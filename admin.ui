@@ -1,0 +1,4580 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Admin</class>
+ <widget class="QDialog" name="Admin">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>767</width>
+    <height>592</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_5">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QStackedWidget" name="stackedWidget">
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <widget class="QWidget" name="login">
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="2" column="0">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="2">
+          <spacer name="horizontalSpacer_66">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="5">
+          <spacer name="horizontalSpacer_59">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="1">
+          <spacer name="horizontalSpacer_16">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="6">
+          <spacer name="horizontalSpacer_15">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="4" column="0">
+          <spacer name="verticalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="6" column="0">
+          <spacer name="verticalSpacer_60">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="5" column="0">
+          <spacer name="verticalSpacer_7">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="3" column="3" rowspan="2">
+          <widget class="QFrame" name="frame">
+           <property name="styleSheet">
+            <string notr="true">QFrame {
+    border: 2px solid white;  /* White border for the frame */
+    background: transparent;  /* No background for the frame */
+}
+
+QFrame &gt; * {
+    background: transparent;  /* Make sure inner components are transparent */
+    border: none;  /* Remove borders from inner components */
+}
+</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Shadow::Raised</enum>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_16">
+            <item row="0" column="6">
+             <spacer name="horizontalSpacer_68">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="0">
+             <spacer name="verticalSpacer_62">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="5">
+             <spacer name="horizontalSpacer_74">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="2" colspan="3">
+             <widget class="QLabel" name="label_23">
+              <property name="styleSheet">
+               <string notr="true">/* General QLabel Styling */
+border-color: qradialgradient(spread:reflect, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));
+</string>
+              </property>
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:700;&quot;&gt;*ADMIN LOGIN *&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <spacer name="verticalSpacer_63">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="5" column="0">
+             <spacer name="verticalSpacer_65">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="4" column="0">
+             <spacer name="verticalSpacer_64">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="1">
+             <spacer name="horizontalSpacer_69">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="3">
+             <spacer name="horizontalSpacer_73">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="6" column="0">
+             <spacer name="verticalSpacer_66">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="2">
+             <spacer name="horizontalSpacer_72">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="7" column="0">
+             <spacer name="verticalSpacer_67">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="4">
+             <spacer name="horizontalSpacer_75">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="0">
+             <spacer name="verticalSpacer_61">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="4" column="1" colspan="5">
+             <widget class="QLineEdit" name="password_lineEdit">
+              <property name="font">
+               <font>
+                <pointsize>-1</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">/* General LineEdit Styling */
+QLineEdit {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #1e1e1e, stop:1 #2e2e2e); /* Gradient background */
+    color: white; /* Text color */
+    font-size: 16px; /* Larger font for input text */
+    font-weight: bold; /* Bold text for better visibility */
+    border: 2px solid #444444; /* Subtle border */
+    border-radius: 15px; /* Rounded corners */
+    padding: 10px 15px; /* Padding inside the field */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.4); /* Subtle shadow for a raised effect */
+}
+
+/* Placeholder Text Styling */
+QLineEdit::placeholder {
+    color: #888888; /* Light grey placeholder text */
+    font-style: italic; /* Italicized placeholder text */
+}
+
+/* Focused LineEdit Styling */
+QLineEdit:focus {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #2e2e2e, stop:1 #3e3e3e); /* Slightly brighter gradient */
+    border: 2px solid #d4af37; /* Gold border for focus */
+    box-shadow: 0px 6px 10px rgba(212, 175, 55, 0.5); /* Gold glow when focused */
+}
+
+/* Disabled LineEdit Styling */
+QLineEdit:disabled {
+    background-color: #555555; /* Grey background for disabled state */
+    color: #bbbbbb; /* Faded text */
+    border: 2px solid #666666; /* Subtle grey border */
+}
+
+/* Hover Effect */
+QLineEdit:hover {
+    border: 2px solid #f7e09d; /* Light gold border on hover */
+    box-shadow: 0px 5px 8px rgba(247, 224, 157, 0.4); /* Light gold glow on hover */
+}
+</string>
+              </property>
+              <property name="echoMode">
+               <enum>QLineEdit::EchoMode::Password</enum>
+              </property>
+              <property name="placeholderText">
+               <string>PASSWORD</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1" colspan="5">
+             <widget class="QLineEdit" name="name_lineEdit">
+              <property name="font">
+               <font>
+                <pointsize>-1</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">/* General LineEdit Styling */
+QLineEdit {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #1e1e1e, stop:1 #2e2e2e); /* Gradient background */
+    color: white; /* Text color */
+    font-size: 16px; /* Larger font for input text */
+    font-weight: bold; /* Bold text for better visibility */
+    border: 2px solid #444444; /* Subtle border */
+    border-radius: 15px; /* Rounded corners */
+    padding: 10px 15px; /* Padding inside the field */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.4); /* Subtle shadow for a raised effect */
+}
+
+/* Placeholder Text Styling */
+QLineEdit::placeholder {
+    color: #888888; /* Light grey placeholder text */
+    font-style: italic; /* Italicized placeholder text */
+}
+
+/* Focused LineEdit Styling */
+QLineEdit:focus {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #2e2e2e, stop:1 #3e3e3e); /* Slightly brighter gradient */
+    border: 2px solid #d4af37; /* Gold border for focus */
+    box-shadow: 0px 6px 10px rgba(212, 175, 55, 0.5); /* Gold glow when focused */
+}
+
+/* Disabled LineEdit Styling */
+QLineEdit:disabled {
+    background-color: #555555; /* Grey background for disabled state */
+    color: #bbbbbb; /* Faded text */
+    border: 2px solid #666666; /* Subtle grey border */
+}
+
+/* Hover Effect */
+QLineEdit:hover {
+    border: 2px solid #f7e09d; /* Light gold border on hover */
+    box-shadow: 0px 5px 8px rgba(247, 224, 157, 0.4); /* Light gold glow on hover */
+}
+</string>
+              </property>
+              <property name="placeholderText">
+               <string>NAME </string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <spacer name="verticalSpacer_68">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Policy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>15</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="5" column="5">
+             <widget class="QPushButton" name="login_button">
+              <property name="font">
+               <font>
+                <pointsize>-1</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">/* General QPushButton Styling */
+QPushButton {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #1e90ff, stop:1 #4682b4); /* Blue gradient */
+    color: white; /* White text */
+    font-size: 16px; /* Font size for text */
+    font-weight: bold; /* Bold text */
+    border: none; /* Remove border */
+    border-radius: 15px; /* Rounded corners */
+    padding: 10px 20px; /* Padding for comfortable size */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Subtle shadow for raised effect */
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #4682b4, stop:1 #1e90ff); /* Reverse gradient */
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.4); /* Enhance shadow on hover */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #104e8b, stop:1 #1c6ba0); /* Darker blue gradient */
+    box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.5); /* Inset shadow */
+}
+
+/* Cancel Button Specific Styling */
+#cancelButton {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #ff6347, stop:1 #cd5c5c); /* Red gradient */
+    color: white;
+}
+
+#cancelButton:hover {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #cd5c5c, stop:1 #ff6347); /* Reverse red gradient */
+}
+</string>
+              </property>
+              <property name="text">
+               <string>LOGIN</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="4">
+             <widget class="QPushButton" name="cancel_button">
+              <property name="font">
+               <font>
+                <pointsize>-1</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">/* General QPushButton Styling */
+QPushButton {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #1e90ff, stop:1 #4682b4); /* Blue gradient */
+    color: white; /* White text */
+    font-size: 16px; /* Font size for text */
+    font-weight: bold; /* Bold text */
+    border: none; /* Remove border */
+    border-radius: 15px; /* Rounded corners */
+    padding: 10px 20px; /* Padding for comfortable size */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Subtle shadow for raised effect */
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #4682b4, stop:1 #1e90ff); /* Reverse gradient */
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.4); /* Enhance shadow on hover */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #104e8b, stop:1 #1c6ba0); /* Darker blue gradient */
+    box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.5); /* Inset shadow */
+}
+
+/* Cancel Button Specific Styling */
+#cancelButton {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #ff6347, stop:1 #cd5c5c); /* Red gradient */
+    color: white;
+}
+
+#cancelButton:hover {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #cd5c5c, stop:1 #ff6347); /* Reverse red gradient */
+}
+</string>
+              </property>
+              <property name="text">
+               <string>CANCEL</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1" colspan="2">
+             <widget class="QCheckBox" name="checkBox">
+              <property name="font">
+               <font>
+                <pointsize>-1</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">/* General QCheckBox Styling */
+QCheckBox {
+    font-size: 14px; /* Font size for label text */
+    color: white; /* White text color */
+    font-weight: bold; /* Bold label */
+    spacing: 8px; /* Space between checkbox and text */
+}
+
+/* Checkbox Indicator */
+QCheckBox::indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    border: 2px solid #d4af37; /* Gold border */
+    background-color: #222222; /* Dark background */
+}
+
+/* Checked State */
+QCheckBox::indicator:checked {
+    background-color: #d4af37; /* Gold color when checked */
+    border: 2px solid #ffffff; /* White border */
+}
+
+/* Hover Effect */
+QCheckBox::indicator:hover {
+    border: 2px solid #f7e09d; /* Light gold border on hover */
+}
+
+/* Disabled Checkbox */
+QCheckBox::indicator:disabled {
+    background-color: #555555; /* Greyed-out background */
+    border: 2px solid #666666; /* Greyed-out border */
+}
+
+QCheckBox:disabled {
+    color: #888888; /* Greyed-out text */
+}
+</string>
+              </property>
+              <property name="text">
+               <string>Show Password</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="Admin_open">
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="5" column="0">
+          <spacer name="verticalSpacer_13">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="17" column="2">
+          <spacer name="horizontalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="13" column="0">
+          <widget class="QPushButton" name="show_users">
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>-1</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">/* General Button Styling */
+QPushButton {
+    background-color: #3b3b3b;  /* Dark background */
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #d4af37;  /* Gold border */
+    border-radius: 10px;
+    padding: 12px 20px;
+    min-width: 180px;  /* Minimum width for consistency */
+    text-align: left;  /* Align text to the left for icons */
+    transition: all 0.3s ease;  /* Smooth transition */
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background-color: #f0a500;  /* Lighter gold on hover */
+    color: black;  /* Darker text on hover */
+    border-color: #ffcc00;  /* Brighter gold border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Slight shadow on hover */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #b57d2a;  /* Darker gold when pressed */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);  /* Inset shadow when pressed */
+}
+
+/* Specific Buttons with Icons */
+QPushButton#showImage {
+    background-image: url(:/icons/show_image.png);  /* Replace with actual image path */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;  /* Padding for the icon */
+}
+QPushButton#addNewImage {
+    background-image: url(:/icons/add_new_image.png);  /* Image for Add New Image */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updatePrice {
+    background-image: url(:/icons/update_price.png);  /* Image for Update Price */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#addDiamond {
+    background-image: url(:/icons/add_diamond.png);  /* Image for Add Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#showAdmin {
+    background-image: url(:/icons/show_admin.png);  /* Image for Show Admin */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#shareBackup {
+    background-image: url(:/icons/share_backup.png);  /* Image for Share Backup */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#logout {
+    background-image: url(:/icons/logout.png);  /* Image for Logout */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#goldButton {
+    background-image: url(:/icons/gold.png);  /* Image for Gold */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#diamondButton {
+    background-image: url(:/icons/diamond.png);  /* Image for Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updateButton {
+    background-image: url(:/icons/update.png);  /* Image for Update */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+
+</string>
+           </property>
+           <property name="text">
+            <string>Show users</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" rowspan="17" colspan="2">
+          <widget class="QStackedWidget" name="Admin_panel">
+           <property name="currentIndex">
+            <number>4</number>
+           </property>
+           <widget class="QWidget" name="_1show_images_page">
+            <layout class="QGridLayout" name="gridLayout_4">
+             <item row="10" column="14">
+              <spacer name="verticalSpacer_26">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="12" column="2">
+              <widget class="QPushButton" name="Remove_image">
+               <property name="font">
+                <font>
+                 <pointsize>-1</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+    background: transparent;
+    border: 2px solid #ffffff;  /* White border */
+    color: #ffffff;  /* White text */
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 10px 20px;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+QPushButton:hover {
+    background-color: rgba(255, 215, 0, 0.1);  /* Light gold background on hover */
+    border-color: #ffffff;  /* White border on hover */
+    color: #f1c40f;  /* Bright gold text on hover */
+}
+
+QPushButton:pressed {
+    background-color: rgba(255, 215, 0, 0.2);  /* Slightly darker gold on press */
+    border-color: #ffffff;  /* White border on press */
+    color: #f39c12;  /* Darker gold text on press */
+}
+</string>
+               </property>
+               <property name="text">
+                <string>⛔ Delete</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="14">
+              <spacer name="verticalSpacer_15">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="12" column="8">
+              <spacer name="horizontalSpacer_9">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="12" column="13">
+              <widget class="QPushButton" name="next_image">
+               <property name="font">
+                <font>
+                 <pointsize>-1</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+    background: transparent;
+    border: 2px solid #ffffff;  /* White border */
+    color: #ffffff;  /* White text */
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 10px 20px;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+QPushButton:hover {
+    background-color: rgba(255, 215, 0, 0.1);  /* Light gold background on hover */
+    border-color: #ffffff;  /* White border on hover */
+    color: #f1c40f;  /* Bright gold text on hover */
+}
+
+QPushButton:pressed {
+    background-color: rgba(255, 215, 0, 0.2);  /* Slightly darker gold on press */
+    border-color: #ffffff;  /* White border on press */
+    color: #f39c12;  /* Darker gold text on press */
+}
+</string>
+               </property>
+               <property name="text">
+                <string>➡️  Next</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="14">
+              <spacer name="verticalSpacer_21">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="12" column="14">
+              <spacer name="verticalSpacer_24">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="12" column="5">
+              <spacer name="horizontalSpacer_12">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="12" column="11">
+              <widget class="QPushButton" name="prev_image">
+               <property name="font">
+                <font>
+                 <pointsize>-1</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+    background: transparent;
+    border: 2px solid #ffffff;  /* White border */
+    color: #ffffff;  /* White text */
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 10px 20px;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+QPushButton:hover {
+    background-color: rgba(255, 215, 0, 0.1);  /* Light gold background on hover */
+    border-color: #ffffff;  /* White border on hover */
+    color: #f1c40f;  /* Bright gold text on hover */
+}
+
+QPushButton:pressed {
+    background-color: rgba(255, 215, 0, 0.2);  /* Slightly darker gold on press */
+    border-color: #ffffff;  /* White border on press */
+    color: #f39c12;  /* Darker gold text on press */
+}
+</string>
+               </property>
+               <property name="text">
+                <string>◀️  previous</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="14">
+              <spacer name="verticalSpacer_20">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="1" colspan="12">
+              <widget class="QLineEdit" name="lineEdit_13">
+               <property name="font">
+                <font>
+                 <pointsize>-1</pointsize>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QLineEdit {
+    border: 2px solid #888;          /* Border color */
+    border-radius: 20px;             /* Rounded corners */
+    padding: 5px 20px;               /* Padding inside the line edit */
+    font-size: 16px;                 /* Font size */
+    color: #333;                     /* Text color */
+    background-color: #fff;         /* Background color */
+    transition: all 0.3s ease;       /* Smooth transition for focus effect */
+}
+
+QLineEdit::placeholder {
+    color: #aaa;                     /* Placeholder text color */
+    font-style: italic;              /* Placeholder text style */
+    content: &quot;\u1F50D&quot;;              /* Search icon (magnifying glass) */
+}
+</string>
+               </property>
+               <property name="placeholderText">
+                <string>🔍 Search</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="14">
+              <spacer name="verticalSpacer_19">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="11" column="14">
+              <spacer name="verticalSpacer_25">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="12" column="6">
+              <spacer name="horizontalSpacer_11">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="9" column="14">
+              <spacer name="verticalSpacer_23">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="8" column="14">
+              <spacer name="verticalSpacer_22">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="14">
+              <spacer name="verticalSpacer_16">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="12" column="3" colspan="2">
+              <spacer name="horizontalSpacer_13">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="3" column="14">
+              <spacer name="verticalSpacer_17">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="12" column="10">
+              <spacer name="horizontalSpacer_8">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="4" column="14">
+              <spacer name="verticalSpacer_18">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="13">
+              <widget class="QPushButton" name="pushButton">
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+    background: transparent;
+    border: 2px solid #ffffff;  /* White border */
+    color: #ffffff;  /* White text */
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 2px 5px;
+    text-align: center;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    min-width: 80px;
+}
+
+QPushButton::text {
+    content: &quot;\21B5&quot;;  /* Unicode character for Enter symbol (↵) */
+    font-size: 20px;  /* Adjust size of the symbol */
+}
+
+QPushButton:hover {
+    background-color: rgba(255, 215, 0, 0.1);  /* Light gold background on hover */
+    border-color: #ffffff;  /* White border on hover */
+    color: #f1c40f;  /* Bright gold text on hover */
+}
+
+QPushButton:pressed {
+    background-color: rgba(255, 215, 0, 0.2);  /* Slightly darker gold on press */
+    border-color: #ffffff;  /* White border on press */
+    color: #f39c12;  /* Darker gold text on press */
+}
+</string>
+               </property>
+               <property name="text">
+                <string>enter</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2" rowspan="11" colspan="12">
+              <widget class="QLabel" name="image_viewer">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="_3update_price">
+            <layout class="QGridLayout" name="gridLayout_8">
+             <item row="0" column="1">
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Policy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>15</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="9">
+              <spacer name="horizontalSpacer_27">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="3">
+              <spacer name="horizontalSpacer_33">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="11">
+              <spacer name="horizontalSpacer_7">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="7">
+              <spacer name="horizontalSpacer_29">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="10">
+              <spacer name="horizontalSpacer_20">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="5">
+              <spacer name="horizontalSpacer_31">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="6">
+              <spacer name="horizontalSpacer_30">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="4">
+              <spacer name="horizontalSpacer_32">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="2">
+              <widget class="QPushButton" name="dia_button">
+               <property name="font">
+                <font>
+                 <pointsize>-1</pointsize>
+                 <bold>true</bold>
+                 <underline>false</underline>
+                 <strikeout>false</strikeout>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+        stop: 0 #E5E5E5, stop: 0.4 #B0C4DE, stop: 0.6 #C0C0C0, stop: 1 #A9A9A9); /* Light gray and blueish gradient for diamond look */
+    color: white;               /* White text */
+    font-size: 16px;            /* Font size */
+    font-weight: bold;          /* Bold text */
+    text-align: center;         /* Center text */
+    text-decoration: none;      /* No text decoration */
+    cursor: pointer;           /* Pointer cursor on hover */
+    padding: 10px 20px;         /* Padding for text */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2), 0px 6px 12px rgba(0, 0, 0, 0.1); /* Multiple shadows for depth */
+    width: 160px;                /* Adjusted width for diamond shape */
+    height: 50px;               /* Adjusted height for diamond shape */
+    transform: rotate(45deg);   /* Rotate to create a diamond shape */
+    border-radius: 25px;        /* Slight rounding on the edges */
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+        stop: 0 #E0E0E0, stop: 0.5 #B0C4DE, stop: 1 #C0C0C0); /* Lighter diamond gradient on hover */
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4), 0px 10px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+        stop: 0 #C0C0C0, stop: 1 #A9A9A9); /* Darker gradient when pressed */
+    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.6); /* Inner shadow effect when pressed */
+}
+
+QPushButton:disabled {
+    background-color: #D3D3D3;  /* Light gray when disabled */
+    color: #A9A9A9;             /* Darker gray text when disabled */
+}
+</string>
+               </property>
+               <property name="text">
+                <string>Diamond</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QPushButton" name="gold_button">
+               <property name="font">
+                <font>
+                 <pointsize>-1</pointsize>
+                 <bold>true</bold>
+                 <underline>false</underline>
+                 <strikeout>false</strikeout>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+        stop: 0 #FFD700, stop: 0.5 #DAA520, stop: 1 #B8860B); /* Metallic gold gradient */
+    color: white;               /* White text */
+    font-size: 16px;            /* Font size */
+    font-weight: bold;          /* Bold text */
+    text-align: center;         /* Center text */
+    text-decoration: none;      /* No text decoration */
+    cursor: pointer;           /* Pointer cursor on hover */
+    padding: 10px 20px;         /* Padding for text */
+    border-radius: 25px;        /* Rounded edges for biscuit shape */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2), 0px 6px 12px rgba(0, 0, 0, 0.1); /* Multiple shadows for depth */
+    width: 160px;               /* Adjusted width for biscuit shape */
+    height: 50px;               /* Adjusted height for biscuit shape */
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+        stop: 0 #FFD700, stop: 0.5 #FFD700, stop: 1 #DAA520); /* Lighter gold gradient on hover */
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4), 0px 10px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+QPushButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+        stop: 0 #C0C0C0, stop: 1 #A9A9A9); /* Darker grey when pressed */
+    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.6); /* Inner shadow effect when pressed */
+}
+
+QPushButton:disabled {
+    background-color: #D3D3D3;  /* Light gray when disabled */
+    color: #A9A9A9;             /* Darker gray text when disabled */
+}
+</string>
+               </property>
+               <property name="text">
+                <string>Gold</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="8">
+              <spacer name="horizontalSpacer_28">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="1" column="0" colspan="12">
+              <widget class="QStackedWidget" name="gold_dia_update_price">
+               <property name="currentIndex">
+                <number>1</number>
+               </property>
+               <widget class="QWidget" name="GoldPrice_update">
+                <layout class="QGridLayout" name="gridLayout_12">
+                 <item row="5" column="7" colspan="4">
+                  <widget class="QLabel" name="label_20Kt">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="10" column="8">
+                  <spacer name="horizontalSpacer_65">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="10" column="3">
+                  <spacer name="horizontalSpacer_3">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="6" column="0">
+                  <widget class="QLabel" name="label_19">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>22Kt:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_15">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>10Kt:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1" colspan="4">
+                  <widget class="QLineEdit" name="lineEdit_18Kt">
+                   <property name="font">
+                    <font>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">/* Line Edit Styling */
+QLineEdit {
+    background-color: #ecf0f1;  /* Light grey background */
+    color: #2c3e50;  /* Dark text for contrast */
+    font-size: 16px;
+    border: 2px solid #bdc3c7;  /* Soft grey border */
+    border-radius: 10px;  /* Rounded corners */
+    padding: 8px 15px;  /* Inner padding */
+    transition: all 0.3s ease;  /* Smooth transition for focus and hover */
+}
+
+/* Focus Effect for Line Edit */
+QLineEdit:focus {
+    border: 2px solid #f1c40f;  /* Gold border on focus */
+    background-color: #f9f9f9;  /* Lighter background on focus */
+}
+
+/* Hover Effect for Line Edit */
+QLineEdit:hover {
+    border: 2px solid #7f8c8d;  /* Darker grey border on hover */
+    background-color: #f4f6f7;  /* Slightly lighter background */
+}
+
+/* Placeholder Text Styling */
+QLineEdit::placeholder {
+    color: #95a5a6;  /* Light grey placeholder text */
+    font-style: italic;  /* Italic style for placeholder text */
+}
+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="7" colspan="4">
+                  <widget class="QLabel" name="label_21">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <horstretch>50</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Old Price</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="7" colspan="4">
+                  <widget class="QLabel" name="label_24Kt">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="7" colspan="4">
+                  <widget class="QLabel" name="label_14Kt">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="0">
+                  <widget class="QLabel" name="label_17">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>18Kt:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <spacer name="verticalSpacer_2">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="10" column="2">
+                  <spacer name="horizontalSpacer_5">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="1" column="1" colspan="4">
+                  <widget class="QLabel" name="label_20">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                     <horstretch>50</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>New Price</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="10" column="1">
+                  <spacer name="horizontalSpacer_2">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="10" column="9">
+                  <spacer name="horizontalSpacer_62">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="6" column="7" colspan="4">
+                  <widget class="QLabel" name="label_22Kt">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="10" column="4">
+                  <spacer name="horizontalSpacer_17">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="2" column="1" colspan="4">
+                  <widget class="QLineEdit" name="lineEdit_10Kt">
+                   <property name="font">
+                    <font>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">/* Line Edit Styling */
+QLineEdit {
+    background-color: #ecf0f1;  /* Light grey background */
+    color: #2c3e50;  /* Dark text for contrast */
+    font-size: 16px;
+    border: 2px solid #bdc3c7;  /* Soft grey border */
+    border-radius: 10px;  /* Rounded corners */
+    padding: 8px 15px;  /* Inner padding */
+    transition: all 0.3s ease;  /* Smooth transition for focus and hover */
+}
+
+/* Focus Effect for Line Edit */
+QLineEdit:focus {
+    border: 2px solid #f1c40f;  /* Gold border on focus */
+    background-color: #f9f9f9;  /* Lighter background on focus */
+}
+
+/* Hover Effect for Line Edit */
+QLineEdit:hover {
+    border: 2px solid #7f8c8d;  /* Darker grey border on hover */
+    background-color: #f4f6f7;  /* Slightly lighter background */
+}
+
+/* Placeholder Text Styling */
+QLineEdit::placeholder {
+    color: #95a5a6;  /* Light grey placeholder text */
+    font-style: italic;  /* Italic style for placeholder text */
+}
+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="10" column="10">
+                  <widget class="QPushButton" name="upadateGold_Price">
+                   <property name="font">
+                    <font>
+                     <family>Helvetica</family>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">/* Base style for QPushButton */
+QPushButton {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 1em;
+    padding: 1em 2em;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    background-color: #006494; /* Button Color */
+    color: #fff;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: transform ease-in 0.1s, box-shadow ease-in 0.25s;
+    box-shadow: 0 2px 25px rgba(0, 100, 148, 0.5); /* Box shadow with button color */
+}
+
+QPushButton:focus {
+    outline: 0;
+}
+
+QPushButton:before, QPushButton:after {
+    position: absolute;
+    content: '';
+    display: block;
+    width: 140%;
+    height: 100%;
+    left: -20%;
+    z-index: -1000;
+    transition: all ease-in-out 0.5s;
+    background-repeat: no-repeat;
+}
+
+QPushButton:before {
+    display: none;
+    top: -75%;
+    background-image:
+        radial-gradient(circle, #006494 20%, transparent 20%),
+        radial-gradient(circle, transparent 20%, #006494 20%, transparent 30%),
+        radial-gradient(circle, #006494 20%, transparent 20%),
+        radial-gradient(circle, #006494 20%, transparent 20%),
+        radial-gradient(circle, transparent 10%, #006494 15%, transparent 20%),
+        radial-gradient(circle, #006494 20%, transparent 20%),
+        radial-gradient(circle, #006494 20%, transparent 20%),
+        radial-gradient(circle, #006494 20%, transparent 20%),
+        radial-gradient(circle, #006494 20%, transparent 20%);
+    background-size: 10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%, 10% 10%, 15% 15%, 10% 10%, 18% 18%;
+}
+
+QPushButton:after {
+    display: none;
+    bottom: -75%;
+    background-image:
+        radial-gradient(circle, #006494 20%, transparent 20%),
+        radial-gradient(circle, #006494 20%, transparent 20%),
+        radial-gradient(circle, transparent 10%, #006494 15%, transparent 20%),
+        radial-gradient(circle, #006494 20%, transparent 20%),
+        radial-gradient(circle, #006494 20%, transparent 20%),
+        radial-gradient(circle, #006494 20%, transparent 20%),
+        radial-gradient(circle, #006494 20%, transparent 20%);
+    background-size: 15% 15%, 20% 20%, 18% 18%, 20% 20%, 15% 15%, 10% 10%, 20% 20%;
+}
+
+/* Active state */
+QPushButton:pressed {
+    transform: scale(0.9);
+    background-color: #005682; /* Darker shade on click */
+    box-shadow: 0 2px 25px rgba(0, 100, 148, 0.2);
+}
+
+/* Animation for button */
+QPushButton.animate:before {
+    display: block;
+    animation: topBubbles ease-in-out 0.75s forwards;
+}
+
+QPushButton.animate:after {
+    display: block;
+    animation: bottomBubbles ease-in-out 0.75s forwards;
+}
+
+/* Keyframe animations */
+@keyframes topBubbles {
+    0% {
+        background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%, 25% 90%, 40% 90%, 55% 90%, 70% 90%;
+    }
+    50% {
+        background-position: 0% 80%, 0% 20%, 10% 40%, 20% 0%, 30% 30%, 22% 50%, 50% 50%, 65% 20%, 90% 30%;
+    }
+    100% {
+        background-position: 0% 70%, 0% 10%, 10% 30%, 20% -10%, 30% 20%, 22% 40%, 50% 40%, 65% 10%, 90% 20%;
+        background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+    }
+}
+
+@keyframes bottomBubbles {
+    0% {
+        background-position: 10% -10%, 30% 10%, 55% -10%, 70% -10%, 85% -10%, 70% -10%, 70% 0%;
+    }
+    50% {
+        background-position: 0% 80%, 20% 80%, 45% 60%, 60% 100%, 75% 70%, 95% 60%, 105% 0%;
+    }
+    100% {
+        background-position: 0% 90%, 20% 90%, 45% 70%, 60% 110%, 75% 80%, 95% 70%, 110% 10%;
+        background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+    }
+}
+</string>
+                   </property>
+                   <property name="text">
+                    <string>Update</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="10" column="7">
+                  <spacer name="horizontalSpacer_6">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="2" column="7" colspan="4">
+                  <widget class="QLabel" name="label_10Kt">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_16">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>14Kt:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="8" column="1">
+                  <spacer name="verticalSpacer_58">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="3" column="1" colspan="4">
+                  <widget class="QLineEdit" name="lineEdit_14Kt">
+                   <property name="font">
+                    <font>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">/* Line Edit Styling */
+QLineEdit {
+    background-color: #ecf0f1;  /* Light grey background */
+    color: #2c3e50;  /* Dark text for contrast */
+    font-size: 16px;
+    border: 2px solid #bdc3c7;  /* Soft grey border */
+    border-radius: 10px;  /* Rounded corners */
+    padding: 8px 15px;  /* Inner padding */
+    transition: all 0.3s ease;  /* Smooth transition for focus and hover */
+}
+
+/* Focus Effect for Line Edit */
+QLineEdit:focus {
+    border: 2px solid #f1c40f;  /* Gold border on focus */
+    background-color: #f9f9f9;  /* Lighter background on focus */
+}
+
+/* Hover Effect for Line Edit */
+QLineEdit:hover {
+    border: 2px solid #7f8c8d;  /* Darker grey border on hover */
+    background-color: #f4f6f7;  /* Slightly lighter background */
+}
+
+/* Placeholder Text Styling */
+QLineEdit::placeholder {
+    color: #95a5a6;  /* Light grey placeholder text */
+    font-style: italic;  /* Italic style for placeholder text */
+}
+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="0">
+                  <widget class="QLabel" name="label_6">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>24Kt:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="9" column="1">
+                  <spacer name="verticalSpacer_59">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="5" column="0">
+                  <widget class="QLabel" name="label_18">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>20Kt:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="7" colspan="4">
+                  <widget class="QLabel" name="label_18Kt">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="10" column="0">
+                  <spacer name="horizontalSpacer_4">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="5" column="1" colspan="4">
+                  <widget class="QLineEdit" name="lineEdit_20Kt">
+                   <property name="font">
+                    <font>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">/* Line Edit Styling */
+QLineEdit {
+    background-color: #ecf0f1;  /* Light grey background */
+    color: #2c3e50;  /* Dark text for contrast */
+    font-size: 16px;
+    border: 2px solid #bdc3c7;  /* Soft grey border */
+    border-radius: 10px;  /* Rounded corners */
+    padding: 8px 15px;  /* Inner padding */
+    transition: all 0.3s ease;  /* Smooth transition for focus and hover */
+}
+
+/* Focus Effect for Line Edit */
+QLineEdit:focus {
+    border: 2px solid #f1c40f;  /* Gold border on focus */
+    background-color: #f9f9f9;  /* Lighter background on focus */
+}
+
+/* Hover Effect for Line Edit */
+QLineEdit:hover {
+    border: 2px solid #7f8c8d;  /* Darker grey border on hover */
+    background-color: #f4f6f7;  /* Slightly lighter background */
+}
+
+/* Placeholder Text Styling */
+QLineEdit::placeholder {
+    color: #95a5a6;  /* Light grey placeholder text */
+    font-style: italic;  /* Italic style for placeholder text */
+}
+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="1" colspan="4">
+                  <widget class="QLineEdit" name="lineEdit_22Kt">
+                   <property name="font">
+                    <font>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">/* Line Edit Styling */
+QLineEdit {
+    background-color: #ecf0f1;  /* Light grey background */
+    color: #2c3e50;  /* Dark text for contrast */
+    font-size: 16px;
+    border: 2px solid #bdc3c7;  /* Soft grey border */
+    border-radius: 10px;  /* Rounded corners */
+    padding: 8px 15px;  /* Inner padding */
+    transition: all 0.3s ease;  /* Smooth transition for focus and hover */
+}
+
+/* Focus Effect for Line Edit */
+QLineEdit:focus {
+    border: 2px solid #f1c40f;  /* Gold border on focus */
+    background-color: #f9f9f9;  /* Lighter background on focus */
+}
+
+/* Hover Effect for Line Edit */
+QLineEdit:hover {
+    border: 2px solid #7f8c8d;  /* Darker grey border on hover */
+    background-color: #f4f6f7;  /* Slightly lighter background */
+}
+
+/* Placeholder Text Styling */
+QLineEdit::placeholder {
+    color: #95a5a6;  /* Light grey placeholder text */
+    font-style: italic;  /* Italic style for placeholder text */
+}
+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="1" colspan="4">
+                  <widget class="QLineEdit" name="lineEdit_24Kt">
+                   <property name="font">
+                    <font>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">/* Line Edit Styling */
+QLineEdit {
+    background-color: #ecf0f1;  /* Light grey background */
+    color: #2c3e50;  /* Dark text for contrast */
+    font-size: 16px;
+    border: 2px solid #bdc3c7;  /* Soft grey border */
+    border-radius: 10px;  /* Rounded corners */
+    padding: 8px 15px;  /* Inner padding */
+    transition: all 0.3s ease;  /* Smooth transition for focus and hover */
+}
+
+/* Focus Effect for Line Edit */
+QLineEdit:focus {
+    border: 2px solid #f1c40f;  /* Gold border on focus */
+    background-color: #f9f9f9;  /* Lighter background on focus */
+}
+
+/* Hover Effect for Line Edit */
+QLineEdit:hover {
+    border: 2px solid #7f8c8d;  /* Darker grey border on hover */
+    background-color: #f4f6f7;  /* Slightly lighter background */
+}
+
+/* Placeholder Text Styling */
+QLineEdit::placeholder {
+    color: #95a5a6;  /* Light grey placeholder text */
+    font-style: italic;  /* Italic style for placeholder text */
+}
+</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="DiamondPrice_update">
+                <layout class="QGridLayout" name="gridLayout_13">
+                 <item row="0" column="1">
+                  <widget class="QPushButton" name="FancyDiamond_Price">
+                   <property name="font">
+                    <font>
+                     <pointsize>-1</pointsize>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QPushButton {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #4facfe, stop:1 #00f2fe); /* Blue gradient */
+    color: white; /* Text color */
+    border-radius: 25px; /* Fully round button (adjust based on button size) */
+    border: 2px solid #1d9fea; /* Slightly darker border */
+    font-size: 16px; /* Adjusts the font size */
+    font-weight: bold; /* Makes the text bold */
+    padding: 10px 20px; /* Adds padding for better aesthetics */
+    transition: 0.3s; /* Adds a smooth hover effect */
+    box-shadow: 3px 3px 5px #888888; /* Adds a shadow for a 3D effect */
+}
+
+QPushButton:hover {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #1d9fea, stop:1 #007bbd); /* Darker blue on hover */
+    border-color: #005f8d; /* Darker border on hover */
+    color: #eefaff; /* Slightly lighter text color */
+}
+
+QPushButton:pressed {
+    background-color: #007bbd; /* Solid blue on click */
+    box-shadow: 1px 1px 3px #555555 inset; /* Inset shadow on click */
+}
+</string>
+                   </property>
+                   <property name="text">
+                    <string>Fancy</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QPushButton" name="RoundDiamind_Price">
+                   <property name="font">
+                    <font>
+                     <family>ui-sans-serif</family>
+                     <pointsize>-1</pointsize>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QPushButton {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #4facfe, stop:1 #00f2fe); /* Blue gradient */
+    color: white; /* Text color */
+    border-radius: 50%; /* Fully round button (adjust based on button size) */
+    border: 2px solid #1d9fea; /* Slightly darker border */
+    font-size: 16px; /* Adjusts the font size */
+    font-weight: bold; /* Makes the text bold */
+    padding: 10px 20px; /* Adds padding for better aesthetics */
+    transition: 0.3s; /* Adds a smooth hover effect */
+    box-shadow: 3px 3px 5px #888888; /* Adds a shadow for a 3D effect */
+}
+
+QPushButton:hover {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #1d9fea, stop:1 #007bbd); /* Darker blue on hover */
+    border-color: #005f8d; /* Darker border on hover */
+    color: #eefaff; /* Slightly lighter text color */
+}
+
+QPushButton:pressed {
+    background-color: #007bbd; /* Solid blue on click */
+    box-shadow: 1px 1px 3px #555555 inset; /* Inset shadow on click */
+}
+</string>
+                   </property>
+                   <property name="text">
+                    <string>Round</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="2">
+                  <spacer name="horizontalSpacer_67">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="1" column="0" colspan="3">
+                  <widget class="QStackedWidget" name="DiamondPrice_update_2">
+                   <property name="currentIndex">
+                    <number>1</number>
+                   </property>
+                   <widget class="QWidget" name="Round_Diamond_Price_update">
+                    <layout class="QGridLayout" name="gridLayout_14">
+                     <item row="2" column="1">
+                      <widget class="QPushButton" name="updateRoundDiamond_price">
+                       <property name="font">
+                        <font>
+                         <family>Arial</family>
+                         <pointsize>-1</pointsize>
+                         <bold>false</bold>
+                        </font>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">QPushButton {
+    background-color: #000; /* Black background */
+    color: #fff; /* White text color */
+    border: 1px solid #000; /* Black border */
+    border-radius: 4px; /* Slightly rounded corners */
+    padding: 12px 40px; /* Internal padding */
+    font-size: 14px; /* Font size */
+    font-weight: 400; /* Regular font weight */
+    font-family: Arial, sans-serif; /* Font family */
+    text-align: center; /* Centered text */
+    box-shadow: #fff 4px 4px 0 0, #000 4px 4px 0 1px; /* White and black shadows for 3D effect */
+    cursor: pointer; /* Pointer cursor for interactivity */
+    transition: all 0.2s ease; /* Smooth hover and click animations */
+}
+
+QPushButton:hover {
+    text-decoration: none; /* No underline (optional) */
+    background-color: #111; /* Slightly lighter black for hover effect */
+}
+
+QPushButton:pressed {
+    box-shadow: inset rgba(0, 0, 0, 0.125) 0 3px 5px; /* Inset shadow for pressed state */
+    outline: 0; /* No outline on focus */
+    transform: translate(2px, 2px); /* Simulate button &quot;press&quot; movement */
+}
+
+QPushButton:focus {
+    outline: none; /* Remove default focus outline */
+}
+
+QPushButton:disabled {
+    background-color: #555; /* Gray background for disabled state */
+    color: #aaa; /* Light gray text */
+    border: 1px solid #555; /* Match border with background */
+    cursor: not-allowed; /* Indicate disabled state */
+}
+</string>
+                       </property>
+                       <property name="text">
+                        <string>Update</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="0">
+                      <spacer name="horizontalSpacer_70">
+                       <property name="orientation">
+                        <enum>Qt::Orientation::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item row="1" column="0" colspan="2">
+                      <widget class="QTableView" name="tableView">
+                       <property name="styleSheet">
+                        <string notr="true">/* Table View Styling */
+QTableView {
+    background-color: #ecf0f1;  /* Light grey background */
+    color: #2c3e50;  /* Dark text for better readability */
+    font-size: 14px;
+    border: 2px solid #bdc3c7;  /* Soft grey border */
+    border-radius: 10px;  /* Rounded corners */
+    padding: 10px;  /* Padding around the table */
+}
+
+/* Header Styling */
+QTableView QHeaderView::section {
+    background-color: #495057;  /* Gold header background */
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    border: 1px solid #bdc3c7;  /* Border for header */
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Row Styling */
+QTableView::item {
+    background-color: #ffffff;  /* White background for table rows */
+    color: #2c3e50;  /* Dark text */
+    padding: 8px;
+}
+
+/* Row Hover Effect */
+QTableView::item:hover {
+    background-color: #f1c40f;  /* Gold background on hover */
+    color: white;  /* White text when hovered */
+}
+
+/* Selection Styling */
+QTableView::item:selected {
+    background-color: #e67e22;  /* Orange gold selection background */
+    color: white;  /* White text when selected */
+}
+
+/* Alternating Row Colors */
+QTableView AlternatingRowColors {
+    background-color: #f7f7f7;  /* Slight grey for alternate rows */
+}
+
+QTableView::item:odd {
+    background-color: #f9f9f9;  /* Light grey for odd rows */
+}
+</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                   <widget class="QWidget" name="Fancy_Diamond_Price_update">
+                    <layout class="QGridLayout" name="gridLayout_15">
+                     <item row="1" column="1">
+                      <widget class="QPushButton" name="updateFancyDiamond_price">
+                       <property name="font">
+                        <font>
+                         <family>Arial</family>
+                         <pointsize>-1</pointsize>
+                         <bold>false</bold>
+                        </font>
+                       </property>
+                       <property name="styleSheet">
+                        <string notr="true">QPushButton {
+    background-color: #000; /* Black background */
+    color: #fff; /* White text color */
+    border: 1px solid #000; /* Black border */
+    border-radius: 4px; /* Slightly rounded corners */
+    padding: 12px 40px; /* Internal padding */
+    font-size: 14px; /* Font size */
+    font-weight: 400; /* Regular font weight */
+    font-family: Arial, sans-serif; /* Font family */
+    text-align: center; /* Centered text */
+    box-shadow: #fff 4px 4px 0 0, #000 4px 4px 0 1px; /* White and black shadows for 3D effect */
+    cursor: pointer; /* Pointer cursor for interactivity */
+    transition: all 0.2s ease; /* Smooth hover and click animations */
+}
+
+QPushButton:hover {
+    text-decoration: none; /* No underline (optional) */
+    background-color: #111; /* Slightly lighter black for hover effect */
+}
+
+QPushButton:pressed {
+    box-shadow: inset rgba(0, 0, 0, 0.125) 0 3px 5px; /* Inset shadow for pressed state */
+    outline: 0; /* No outline on focus */
+    transform: translate(2px, 2px); /* Simulate button &quot;press&quot; movement */
+}
+
+QPushButton:focus {
+    outline: none; /* Remove default focus outline */
+}
+
+QPushButton:disabled {
+    background-color: #555; /* Gray background for disabled state */
+    color: #aaa; /* Light gray text */
+    border: 1px solid #555; /* Match border with background */
+    cursor: not-allowed; /* Indicate disabled state */
+}
+</string>
+                       </property>
+                       <property name="text">
+                        <string>Update</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="0">
+                      <spacer name="horizontalSpacer_71">
+                       <property name="orientation">
+                        <enum>Qt::Orientation::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item row="0" column="0" colspan="2">
+                      <widget class="QTableView" name="tableView_2">
+                       <property name="styleSheet">
+                        <string notr="true">/* Table View Styling */
+QTableView {
+    background-color: #ecf0f1;  /* Light grey background */
+    color: #2c3e50;  /* Dark text for better readability */
+    font-size: 14px;
+    border: 2px solid #bdc3c7;  /* Soft grey border */
+    border-radius: 10px;  /* Rounded corners */
+    padding: 10px;  /* Padding around the table */
+}
+
+/* Header Styling */
+QTableView QHeaderView::section {
+    background-color: #495057;  /* Gold header background */
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    border: 1px solid #bdc3c7;  /* Border for header */
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Row Styling */
+QTableView::item {
+    background-color: #ffffff;  /* White background for table rows */
+    color: #2c3e50;  /* Dark text */
+    padding: 8px;
+}
+
+/* Row Hover Effect */
+QTableView::item:hover {
+    background-color: #f1c40f;  /* Gold background on hover */
+    color: white;  /* White text when hovered */
+}
+
+/* Selection Styling */
+QTableView::item:selected {
+    background-color: #e67e22;  /* Orange gold selection background */
+    color: white;  /* White text when selected */
+}
+
+/* Alternating Row Colors */
+QTableView AlternatingRowColors {
+    background-color: #f7f7f7;  /* Slight grey for alternate rows */
+}
+
+QTableView::item:odd {
+    background-color: #f9f9f9;  /* Light grey for odd rows */
+}
+</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="_4add_dia">
+            <layout class="QGridLayout" name="gridLayout_9">
+             <item row="0" column="4">
+              <spacer name="horizontalSpacer_54">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="3">
+              <spacer name="horizontalSpacer_55">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="6">
+              <spacer name="horizontalSpacer_52">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="10">
+              <spacer name="horizontalSpacer_48">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="1">
+              <spacer name="horizontalSpacer_46">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="11">
+              <spacer name="horizontalSpacer_47">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="8">
+              <spacer name="horizontalSpacer_50">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="2">
+              <widget class="QPushButton" name="fancy_dia_button">
+               <property name="font">
+                <font>
+                 <pointsize>-1</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #4facfe, stop:1 #00f2fe); /* Blue gradient */
+    color: white; /* Text color */
+    border-radius: 25px; /* Makes the button round */
+    border: 2px solid #1d9fea; /* Slightly darker border */
+    font-size: 16px; /* Adjusts the font size */
+    font-weight: bold; /* Makes the text bold */
+    padding: 10px 20px; /* Adds padding for a better look */
+    transition: 0.3s; /* Adds a smooth hover effect */
+    box-shadow: 3px 3px 5px #888888; /* Adds a shadow for a 3D effect */
+}
+
+QPushButton:hover {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #1d9fea, stop:1 #007bbd); /* Darker blue on hover */
+    border-color: #005f8d; /* Darker border on hover */
+    color: #eefaff; /* Slightly lighter text color */
+}
+
+QPushButton:pressed {
+    background-color: #007bbd; /* Solid blue on click */
+    box-shadow: 1px 1px 3px #555555 inset; /* Inset shadow on click */
+}
+</string>
+               </property>
+               <property name="text">
+                <string>Fancy</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QPushButton" name="round_dia_button">
+               <property name="font">
+                <font>
+                 <pointsize>-1</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #4facfe, stop:1 #00f2fe); /* Blue gradient */
+    color: white; /* Text color */
+    border-radius: 25px; /* Makes the button round */
+    border: 2px solid #1d9fea; /* Slightly darker border */
+    font-size: 16px; /* Adjusts the font size */
+    font-weight: bold; /* Makes the text bold */
+    padding: 10px 20px; /* Adds padding for a better look */
+    transition: 0.3s; /* Adds a smooth hover effect */
+    box-shadow: 3px 3px 5px #888888; /* Adds a shadow for a 3D effect */
+}
+
+QPushButton:hover {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #1d9fea, stop:1 #007bbd); /* Darker blue on hover */
+    border-color: #005f8d; /* Darker border on hover */
+    color: #eefaff; /* Slightly lighter text color */
+}
+
+QPushButton:pressed {
+    background-color: #007bbd; /* Solid blue on click */
+    box-shadow: 1px 1px 3px #555555 inset; /* Inset shadow on click */
+}
+</string>
+               </property>
+               <property name="text">
+                <string>Round</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="5">
+              <spacer name="horizontalSpacer_53">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="9">
+              <spacer name="horizontalSpacer_49">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="7">
+              <spacer name="horizontalSpacer_51">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="12">
+              <spacer name="horizontalSpacer_45">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="1" column="0" colspan="13">
+              <widget class="QStackedWidget" name="add_dia_stackwidget">
+               <property name="currentIndex">
+                <number>0</number>
+               </property>
+               <widget class="QWidget" name="round_dia">
+                <layout class="QGridLayout" name="gridLayout_10">
+                 <item row="10" column="10">
+                  <spacer name="horizontalSpacer_37">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="13" column="2">
+                  <spacer name="verticalSpacer_42">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="15" column="2">
+                  <spacer name="verticalSpacer_38">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="10" column="2">
+                  <spacer name="verticalSpacer_48">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="10" column="8">
+                  <spacer name="horizontalSpacer_34">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="8" column="2">
+                  <spacer name="verticalSpacer_46">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="12" column="2">
+                  <spacer name="verticalSpacer_43">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="10" column="7">
+                  <spacer name="horizontalSpacer_57">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="2" column="2">
+                  <spacer name="verticalSpacer_41">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_2">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Size MM:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="2">
+                  <spacer name="verticalSpacer_47">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="10" column="5">
+                  <spacer name="horizontalSpacer_39">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="5" column="0">
+                  <widget class="QLabel" name="label_3">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Weigtht:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="15" column="0">
+                  <spacer name="horizontalSpacer_56">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="14" column="2">
+                  <spacer name="verticalSpacer_37">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="9" column="2">
+                  <spacer name="verticalSpacer_45">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="4" column="2">
+                  <spacer name="verticalSpacer_39">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="11" column="2">
+                  <spacer name="verticalSpacer_44">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="10" column="9">
+                  <spacer name="horizontalSpacer_38">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="10" column="11">
+                  <spacer name="horizontalSpacer_36">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Sieve:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="2">
+                  <spacer name="verticalSpacer_40">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="10" column="6">
+                  <spacer name="horizontalSpacer_58">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="7" column="0">
+                  <widget class="QLabel" name="label_10">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Price:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="1" colspan="7">
+                  <widget class="QLineEdit" name="price_lineEdit_round">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QLineEdit {
+    background-color: #F5F5F5; /* Light gray background */
+    border: 2px solid #D3D3D3; /* Subtle border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 8px 12px; /* Comfortable padding */
+    font-size: 14px; /* Font size */
+    font-family: Arial, sans-serif; /* Clean font */
+    color: #333333; /* Dark gray text */
+    outline: none; /* Remove default outline */
+}
+
+QLineEdit:hover {
+    border: 2px solid #9E9E9E; /* Darker border on hover */
+}
+
+QLineEdit:focus {
+    border: 2px solid #3F51B5; /* Blue border on focus */
+    background-color: #FFFFFF; /* White background for focus */
+}
+
+QLineEdit:disabled {
+    background-color: #E0E0E0; /* Gray background for disabled state */
+    color: #A5A5A5; /* Light gray text for disabled state */
+    border: 2px solid #D3D3D3; /* Subtle border for disabled state */
+}
+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="1" colspan="7">
+                  <widget class="QLineEdit" name="Weight_lineEdit_round">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QLineEdit {
+    background-color: #F5F5F5; /* Light gray background */
+    border: 2px solid #D3D3D3; /* Subtle border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 8px 12px; /* Comfortable padding */
+    font-size: 14px; /* Font size */
+    font-family: Arial, sans-serif; /* Clean font */
+    color: #333333; /* Dark gray text */
+    outline: none; /* Remove default outline */
+}
+
+QLineEdit:hover {
+    border: 2px solid #9E9E9E; /* Darker border on hover */
+}
+
+QLineEdit:focus {
+    border: 2px solid #3F51B5; /* Blue border on focus */
+    background-color: #FFFFFF; /* White background for focus */
+}
+
+QLineEdit:disabled {
+    background-color: #E0E0E0; /* Gray background for disabled state */
+    color: #A5A5A5; /* Light gray text for disabled state */
+    border: 2px solid #D3D3D3; /* Subtle border for disabled state */
+}
+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1" colspan="7">
+                  <widget class="QLineEdit" name="sizeMM_lineEdit_round">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QLineEdit {
+    background-color: #F5F5F5; /* Light gray background */
+    border: 2px solid #D3D3D3; /* Subtle border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 8px 12px; /* Comfortable padding */
+    font-size: 14px; /* Font size */
+    font-family: Arial, sans-serif; /* Clean font */
+    color: #333333; /* Dark gray text */
+    outline: none; /* Remove default outline */
+}
+
+QLineEdit:hover {
+    border: 2px solid #9E9E9E; /* Darker border on hover */
+}
+
+QLineEdit:focus {
+    border: 2px solid #3F51B5; /* Blue border on focus */
+    background-color: #FFFFFF; /* White background for focus */
+}
+
+QLineEdit:disabled {
+    background-color: #E0E0E0; /* Gray background for disabled state */
+    color: #A5A5A5; /* Light gray text for disabled state */
+    border: 2px solid #D3D3D3; /* Subtle border for disabled state */
+}
+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1" colspan="7">
+                  <widget class="QLineEdit" name="sieve_lineEdit">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QLineEdit {
+    background-color: #F5F5F5; /* Light gray background */
+    border: 2px solid #D3D3D3; /* Subtle border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 8px 12px; /* Comfortable padding */
+    font-size: 14px; /* Font size */
+    font-family: Arial, sans-serif; /* Clean font */
+    color: #333333; /* Dark gray text */
+    outline: none; /* Remove default outline */
+}
+
+QLineEdit:hover {
+    border: 2px solid #9E9E9E; /* Darker border on hover */
+}
+
+QLineEdit:focus {
+    border: 2px solid #3F51B5; /* Blue border on focus */
+    background-color: #FFFFFF; /* White background for focus */
+}
+
+QLineEdit:disabled {
+    background-color: #E0E0E0; /* Gray background for disabled state */
+    color: #A5A5A5; /* Light gray text for disabled state */
+    border: 2px solid #D3D3D3; /* Subtle border for disabled state */
+}
+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="15" column="1">
+                  <spacer name="horizontalSpacer_60">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="15" column="10" colspan="2">
+                  <widget class="QPushButton" name="AddRoundDiamond">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QPushButton {
+    background: qlineargradient(spread:pad, x1:0.5, y1:0, x2:1, y2:1, stop:0 #AF40FF, stop:0.5 #5B42F3, stop:1 #00DDEB); /* Gradient background */
+    border: 0; /* No border */
+    border-radius: 8px; /* Rounded corners */
+    color: #FFFFFF; /* White text color */
+    font-family: Arial, sans-serif; /* Clean font */
+    font-size: 20px; /* Font size */
+    padding: 3px; /* Outer padding */
+    text-align: center; /* Center text */
+    box-shadow: rgba(151, 65, 252, 0.2) 0px 15px 30px -5px; /* Subtle shadow */
+    cursor: pointer; /* Pointer for interactivity */
+}
+
+QPushButton:hover {
+    outline: none; /* No outline */
+    background: qlineargradient(spread:pad, x1:0.5, y1:0, x2:1, y2:1, stop:0 #9B36E8, stop:0.5 #5037E3, stop:1 #00C9DA); /* Slightly altered gradient on hover */
+}
+
+QPushButton:pressed {
+    background-color: rgb(5, 6, 45); /* Dark background on press */
+    color: #E0E0E0; /* Slightly muted text color */
+}
+
+QPushButton:disabled {
+    background: #A5A5A5; /* Gray background for disabled state */
+    color: #C0C0C0; /* Light gray text for disabled state */
+    cursor: not-allowed; /* Disabled cursor */
+}
+</string>
+                   </property>
+                   <property name="text">
+                    <string>Add</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="fancy_dia">
+                <layout class="QGridLayout" name="gridLayout_11">
+                 <item row="4" column="2">
+                  <spacer name="verticalSpacer_54">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="8" column="4">
+                  <spacer name="horizontalSpacer_44">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_11">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Shape:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="8" column="3">
+                  <spacer name="horizontalSpacer_41">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="11" column="1">
+                  <spacer name="verticalSpacer_57">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="8" column="5">
+                  <spacer name="horizontalSpacer_42">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="8" column="7">
+                  <spacer name="horizontalSpacer_40">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Policy::Fixed</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="2" column="2">
+                  <spacer name="verticalSpacer_14">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="8" column="6">
+                  <spacer name="horizontalSpacer_43">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="5" column="0">
+                  <widget class="QLabel" name="label_13">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Weight:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="10" column="1">
+                  <spacer name="verticalSpacer_52">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_12">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Size:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="9" column="1">
+                  <spacer name="verticalSpacer_50">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="13" column="1">
+                  <spacer name="verticalSpacer_51">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="8" column="1">
+                  <spacer name="verticalSpacer_49">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="6" column="2">
+                  <spacer name="verticalSpacer_55">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="12" column="1">
+                  <spacer name="verticalSpacer_53">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="7" column="0">
+                  <widget class="QLabel" name="label_14">
+                   <property name="font">
+                    <font>
+                     <pointsize>15</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Price:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="8" column="2">
+                  <spacer name="horizontalSpacer_35">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="0" column="2">
+                  <spacer name="verticalSpacer_56">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="1" column="1" colspan="4">
+                  <widget class="QLineEdit" name="shape_lineEdit">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QLineEdit {
+    background-color: #F5F5F5; /* Light gray background */
+    border: 2px solid #D3D3D3; /* Subtle border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 8px 12px; /* Comfortable padding */
+    font-size: 14px; /* Font size */
+    font-family: Arial, sans-serif; /* Clean font */
+    color: #333333; /* Dark gray text */
+    outline: none; /* Remove default outline */
+}
+
+QLineEdit:hover {
+    border: 2px solid #9E9E9E; /* Darker border on hover */
+}
+
+QLineEdit:focus {
+    border: 2px solid #3F51B5; /* Blue border on focus */
+    background-color: #FFFFFF; /* White background for focus */
+}
+
+QLineEdit:disabled {
+    background-color: #E0E0E0; /* Gray background for disabled state */
+    color: #A5A5A5; /* Light gray text for disabled state */
+    border: 2px solid #D3D3D3; /* Subtle border for disabled state */
+}
+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1" colspan="4">
+                  <widget class="QLineEdit" name="size_lineEdit_Fancy">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QLineEdit {
+    background-color: #F5F5F5; /* Light gray background */
+    border: 2px solid #D3D3D3; /* Subtle border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 8px 12px; /* Comfortable padding */
+    font-size: 14px; /* Font size */
+    font-family: Arial, sans-serif; /* Clean font */
+    color: #333333; /* Dark gray text */
+    outline: none; /* Remove default outline */
+}
+
+QLineEdit:hover {
+    border: 2px solid #9E9E9E; /* Darker border on hover */
+}
+
+QLineEdit:focus {
+    border: 2px solid #3F51B5; /* Blue border on focus */
+    background-color: #FFFFFF; /* White background for focus */
+}
+
+QLineEdit:disabled {
+    background-color: #E0E0E0; /* Gray background for disabled state */
+    color: #A5A5A5; /* Light gray text for disabled state */
+    border: 2px solid #D3D3D3; /* Subtle border for disabled state */
+}
+</string>
+                   </property>
+                   <property name="placeholderText">
+                    <string>1.25x1.25</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="1" colspan="4">
+                  <widget class="QLineEdit" name="Weight_lineEdit_Fancy">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QLineEdit {
+    background-color: #F5F5F5; /* Light gray background */
+    border: 2px solid #D3D3D3; /* Subtle border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 8px 12px; /* Comfortable padding */
+    font-size: 14px; /* Font size */
+    font-family: Arial, sans-serif; /* Clean font */
+    color: #333333; /* Dark gray text */
+    outline: none; /* Remove default outline */
+}
+
+QLineEdit:hover {
+    border: 2px solid #9E9E9E; /* Darker border on hover */
+}
+
+QLineEdit:focus {
+    border: 2px solid #3F51B5; /* Blue border on focus */
+    background-color: #FFFFFF; /* White background for focus */
+}
+
+QLineEdit:disabled {
+    background-color: #E0E0E0; /* Gray background for disabled state */
+    color: #A5A5A5; /* Light gray text for disabled state */
+    border: 2px solid #D3D3D3; /* Subtle border for disabled state */
+}
+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="1" colspan="4">
+                  <widget class="QLineEdit" name="price_lineEdit_Fancy">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QLineEdit {
+    background-color: #F5F5F5; /* Light gray background */
+    border: 2px solid #D3D3D3; /* Subtle border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 8px 12px; /* Comfortable padding */
+    font-size: 14px; /* Font size */
+    font-family: Arial, sans-serif; /* Clean font */
+    color: #333333; /* Dark gray text */
+    outline: none; /* Remove default outline */
+}
+
+QLineEdit:hover {
+    border: 2px solid #9E9E9E; /* Darker border on hover */
+}
+
+QLineEdit:focus {
+    border: 2px solid #3F51B5; /* Blue border on focus */
+    background-color: #FFFFFF; /* White background for focus */
+}
+
+QLineEdit:disabled {
+    background-color: #E0E0E0; /* Gray background for disabled state */
+    color: #A5A5A5; /* Light gray text for disabled state */
+    border: 2px solid #D3D3D3; /* Subtle border for disabled state */
+}
+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="13" column="6" colspan="2">
+                  <widget class="QPushButton" name="AddFancyDiamond">
+                   <property name="font">
+                    <font>
+                     <family>Arial</family>
+                     <pointsize>-1</pointsize>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QPushButton {
+    background: qlineargradient(spread:pad, x1:0.5, y1:0, x2:1, y2:1, stop:0 #AF40FF, stop:0.5 #5B42F3, stop:1 #00DDEB); /* Gradient background */
+    border: 0; /* No border */
+    border-radius: 8px; /* Rounded corners */
+    color: #FFFFFF; /* White text color */
+    font-family: Arial, sans-serif; /* Clean font */
+    font-size: 20px; /* Font size */
+    padding: 3px; /* Outer padding */
+    text-align: center; /* Center text */
+    box-shadow: rgba(151, 65, 252, 0.2) 0px 15px 30px -5px; /* Subtle shadow */
+    cursor: pointer; /* Pointer for interactivity */
+}
+
+QPushButton:hover {
+    outline: none; /* No outline */
+    background: qlineargradient(spread:pad, x1:0.5, y1:0, x2:1, y2:1, stop:0 #9B36E8, stop:0.5 #5037E3, stop:1 #00C9DA); /* Slightly altered gradient on hover */
+}
+
+QPushButton:pressed {
+    background-color: rgb(5, 6, 45); /* Dark background on press */
+    color: #E0E0E0; /* Slightly muted text color */
+}
+
+QPushButton:disabled {
+    background: #A5A5A5; /* Gray background for disabled state */
+    color: #C0C0C0; /* Light gray text for disabled state */
+    cursor: not-allowed; /* Disabled cursor */
+}
+</string>
+                   </property>
+                   <property name="text">
+                    <string>Add</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="_6show_users">
+            <layout class="QGridLayout" name="gridLayout_6">
+             <item row="0" column="0">
+              <widget class="QTableWidget" name="tableWidget_2">
+               <property name="font">
+                <font>
+                 <family>Arial</family>
+                 <pointsize>-1</pointsize>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QTableWidget {
+    background-color: #f8f9fa; /* Light gray background */
+    border: 1px solid #ced4da; /* Subtle border around the table */
+    border-radius: 6px; /* Rounded corners */
+    gridline-color: #dee2e6; /* Light gridline color */
+    font-size: 14px; /* Default font size */
+    font-family: Arial, sans-serif; /* Clean font */
+}
+
+QTableWidget::item {
+    padding: 5px; /* Space between text and cell border */
+    border: none; /* No border around individual items */
+    color: #343a40; /* Text color */
+}
+
+QTableWidget::item:selected {
+    background-color: #6c757d; /* Gray background for selected items */
+    color: #ffffff; /* White text for selected items */
+    border: 1px solid #495057; /* Border around the selected cell */
+}
+
+QHeaderView::section {
+    background-color: #e9ecef; /* Light gray header background */
+    color: #495057; /* Dark gray header text */
+    padding: 8px; /* Header padding */
+    font-weight: bold; /* Bold header text */
+    border: 1px solid #ced4da; /* Border around header sections */
+}
+
+QHeaderView::section:hover {
+    background-color: #dee2e6; /* Slightly darker gray on hover */
+}
+
+QTableCornerButton::section {
+    background-color: #e9ecef; /* Match header background */
+    border: 1px solid #ced4da; /* Match header border */
+}
+</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="jewelry_menu">
+            <layout class="QGridLayout" name="gridLayout_7"/>
+           </widget>
+          </widget>
+         </item>
+         <item row="17" column="0">
+          <widget class="QPushButton" name="logout">
+           <property name="font">
+            <font>
+             <pointsize>-1</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: white; /* White background */
+    color: #D32F2F; /* Red text */
+    font-size: 16px; /* Font size */
+    font-weight: bold; /* Bold text */
+    border: 2px solid #D32F2F; /* Red border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 8px 20px; /* Padding for size */
+    text-align: center; /* Center the text */
+}
+
+QPushButton:hover {
+    background-color: #FCE4EC; /* Light red background on hover */
+}
+
+QPushButton:pressed {
+    background-color: #FFEBEE; /* Slightly darker light red when pressed */
+    border: 2px solid #B71C1C; /* Darker red border on press */
+}
+</string>
+           </property>
+           <property name="text">
+            <string>⏻      LOGOUT</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="0">
+          <widget class="QPushButton" name="rbackup">
+           <property name="styleSheet">
+            <string notr="true">/* General Button Styling */
+QPushButton {
+    background-color: #3b3b3b;  /* Dark background */
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #d4af37;  /* Gold border */
+    border-radius: 10px;
+    padding: 12px 20px;
+    min-width: 180px;  /* Minimum width for consistency */
+    text-align: left;  /* Align text to the left for icons */
+    transition: all 0.3s ease;  /* Smooth transition */
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background-color: #f0a500;  /* Lighter gold on hover */
+    color: black;  /* Darker text on hover */
+    border-color: #ffcc00;  /* Brighter gold border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Slight shadow on hover */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #b57d2a;  /* Darker gold when pressed */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);  /* Inset shadow when pressed */
+}
+
+/* Specific Buttons with Icons */
+QPushButton#showImage {
+    background-image: url(:/icons/show_image.png);  /* Replace with actual image path */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;  /* Padding for the icon */
+}
+QPushButton#addNewImage {
+    background-image: url(:/icons/add_new_image.png);  /* Image for Add New Image */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updatePrice {
+    background-image: url(:/icons/update_price.png);  /* Image for Update Price */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#addDiamond {
+    background-image: url(:/icons/add_diamond.png);  /* Image for Add Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#showAdmin {
+    background-image: url(:/icons/show_admin.png);  /* Image for Show Admin */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#shareBackup {
+    background-image: url(:/icons/share_backup.png);  /* Image for Share Backup */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#logout {
+    background-image: url(:/icons/logout.png);  /* Image for Logout */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#goldButton {
+    background-image: url(:/icons/gold.png);  /* Image for Gold */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#diamondButton {
+    background-image: url(:/icons/diamond.png);  /* Image for Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updateButton {
+    background-image: url(:/icons/update.png);  /* Image for Update */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+
+</string>
+           </property>
+           <property name="text">
+            <string>Restore Backup</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="0">
+          <spacer name="verticalSpacer_8">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="show_images">
+           <property name="font">
+            <font>
+             <pointsize>-1</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">/* General Button Styling */
+QPushButton {
+    background-color: #3b3b3b;  /* Dark background */
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #d4af37;  /* Gold border */
+    border-radius: 10px;
+    padding: 12px 20px;
+    min-width: 180px;  /* Minimum width for consistency */
+    text-align: left;  /* Align text to the left for icons */
+    transition: all 0.3s ease;  /* Smooth transition */
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background-color: #f0a500;  /* Lighter gold on hover */
+    color: black;  /* Darker text on hover */
+    border-color: #ffcc00;  /* Brighter gold border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Slight shadow on hover */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #b57d2a;  /* Darker gold when pressed */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);  /* Inset shadow when pressed */
+}
+
+/* Specific Buttons with Icons */
+QPushButton#showImage {
+    background-image: url(:/icons/show_image.png);  /* Replace with actual image path */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;  /* Padding for the icon */
+}
+QPushButton#addNewImage {
+    background-image: url(:/icons/add_new_image.png);  /* Image for Add New Image */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updatePrice {
+    background-image: url(:/icons/update_price.png);  /* Image for Update Price */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#addDiamond {
+    background-image: url(:/icons/add_diamond.png);  /* Image for Add Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#showAdmin {
+    background-image: url(:/icons/show_admin.png);  /* Image for Show Admin */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#shareBackup {
+    background-image: url(:/icons/share_backup.png);  /* Image for Share Backup */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#logout {
+    background-image: url(:/icons/logout.png);  /* Image for Logout */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#goldButton {
+    background-image: url(:/icons/gold.png);  /* Image for Gold */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#diamondButton {
+    background-image: url(:/icons/diamond.png);  /* Image for Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updateButton {
+    background-image: url(:/icons/update.png);  /* Image for Update */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Show Images 🖼️</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <spacer name="verticalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="15" column="0">
+          <widget class="QPushButton" name="cbackup">
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>-1</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">/* General Button Styling */
+QPushButton {
+    background-color: #3b3b3b;  /* Dark background */
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #d4af37;  /* Gold border */
+    border-radius: 10px;
+    padding: 12px 20px;
+    min-width: 180px;  /* Minimum width for consistency */
+    text-align: left;  /* Align text to the left for icons */
+    transition: all 0.3s ease;  /* Smooth transition */
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background-color: #f0a500;  /* Lighter gold on hover */
+    color: black;  /* Darker text on hover */
+    border-color: #ffcc00;  /* Brighter gold border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Slight shadow on hover */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #b57d2a;  /* Darker gold when pressed */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);  /* Inset shadow when pressed */
+}
+
+/* Specific Buttons with Icons */
+QPushButton#showImage {
+    background-image: url(:/icons/show_image.png);  /* Replace with actual image path */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;  /* Padding for the icon */
+}
+QPushButton#addNewImage {
+    background-image: url(:/icons/add_new_image.png);  /* Image for Add New Image */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updatePrice {
+    background-image: url(:/icons/update_price.png);  /* Image for Update Price */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#addDiamond {
+    background-image: url(:/icons/add_diamond.png);  /* Image for Add Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#showAdmin {
+    background-image: url(:/icons/show_admin.png);  /* Image for Show Admin */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#shareBackup {
+    background-image: url(:/icons/share_backup.png);  /* Image for Share Backup */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#logout {
+    background-image: url(:/icons/logout.png);  /* Image for Logout */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#goldButton {
+    background-image: url(:/icons/gold.png);  /* Image for Gold */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#diamondButton {
+    background-image: url(:/icons/diamond.png);  /* Image for Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updateButton {
+    background-image: url(:/icons/update.png);  /* Image for Update */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+
+</string>
+           </property>
+           <property name="text">
+            <string>Share Backup 🗂️</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <spacer name="verticalSpacer_12">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="3" column="0">
+          <widget class="QPushButton" name="add_dia">
+           <property name="font">
+            <font>
+             <pointsize>-1</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">/* General Button Styling */
+QPushButton {
+    background-color: #3b3b3b;  /* Dark background */
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #d4af37;  /* Gold border */
+    border-radius: 10px;
+    padding: 12px 20px;
+    min-width: 180px;  /* Minimum width for consistency */
+    text-align: left;  /* Align text to the left for icons */
+    transition: all 0.3s ease;  /* Smooth transition */
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background-color: #f0a500;  /* Lighter gold on hover */
+    color: black;  /* Darker text on hover */
+    border-color: #ffcc00;  /* Brighter gold border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Slight shadow on hover */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #b57d2a;  /* Darker gold when pressed */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);  /* Inset shadow when pressed */
+}
+
+/* Specific Buttons with Icons */
+QPushButton#showImage {
+    background-image: url(:/icons/show_image.png);  /* Replace with actual image path */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;  /* Padding for the icon */
+}
+QPushButton#addNewImage {
+    background-image: url(:/icons/add_new_image.png);  /* Image for Add New Image */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updatePrice {
+    background-image: url(:/icons/update_price.png);  /* Image for Update Price */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#addDiamond {
+    background-image: url(:/icons/add_diamond.png);  /* Image for Add Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#showAdmin {
+    background-image: url(:/icons/show_admin.png);  /* Image for Show Admin */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#shareBackup {
+    background-image: url(:/icons/share_backup.png);  /* Image for Share Backup */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#logout {
+    background-image: url(:/icons/logout.png);  /* Image for Logout */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#goldButton {
+    background-image: url(:/icons/gold.png);  /* Image for Gold */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#diamondButton {
+    background-image: url(:/icons/diamond.png);  /* Image for Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updateButton {
+    background-image: url(:/icons/update.png);  /* Image for Update */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+
+</string>
+           </property>
+           <property name="text">
+            <string>Add Diamond 💎</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <spacer name="verticalSpacer_11">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="10" column="0">
+          <spacer name="verticalSpacer_9">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="update_price">
+           <property name="font">
+            <font>
+             <pointsize>-1</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">/* General Button Styling */
+QPushButton {
+    background-color: #3b3b3b;  /* Dark background */
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #d4af37;  /* Gold border */
+    border-radius: 10px;
+    padding: 12px 20px;
+    min-width: 180px;  /* Minimum width for consistency */
+    text-align: left;  /* Align text to the left for icons */
+    transition: all 0.3s ease;  /* Smooth transition */
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background-color: #f0a500;  /* Lighter gold on hover */
+    color: black;  /* Darker text on hover */
+    border-color: #ffcc00;  /* Brighter gold border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Slight shadow on hover */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #b57d2a;  /* Darker gold when pressed */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);  /* Inset shadow when pressed */
+}
+
+/* Specific Buttons with Icons */
+QPushButton#showImage {
+    background-image: url(:/icons/show_image.png);  /* Replace with actual image path */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;  /* Padding for the icon */
+}
+QPushButton#addNewImage {
+    background-image: url(:/icons/add_new_image.png);  /* Image for Add New Image */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updatePrice {
+    background-image: url(:/icons/update_price.png);  /* Image for Update Price */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#addDiamond {
+    background-image: url(:/icons/add_diamond.png);  /* Image for Add Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#showAdmin {
+    background-image: url(:/icons/show_admin.png);  /* Image for Show Admin */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#shareBackup {
+    background-image: url(:/icons/share_backup.png);  /* Image for Share Backup */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#logout {
+    background-image: url(:/icons/logout.png);  /* Image for Logout */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#goldButton {
+    background-image: url(:/icons/gold.png);  /* Image for Gold */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#diamondButton {
+    background-image: url(:/icons/diamond.png);  /* Image for Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updateButton {
+    background-image: url(:/icons/update.png);  /* Image for Update */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Update Price 💰</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QPushButton" name="jewelry_menu_button">
+           <property name="styleSheet">
+            <string notr="true">/* General Button Styling */
+QPushButton {
+    background-color: #3b3b3b;  /* Dark background */
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #d4af37;  /* Gold border */
+    border-radius: 10px;
+    padding: 12px 20px;
+    min-width: 180px;  /* Minimum width for consistency */
+    text-align: left;  /* Align text to the left for icons */
+    transition: all 0.3s ease;  /* Smooth transition */
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background-color: #f0a500;  /* Lighter gold on hover */
+    color: black;  /* Darker text on hover */
+    border-color: #ffcc00;  /* Brighter gold border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Slight shadow on hover */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #b57d2a;  /* Darker gold when pressed */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);  /* Inset shadow when pressed */
+}
+
+/* Specific Buttons with Icons */
+QPushButton#showImage {
+    background-image: url(:/icons/show_image.png);  /* Replace with actual image path */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;  /* Padding for the icon */
+}
+QPushButton#addNewImage {
+    background-image: url(:/icons/add_new_image.png);  /* Image for Add New Image */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updatePrice {
+    background-image: url(:/icons/update_price.png);  /* Image for Update Price */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#addDiamond {
+    background-image: url(:/icons/add_diamond.png);  /* Image for Add Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#showAdmin {
+    background-image: url(:/icons/show_admin.png);  /* Image for Show Admin */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#shareBackup {
+    background-image: url(:/icons/share_backup.png);  /* Image for Share Backup */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#logout {
+    background-image: url(:/icons/logout.png);  /* Image for Logout */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#goldButton {
+    background-image: url(:/icons/gold.png);  /* Image for Gold */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#diamondButton {
+    background-image: url(:/icons/diamond.png);  /* Image for Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updateButton {
+    background-image: url(:/icons/update.png);  /* Image for Update */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+
+</string>
+           </property>
+           <property name="text">
+            <string>Jewelry Menu</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>name_lineEdit</tabstop>
+  <tabstop>password_lineEdit</tabstop>
+  <tabstop>checkBox</tabstop>
+  <tabstop>login_button</tabstop>
+  <tabstop>cancel_button</tabstop>
+  <tabstop>update_price</tabstop>
+  <tabstop>show_users</tabstop>
+  <tabstop>lineEdit_13</tabstop>
+  <tabstop>next_image</tabstop>
+  <tabstop>dia_button</tabstop>
+  <tabstop>gold_button</tabstop>
+  <tabstop>lineEdit_18Kt</tabstop>
+  <tabstop>lineEdit_10Kt</tabstop>
+  <tabstop>upadateGold_Price</tabstop>
+  <tabstop>lineEdit_14Kt</tabstop>
+  <tabstop>lineEdit_20Kt</tabstop>
+  <tabstop>lineEdit_22Kt</tabstop>
+  <tabstop>lineEdit_24Kt</tabstop>
+  <tabstop>FancyDiamond_Price</tabstop>
+  <tabstop>RoundDiamind_Price</tabstop>
+  <tabstop>updateRoundDiamond_price</tabstop>
+  <tabstop>updateFancyDiamond_price</tabstop>
+  <tabstop>tableView_2</tabstop>
+  <tabstop>fancy_dia_button</tabstop>
+  <tabstop>round_dia_button</tabstop>
+  <tabstop>price_lineEdit_round</tabstop>
+  <tabstop>Weight_lineEdit_round</tabstop>
+  <tabstop>sizeMM_lineEdit_round</tabstop>
+  <tabstop>sieve_lineEdit</tabstop>
+  <tabstop>AddRoundDiamond</tabstop>
+  <tabstop>AddFancyDiamond</tabstop>
+  <tabstop>shape_lineEdit</tabstop>
+  <tabstop>size_lineEdit_Fancy</tabstop>
+  <tabstop>Weight_lineEdit_Fancy</tabstop>
+  <tabstop>price_lineEdit_Fancy</tabstop>
+  <tabstop>tableWidget_2</tabstop>
+  <tabstop>cbackup</tabstop>
+  <tabstop>add_dia</tabstop>
+  <tabstop>show_images</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

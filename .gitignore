@@ -1,0 +1,20 @@
+# Build artifacts
+build/
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+
+# Qt Creator user/project settings
+*.pro.user
+*.autosave
+
+# Qt generated files
+moc_*
+ui_*
+qrc_*
+
+# Backup/temp files
+*~
+*.bak

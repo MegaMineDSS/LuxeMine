@@ -1,0 +1,36 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icon/homeIcon.png</file>
+        <file>Backgrounds/0.jpg</file>
+        <file>Backgrounds/1.jpg</file>
+        <file>Backgrounds/2.jpg</file>
+        <file>Backgrounds/3.jpg</file>
+        <file>Backgrounds/4.jpg</file>
+        <file>Backgrounds/5.jpg</file>
+        <file>Backgrounds/6.jpg</file>
+        <file>Backgrounds/7.jpg</file>
+        <file>Backgrounds/8.jpg</file>
+        <file>Backgrounds/9.jpg</file>
+        <file>Backgrounds/10.jpg</file>
+        <file>Backgrounds/11.jpg</file>
+        <file>Backgrounds/12.jpg</file>
+        <file>Backgrounds/13.jpg</file>
+        <file>Backgrounds/14.jpg</file>
+        <file>Backgrounds/15.jpg</file>
+        <file>Backgrounds/16.jpg</file>
+        <file>Backgrounds/17.jpg</file>
+        <file>Backgrounds/18.jpg</file>
+        <file>Backgrounds/19.jpg</file>
+        <file>Backgrounds/20.jpg</file>
+        <file>Backgrounds/21.jpg</file>
+        <file>Backgrounds/22.jpg</file>
+        <file>Backgrounds/23.jpg</file>
+        <file>Backgrounds/24.jpg</file>
+        <file>Backgrounds/25.jpg</file>
+        <file>Backgrounds/26.jpg</file>
+        <file>Backgrounds/27.jpg</file>
+        <file>Backgrounds/28.jpg</file>
+        <file>Backgrounds/29.jpg</file>
+        <file>icon/addcatalog.png</file>
+    </qresource>
+</RCC>
