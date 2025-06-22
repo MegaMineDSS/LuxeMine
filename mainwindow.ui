@@ -53,7 +53,7 @@
       <x>10</x>
       <y>160</y>
       <width>171</width>
-      <height>191</height>
+      <height>251</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -213,6 +213,37 @@ QPushButton:pressed {
        </property>
        <property name="text">
         <string>Add Catalog</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="orderBookButton">
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #e0e0e0, stop:0.5 #c0c0c0, stop:1 #a0a0a0); /* Subtle silver gradient */
+    color: #333333; /* Dark gray text for contrast */
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 15px;
+    padding: 12px 25px; /* Slightly larger padding for elegance */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3), inset 0px 1px 2px rgba(255, 255, 255, 0.6); /* Soft shadow with inner glow */
+    text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.3); /* Subtle white text glow */
+}
+
+QPushButton:hover {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #d0d0d0, stop:0.5 #b0b0b0, stop:1 #909090); /* Darker silver on hover */
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4), inset 0px 2px 3px rgba(255, 255, 255, 0.8); /* Enhanced glow on hover */
+    color: #1a1a1a; /* Slightly darker text for depth */
+}
+
+QPushButton:pressed {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #b0b0b0, stop:0.5 #a0a0a0, stop:1 #808080); /* Pressed state */
+    box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.5), 0px 2px 4px rgba(0, 0, 0, 0.2); /* Inner shadow on press */
+}</string>
+       </property>
+       <property name="text">
+        <string>Order Book</string>
        </property>
       </widget>
      </item>

@@ -13,6 +13,8 @@
 #include "admin.h"
 #include "user.h"
 #include "addcatalog.h"
+#include "ordermenu.h"
+#include "loginwindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -32,12 +34,16 @@ private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
     void on_pushButton_4_clicked();
+    void on_orderBookButton_clicked();
 
 private:
     Ui::MainWindow *ui;
     Admin *newAdmin = nullptr;
     User *newUser = nullptr;
     AddCatalog *newAddCatalog = nullptr;
+    OrderMenu *newOrderMenu = nullptr;
+    LoginWindow *loginWindow = nullptr;
+
     void setRandomBackground();
 
 };

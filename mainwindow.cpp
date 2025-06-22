@@ -4,12 +4,15 @@
 #include <QRandomGenerator>
 #include "user.h"
 
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , newAdmin(nullptr)
     , newAddCatalog(nullptr)
+    , loginWindow(nullptr)
     , newUser(nullptr)
+    , newOrderMenu(nullptr)
 {
     ui->setupUi(this);
 
@@ -66,6 +69,25 @@ void MainWindow::on_pushButton_4_clicked()
     }
 }
 
+void MainWindow::on_orderBookButton_clicked()
+{
+
+    // loginWindow = new LoginWindow(this);
+
+    loginWindow = new LoginWindow(this);
+    if (loginWindow->exec() == QDialog::Accepted) {
+        QString userName = loginWindow->getUserName();
+        QString userId = loginWindow->getUserId();
+
+        newOrderMenu = new OrderMenu(nullptr);
+        newOrderMenu->setSellerInfo(userName, userId);
+        newOrderMenu->insertDummyOrder();
+        newOrderMenu->show();
+    }
+
+}
+
+
 void MainWindow::setRandomBackground()
 {
     // List of image paths from the .qrc file
@@ -118,3 +140,8 @@ void MainWindow::setRandomBackground()
     ui->backgroundLabel->setAlignment(Qt::AlignCenter);
 
 }
+
+
+
+
+

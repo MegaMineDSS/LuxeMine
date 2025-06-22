@@ -615,32 +615,6 @@ QCheckBox:disabled {
        </widget>
        <widget class="QWidget" name="Admin_open">
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="5" column="0">
-          <spacer name="verticalSpacer_13">
-           <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="17" column="2">
-          <spacer name="horizontalSpacer_10">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
          <item row="13" column="0">
           <widget class="QPushButton" name="show_users">
            <property name="font">
@@ -748,7 +722,278 @@ QPushButton#updateButton {
            </property>
           </widget>
          </item>
-         <item row="0" column="1" rowspan="17" colspan="2">
+         <item row="7" column="0">
+          <spacer name="verticalSpacer_11">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="10" column="0">
+          <spacer name="verticalSpacer_9">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="3" column="0">
+          <widget class="QPushButton" name="add_dia">
+           <property name="font">
+            <font>
+             <pointsize>-1</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">/* General Button Styling */
+QPushButton {
+    background-color: #3b3b3b;  /* Dark background */
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #d4af37;  /* Gold border */
+    border-radius: 10px;
+    padding: 12px 20px;
+    min-width: 180px;  /* Minimum width for consistency */
+    text-align: left;  /* Align text to the left for icons */
+    transition: all 0.3s ease;  /* Smooth transition */
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background-color: #f0a500;  /* Lighter gold on hover */
+    color: black;  /* Darker text on hover */
+    border-color: #ffcc00;  /* Brighter gold border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Slight shadow on hover */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #b57d2a;  /* Darker gold when pressed */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);  /* Inset shadow when pressed */
+}
+
+/* Specific Buttons with Icons */
+QPushButton#showImage {
+    background-image: url(:/icons/show_image.png);  /* Replace with actual image path */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;  /* Padding for the icon */
+}
+QPushButton#addNewImage {
+    background-image: url(:/icons/add_new_image.png);  /* Image for Add New Image */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updatePrice {
+    background-image: url(:/icons/update_price.png);  /* Image for Update Price */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#addDiamond {
+    background-image: url(:/icons/add_diamond.png);  /* Image for Add Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#showAdmin {
+    background-image: url(:/icons/show_admin.png);  /* Image for Show Admin */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#shareBackup {
+    background-image: url(:/icons/share_backup.png);  /* Image for Share Backup */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#logout {
+    background-image: url(:/icons/logout.png);  /* Image for Logout */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#goldButton {
+    background-image: url(:/icons/gold.png);  /* Image for Gold */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#diamondButton {
+    background-image: url(:/icons/diamond.png);  /* Image for Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updateButton {
+    background-image: url(:/icons/update.png);  /* Image for Update */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+
+</string>
+           </property>
+           <property name="text">
+            <string>Add Diamond 💎</string>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="2">
+          <spacer name="horizontalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="9" column="0">
+          <spacer name="verticalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="6" column="0">
+          <spacer name="verticalSpacer_12">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="4" column="0">
+          <widget class="QPushButton" name="jewelry_menu_button">
+           <property name="styleSheet">
+            <string notr="true">/* General Button Styling */
+QPushButton {
+    background-color: #3b3b3b;  /* Dark background */
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #d4af37;  /* Gold border */
+    border-radius: 10px;
+    padding: 12px 20px;
+    min-width: 180px;  /* Minimum width for consistency */
+    text-align: left;  /* Align text to the left for icons */
+    transition: all 0.3s ease;  /* Smooth transition */
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background-color: #f0a500;  /* Lighter gold on hover */
+    color: black;  /* Darker text on hover */
+    border-color: #ffcc00;  /* Brighter gold border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Slight shadow on hover */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #b57d2a;  /* Darker gold when pressed */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);  /* Inset shadow when pressed */
+}
+
+/* Specific Buttons with Icons */
+QPushButton#showImage {
+    background-image: url(:/icons/show_image.png);  /* Replace with actual image path */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;  /* Padding for the icon */
+}
+QPushButton#addNewImage {
+    background-image: url(:/icons/add_new_image.png);  /* Image for Add New Image */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updatePrice {
+    background-image: url(:/icons/update_price.png);  /* Image for Update Price */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#addDiamond {
+    background-image: url(:/icons/add_diamond.png);  /* Image for Add Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#showAdmin {
+    background-image: url(:/icons/show_admin.png);  /* Image for Show Admin */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#shareBackup {
+    background-image: url(:/icons/share_backup.png);  /* Image for Share Backup */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#logout {
+    background-image: url(:/icons/logout.png);  /* Image for Logout */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#goldButton {
+    background-image: url(:/icons/gold.png);  /* Image for Gold */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#diamondButton {
+    background-image: url(:/icons/diamond.png);  /* Image for Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updateButton {
+    background-image: url(:/icons/update.png);  /* Image for Update */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+
+</string>
+           </property>
+           <property name="text">
+            <string>Jewelry Menu</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" rowspan="15" colspan="2">
           <widget class="QStackedWidget" name="Admin_panel">
            <property name="currentIndex">
             <number>4</number>
@@ -3803,154 +4048,6 @@ QTableCornerButton::section {
            </widget>
           </widget>
          </item>
-         <item row="17" column="0">
-          <widget class="QPushButton" name="logout">
-           <property name="font">
-            <font>
-             <pointsize>-1</pointsize>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-    background-color: white; /* White background */
-    color: #D32F2F; /* Red text */
-    font-size: 16px; /* Font size */
-    font-weight: bold; /* Bold text */
-    border: 2px solid #D32F2F; /* Red border */
-    border-radius: 8px; /* Rounded corners */
-    padding: 8px 20px; /* Padding for size */
-    text-align: center; /* Center the text */
-}
-
-QPushButton:hover {
-    background-color: #FCE4EC; /* Light red background on hover */
-}
-
-QPushButton:pressed {
-    background-color: #FFEBEE; /* Slightly darker light red when pressed */
-    border: 2px solid #B71C1C; /* Darker red border on press */
-}
-</string>
-           </property>
-           <property name="text">
-            <string>⏻      LOGOUT</string>
-           </property>
-          </widget>
-         </item>
-         <item row="14" column="0">
-          <widget class="QPushButton" name="rbackup">
-           <property name="styleSheet">
-            <string notr="true">/* General Button Styling */
-QPushButton {
-    background-color: #3b3b3b;  /* Dark background */
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    border: 2px solid #d4af37;  /* Gold border */
-    border-radius: 10px;
-    padding: 12px 20px;
-    min-width: 180px;  /* Minimum width for consistency */
-    text-align: left;  /* Align text to the left for icons */
-    transition: all 0.3s ease;  /* Smooth transition */
-}
-
-/* Hover Effect */
-QPushButton:hover {
-    background-color: #f0a500;  /* Lighter gold on hover */
-    color: black;  /* Darker text on hover */
-    border-color: #ffcc00;  /* Brighter gold border */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Slight shadow on hover */
-}
-
-/* Pressed Effect */
-QPushButton:pressed {
-    background-color: #b57d2a;  /* Darker gold when pressed */
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);  /* Inset shadow when pressed */
-}
-
-/* Specific Buttons with Icons */
-QPushButton#showImage {
-    background-image: url(:/icons/show_image.png);  /* Replace with actual image path */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;  /* Padding for the icon */
-}
-QPushButton#addNewImage {
-    background-image: url(:/icons/add_new_image.png);  /* Image for Add New Image */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#updatePrice {
-    background-image: url(:/icons/update_price.png);  /* Image for Update Price */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#addDiamond {
-    background-image: url(:/icons/add_diamond.png);  /* Image for Add Diamond */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#showAdmin {
-    background-image: url(:/icons/show_admin.png);  /* Image for Show Admin */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#shareBackup {
-    background-image: url(:/icons/share_backup.png);  /* Image for Share Backup */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#logout {
-    background-image: url(:/icons/logout.png);  /* Image for Logout */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#goldButton {
-    background-image: url(:/icons/gold.png);  /* Image for Gold */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#diamondButton {
-    background-image: url(:/icons/diamond.png);  /* Image for Diamond */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#updateButton {
-    background-image: url(:/icons/update.png);  /* Image for Update */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-
-</string>
-           </property>
-           <property name="text">
-            <string>Restore Backup</string>
-           </property>
-          </widget>
-         </item>
-         <item row="12" column="0">
-          <spacer name="verticalSpacer_8">
-           <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
          <item row="1" column="0">
           <widget class="QPushButton" name="show_images">
            <property name="font">
@@ -4056,128 +4153,43 @@ QPushButton#updateButton {
            </property>
           </widget>
          </item>
-         <item row="9" column="0">
-          <spacer name="verticalSpacer_10">
-           <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
          <item row="15" column="0">
-          <widget class="QPushButton" name="cbackup">
+          <widget class="QPushButton" name="logout">
            <property name="font">
             <font>
-             <family>Arial</family>
              <pointsize>-1</pointsize>
              <bold>true</bold>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true">/* General Button Styling */
-QPushButton {
-    background-color: #3b3b3b;  /* Dark background */
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    border: 2px solid #d4af37;  /* Gold border */
-    border-radius: 10px;
-    padding: 12px 20px;
-    min-width: 180px;  /* Minimum width for consistency */
-    text-align: left;  /* Align text to the left for icons */
-    transition: all 0.3s ease;  /* Smooth transition */
+            <string notr="true">QPushButton {
+    background-color: white; /* White background */
+    color: #D32F2F; /* Red text */
+    font-size: 16px; /* Font size */
+    font-weight: bold; /* Bold text */
+    border: 2px solid #D32F2F; /* Red border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 8px 20px; /* Padding for size */
+    text-align: center; /* Center the text */
 }
 
-/* Hover Effect */
 QPushButton:hover {
-    background-color: #f0a500;  /* Lighter gold on hover */
-    color: black;  /* Darker text on hover */
-    border-color: #ffcc00;  /* Brighter gold border */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Slight shadow on hover */
+    background-color: #FCE4EC; /* Light red background on hover */
 }
 
-/* Pressed Effect */
 QPushButton:pressed {
-    background-color: #b57d2a;  /* Darker gold when pressed */
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);  /* Inset shadow when pressed */
+    background-color: #FFEBEE; /* Slightly darker light red when pressed */
+    border: 2px solid #B71C1C; /* Darker red border on press */
 }
-
-/* Specific Buttons with Icons */
-QPushButton#showImage {
-    background-image: url(:/icons/show_image.png);  /* Replace with actual image path */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;  /* Padding for the icon */
-}
-QPushButton#addNewImage {
-    background-image: url(:/icons/add_new_image.png);  /* Image for Add New Image */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#updatePrice {
-    background-image: url(:/icons/update_price.png);  /* Image for Update Price */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#addDiamond {
-    background-image: url(:/icons/add_diamond.png);  /* Image for Add Diamond */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#showAdmin {
-    background-image: url(:/icons/show_admin.png);  /* Image for Show Admin */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#shareBackup {
-    background-image: url(:/icons/share_backup.png);  /* Image for Share Backup */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#logout {
-    background-image: url(:/icons/logout.png);  /* Image for Logout */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#goldButton {
-    background-image: url(:/icons/gold.png);  /* Image for Gold */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#diamondButton {
-    background-image: url(:/icons/diamond.png);  /* Image for Diamond */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#updateButton {
-    background-image: url(:/icons/update.png);  /* Image for Update */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-
 </string>
            </property>
            <property name="text">
-            <string>Share Backup 🗂️</string>
+            <string>⏻      LOGOUT</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="0">
-          <spacer name="verticalSpacer_12">
+         <item row="5" column="0">
+          <spacer name="verticalSpacer_13">
            <property name="orientation">
             <enum>Qt::Orientation::Vertical</enum>
            </property>
@@ -4189,127 +4201,8 @@ QPushButton#updateButton {
            </property>
           </spacer>
          </item>
-         <item row="3" column="0">
-          <widget class="QPushButton" name="add_dia">
-           <property name="font">
-            <font>
-             <pointsize>-1</pointsize>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">/* General Button Styling */
-QPushButton {
-    background-color: #3b3b3b;  /* Dark background */
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    border: 2px solid #d4af37;  /* Gold border */
-    border-radius: 10px;
-    padding: 12px 20px;
-    min-width: 180px;  /* Minimum width for consistency */
-    text-align: left;  /* Align text to the left for icons */
-    transition: all 0.3s ease;  /* Smooth transition */
-}
-
-/* Hover Effect */
-QPushButton:hover {
-    background-color: #f0a500;  /* Lighter gold on hover */
-    color: black;  /* Darker text on hover */
-    border-color: #ffcc00;  /* Brighter gold border */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Slight shadow on hover */
-}
-
-/* Pressed Effect */
-QPushButton:pressed {
-    background-color: #b57d2a;  /* Darker gold when pressed */
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);  /* Inset shadow when pressed */
-}
-
-/* Specific Buttons with Icons */
-QPushButton#showImage {
-    background-image: url(:/icons/show_image.png);  /* Replace with actual image path */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;  /* Padding for the icon */
-}
-QPushButton#addNewImage {
-    background-image: url(:/icons/add_new_image.png);  /* Image for Add New Image */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#updatePrice {
-    background-image: url(:/icons/update_price.png);  /* Image for Update Price */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#addDiamond {
-    background-image: url(:/icons/add_diamond.png);  /* Image for Add Diamond */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#showAdmin {
-    background-image: url(:/icons/show_admin.png);  /* Image for Show Admin */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#shareBackup {
-    background-image: url(:/icons/share_backup.png);  /* Image for Share Backup */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#logout {
-    background-image: url(:/icons/logout.png);  /* Image for Logout */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#goldButton {
-    background-image: url(:/icons/gold.png);  /* Image for Gold */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#diamondButton {
-    background-image: url(:/icons/diamond.png);  /* Image for Diamond */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#updateButton {
-    background-image: url(:/icons/update.png);  /* Image for Update */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-
-</string>
-           </property>
-           <property name="text">
-            <string>Add Diamond 💎</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <spacer name="verticalSpacer_11">
-           <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="10" column="0">
-          <spacer name="verticalSpacer_9">
+         <item row="12" column="0">
+          <spacer name="verticalSpacer_8">
            <property name="orientation">
             <enum>Qt::Orientation::Vertical</enum>
            </property>
@@ -4426,106 +4319,6 @@ QPushButton#updateButton {
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
-          <widget class="QPushButton" name="jewelry_menu_button">
-           <property name="styleSheet">
-            <string notr="true">/* General Button Styling */
-QPushButton {
-    background-color: #3b3b3b;  /* Dark background */
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    border: 2px solid #d4af37;  /* Gold border */
-    border-radius: 10px;
-    padding: 12px 20px;
-    min-width: 180px;  /* Minimum width for consistency */
-    text-align: left;  /* Align text to the left for icons */
-    transition: all 0.3s ease;  /* Smooth transition */
-}
-
-/* Hover Effect */
-QPushButton:hover {
-    background-color: #f0a500;  /* Lighter gold on hover */
-    color: black;  /* Darker text on hover */
-    border-color: #ffcc00;  /* Brighter gold border */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Slight shadow on hover */
-}
-
-/* Pressed Effect */
-QPushButton:pressed {
-    background-color: #b57d2a;  /* Darker gold when pressed */
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);  /* Inset shadow when pressed */
-}
-
-/* Specific Buttons with Icons */
-QPushButton#showImage {
-    background-image: url(:/icons/show_image.png);  /* Replace with actual image path */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;  /* Padding for the icon */
-}
-QPushButton#addNewImage {
-    background-image: url(:/icons/add_new_image.png);  /* Image for Add New Image */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#updatePrice {
-    background-image: url(:/icons/update_price.png);  /* Image for Update Price */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#addDiamond {
-    background-image: url(:/icons/add_diamond.png);  /* Image for Add Diamond */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#showAdmin {
-    background-image: url(:/icons/show_admin.png);  /* Image for Show Admin */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#shareBackup {
-    background-image: url(:/icons/share_backup.png);  /* Image for Share Backup */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#logout {
-    background-image: url(:/icons/logout.png);  /* Image for Logout */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#goldButton {
-    background-image: url(:/icons/gold.png);  /* Image for Gold */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#diamondButton {
-    background-image: url(:/icons/diamond.png);  /* Image for Diamond */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-QPushButton#updateButton {
-    background-image: url(:/icons/update.png);  /* Image for Update */
-    background-repeat: no-repeat;
-    background-position: left center;
-    padding-left: 50px;
-}
-
-</string>
-           </property>
-           <property name="text">
-            <string>Jewelry Menu</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </widget>
@@ -4571,7 +4364,6 @@ QPushButton#updateButton {
   <tabstop>Weight_lineEdit_Fancy</tabstop>
   <tabstop>price_lineEdit_Fancy</tabstop>
   <tabstop>tableWidget_2</tabstop>
-  <tabstop>cbackup</tabstop>
   <tabstop>add_dia</tabstop>
   <tabstop>show_images</tabstop>
  </tabstops>

@@ -1,7 +1,7 @@
 #include "admin.h"
 #include "ui_admin.h"
 #include "ReadOnlyDelegate.h"
-#include "backuputils.h"
+// #include "backuputils.h"
 #include "databaseutils.h"
 #include "Utils.h"
 #include "PdfListDialog.h"
@@ -424,37 +424,37 @@ void Admin::on_upadateGold_Price_clicked()
     }
 }
 
-void Admin::on_cbackup_clicked()
-{
-    QString zipPath = QFileDialog::getSaveFileName(this, "Export Catalog Backup", "", "ZIP Files (*.zip)");
-    if (zipPath.isEmpty()) return;
+// void Admin::on_cbackup_clicked()
+// {
+//     QString zipPath = QFileDialog::getSaveFileName(this, "Export Catalog Backup", "", "ZIP Files (*.zip)");
+//     if (zipPath.isEmpty()) return;
 
-    if (BackupUtils::exportAdminBackup(zipPath)) {
-        QMessageBox::information(this, "Success", "Catalog backup exported to: " + zipPath);
-    } else {
-        QMessageBox::critical(this, "Error", "Failed to create catalog backup.");
-    }
-}
+//     if (BackupUtils::exportAdminBackup(zipPath)) {
+//         QMessageBox::information(this, "Success", "Catalog backup exported to: " + zipPath);
+//     } else {
+//         QMessageBox::critical(this, "Error", "Failed to create catalog backup.");
+//     }
+// }
 
-void Admin::on_rbackup_clicked()
-{
-    // Update the filter to expect a .zip file
-    QString filePath = QFileDialog::getOpenFileName(this, "Import User Backup", "", "Zip Archive (*.zip)");
-    if (filePath.isEmpty()) return;
+// void Admin::on_rbackup_clicked()
+// {
+//     // Update the filter to expect a .zip file
+//     QString filePath = QFileDialog::getOpenFileName(this, "Import User Backup", "", "Zip Archive (*.zip)");
+//     if (filePath.isEmpty()) return;
 
-    // Validate that the selected file has a .zip extension
-    if (!filePath.endsWith(".zip", Qt::CaseInsensitive)) {
-        QMessageBox::warning(this, "Invalid File Type", "Please select a .zip file for importing the user backup.");
-        return;
-    }
+//     // Validate that the selected file has a .zip extension
+//     if (!filePath.endsWith(".zip", Qt::CaseInsensitive)) {
+//         QMessageBox::warning(this, "Invalid File Type", "Please select a .zip file for importing the user backup.");
+//         return;
+//     }
 
-    // Attempt to import the user backup
-    if (BackupUtils::importUserBackup(filePath)) {
-        QMessageBox::information(this, "Success", "User backup imported successfully!");
-    } else {
-        QMessageBox::critical(this, "Error", "Failed to import user backup.");
-    }
-}
+//     // Attempt to import the user backup
+//     if (BackupUtils::importUserBackup(filePath)) {
+//         QMessageBox::information(this, "Success", "User backup imported successfully!");
+//     } else {
+//         QMessageBox::critical(this, "Error", "Failed to import user backup.");
+//     }
+// }
 
 void Admin::on_deleteUser_triggered()
 {

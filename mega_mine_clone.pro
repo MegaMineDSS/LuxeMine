@@ -11,12 +11,15 @@ CONFIG += c++17
 SOURCES += \
     addcatalog.cpp \
     admin.cpp \
-    backuputils.cpp \
     cartitemwidget.cpp \
     databaseutils.cpp \
+    imageclicklabel.cpp \
     jewelrymenu.cpp \
+    loginwindow.cpp \
     main.cpp \
     mainwindow.cpp \
+    orderlist.cpp \
+    ordermenu.cpp \
     pdflistdialog.cpp \
     pdfutils.cpp \
     user.cpp\
@@ -29,10 +32,13 @@ HEADERS += \
     Utils.h \
     addcatalog.h \
     admin.h \
-    backuputils.h \
     cartitemwidget.h \
+    imageclicklabel.h \
     jewelrymenu.h \
+    loginwindow.h \
     mainwindow.h \
+    orderlist.h \
+    ordermenu.h \
     pdflistdialog.h \
     pdfutils.h \
     user.h\
@@ -41,7 +47,10 @@ HEADERS += \
 FORMS += \
     addcatalog.ui \
     admin.ui \
+    loginwindow.ui \
     mainwindow.ui \
+    orderlist.ui \
+    ordermenu.ui \
     pdflistdialog.ui \
     user.ui
 

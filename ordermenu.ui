@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OrderMenu</class>
+ <widget class="QDialog" name="OrderMenu">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1190</width>
+    <height>510</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="8" column="10">
+    <widget class="QComboBox" name="chainLockComboBox"/>
+   </item>
+   <item row="5" column="1">
+    <widget class="QDateEdit" name="orderDateDateEdit"/>
+   </item>
+   <item row="2" column="6">
+    <widget class="QLabel" name="cityLabel">
+     <property name="text">
+      <string>CITY</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QDateEdit" name="deliveryDateDateEdit"/>
+   </item>
+   <item row="15" column="1">
+    <widget class="QLineEdit" name="diaPriceLineEdit"/>
+   </item>
+   <item row="0" column="6">
+    <widget class="QLabel" name="jobNoLabel">
+     <property name="text">
+      <string>JOB NO.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
+    <widget class="QLabel" name="metalPriceLabel">
+     <property name="text">
+      <string>METAL PRICE</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="7">
+    <widget class="QLineEdit" name="orderNoLineEdit"/>
+   </item>
+   <item row="1" column="11">
+    <widget class="QLineEdit" name="reteailleIdLineEdit"/>
+   </item>
+   <item row="11" column="6" rowspan="5" colspan="3">
+    <widget class="ImageClickLabel" name="imageLabel2">
+     <property name="text">
+      <string>IMAGE 2</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="12">
+    <widget class="QLabel" name="starIdLabel">
+     <property name="text">
+      <string>STAR ID.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="5">
+    <widget class="QLineEdit" name="stPacificLineEdit"/>
+   </item>
+   <item row="0" column="12" colspan="2">
+    <widget class="QPushButton" name="savePushButton">
+     <property name="text">
+      <string>SAVE</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0">
+    <widget class="QLabel" name="diaPacificLabel">
+     <property name="text">
+      <string>DIA. PACIFIC</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="7">
+    <widget class="QLineEdit" name="cityLineEdit"/>
+   </item>
+   <item row="1" column="8">
+    <widget class="QLabel" name="agencyIdLabel">
+     <property name="text">
+      <string>AGENCY ID. </string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="5">
+    <widget class="QLineEdit" name="heightLineEdit"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="sellerNameLabel">
+     <property name="text">
+      <string>SELLER NAME</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="9">
+    <widget class="QLabel" name="chainLockLabel">
+     <property name="text">
+      <string>CHAIN LOCK</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="productPicLabel">
+     <property name="text">
+      <string>PRODUCT PIC</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="10">
+    <widget class="QLabel" name="shopIdLabel">
+     <property name="text">
+      <string>SHOP ID.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="approxProductWtLabel">
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>APPROX 
+PRODUCT Wt.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="6">
+    <widget class="QLabel" name="designNoLabel">
+     <property name="text">
+      <string>DESIGN NO.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="10">
+    <widget class="QComboBox" name="metalCertiNameComboBox"/>
+   </item>
+   <item row="6" column="10" colspan="4">
+    <widget class="QLabel" name="extraDetailLabel">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>EXTRA DETAILS</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="0">
+    <widget class="QLabel" name="diaPriceLabel">
+     <property name="text">
+      <string>DIA. PRICE</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="4">
+    <widget class="QLabel" name="heightLabel">
+     <property name="text">
+      <string>HEIGHT</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="5">
+    <widget class="QLineEdit" name="lengthLineEdit"/>
+   </item>
+   <item row="9" column="10">
+    <widget class="QComboBox" name="polishComboBox"/>
+   </item>
+   <item row="6" column="2">
+    <widget class="QLabel" name="metalNameLabel">
+     <property name="text">
+      <string>METAL NAME</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="2">
+    <widget class="QLabel" name="metalPurityLabel">
+     <property name="text">
+      <string>METAL PURITY</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="13">
+    <widget class="QLineEdit" name="advanceLineEdit"/>
+   </item>
+   <item row="11" column="12">
+    <widget class="QLabel" name="advanceLabel">
+     <property name="text">
+      <string>ADVANCE</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="9">
+    <widget class="QLineEdit" name="stateLineEdit"/>
+   </item>
+   <item row="12" column="10">
+    <widget class="QLabel" name="totalAmountLabel">
+     <property name="text">
+      <string>TOTAL AMOUNT</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="3">
+    <widget class="QComboBox" name="metalColorComboBox"/>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="productNameLabel">
+     <property name="text">
+      <string>PRODUCT NAME</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="3">
+    <widget class="QComboBox" name="metalNameComboBox"/>
+   </item>
+   <item row="12" column="4">
+    <widget class="QLabel" name="stPacificLabel">
+     <property name="text">
+      <string>ST. PACIFIC</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="10" colspan="4">
+    <widget class="QLabel" name="certificateDetailsLabel">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>CERTIFICATE DETAILS</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::TextFormat::AutoText</enum>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="9">
+    <widget class="QLabel" name="polishLabel">
+     <property name="text">
+      <string>POLISH</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="4">
+    <widget class="QLabel" name="lengthLabel">
+     <property name="text">
+      <string>LENGTH</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="7">
+    <widget class="QLineEdit" name="jobNoLineEdit"/>
+   </item>
+   <item row="5" column="3">
+    <widget class="QLineEdit" name="metalPriceLineEdit"/>
+   </item>
+   <item row="12" column="12">
+    <widget class="QLabel" name="remainingLabel">
+     <property name="text">
+      <string>REMAINING</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="5">
+    <widget class="QLineEdit" name="sizeNoLineEdit"/>
+   </item>
+   <item row="13" column="10" rowspan="3" colspan="4">
+    <widget class="QTextEdit" name="extraNoteTextEdit">
+     <property name="placeholderText">
+      <string>Extra Detail......</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="partyNameLabel">
+     <property name="text">
+      <string>PARTY NAME</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="13">
+    <widget class="QComboBox" name="diaCertiTypeComboBox"/>
+   </item>
+   <item row="1" column="9">
+    <widget class="QLineEdit" name="agencyIdLineEdit"/>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="deliveryDateLabel">
+     <property name="text">
+      <string>DELIVERY DATE</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="5">
+    <widget class="QLineEdit" name="widthLineEdit"/>
+   </item>
+   <item row="5" column="10">
+    <widget class="QComboBox" name="metalCertiTypeComboBox"/>
+   </item>
+   <item row="7" column="9">
+    <widget class="QLabel" name="pesSakiLabel">
+     <property name="text">
+      <string>PES SAKI</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="8">
+    <widget class="QLineEdit" name="designNoLineEdit2"/>
+   </item>
+   <item row="2" column="8">
+    <widget class="QLabel" name="stateLabel">
+     <property name="text">
+      <string>STATE</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="10">
+    <widget class="QLabel" name="countryLabel">
+     <property name="text">
+      <string>COUNTRY</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0" colspan="2">
+    <widget class="QLabel" name="diamondDetailLabel">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>DIAMOND DETAILS</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="4">
+    <widget class="QLabel" name="sizeNoLabel">
+     <property name="text">
+      <string>SIZE NO.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="9" rowspan="2">
+    <widget class="QLabel" name="metalCertiLabel">
+     <property name="text">
+      <string>METAL</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="4">
+    <widget class="QLabel" name="stPurityLabel">
+     <property name="text">
+      <string>ST. PURITY</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="10">
+    <widget class="QComboBox" name="pesSakiComboBox"/>
+   </item>
+   <item row="11" column="11">
+    <widget class="QComboBox" name="payMethodComboBox"/>
+   </item>
+   <item row="1" column="6">
+    <widget class="QLabel" name="orderNoLabel">
+     <property name="text">
+      <string>ORDER NO.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QLineEdit" name="diaPacificLineEdit"/>
+   </item>
+   <item row="0" column="5">
+    <widget class="QLineEdit" name="sellerIdLineEdit"/>
+   </item>
+   <item row="11" column="2">
+    <widget class="QLabel" name="noteLabel">
+     <property name="text">
+      <string>NOTE.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="0">
+    <widget class="QLabel" name="diaColorLabel">
+     <property name="text">
+      <string>DIA. COLOUR</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="2" rowspan="4" colspan="2">
+    <widget class="QTextEdit" name="noteTextEdit"/>
+   </item>
+   <item row="3" column="0" rowspan="2" colspan="10">
+    <widget class="QLabel" name="orderDetailLabel">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>ORDER DETAILS</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="1">
+    <widget class="QLineEdit" name="diaPurityLineEdit"/>
+   </item>
+   <item row="4" column="12" rowspan="2">
+    <widget class="QLabel" name="diaCertiLabel">
+     <property name="text">
+      <string>DIAMOND
+/STONE</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QLineEdit" name="approxProductWtLineEdit"/>
+   </item>
+   <item row="2" column="11">
+    <widget class="QLineEdit" name="countryLineEdit"/>
+   </item>
+   <item row="8" column="4">
+    <widget class="QLabel" name="widthLabel">
+     <property name="text">
+      <string>WIDTH</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="9">
+    <widget class="QLineEdit" name="clientIdLineEdit"/>
+   </item>
+   <item row="1" column="10">
+    <widget class="QLabel" name="reteailleIdLabel">
+     <property name="text">
+      <string>RETEAILLE  ID.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="8">
+    <widget class="QLabel" name="clientIdLabel">
+     <property name="text">
+      <string>CLIENT ID.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="2">
+    <widget class="QLabel" name="metalColorLabel">
+     <property name="text">
+      <string>METAL COLOUR</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="13">
+    <widget class="QComboBox" name="settingLabourComboBox"/>
+   </item>
+   <item row="6" column="4">
+    <widget class="QLabel" name="sizeMMLabel">
+     <property name="text">
+      <string>SIZE MM.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="13">
+    <widget class="QComboBox" name="metalStempComboBox"/>
+   </item>
+   <item row="7" column="1">
+    <widget class="QLineEdit" name="productNameLineEdit"/>
+   </item>
+   <item row="5" column="7">
+    <widget class="QLineEdit" name="designNoLineEdit1"/>
+   </item>
+   <item row="6" column="5">
+    <widget class="QLineEdit" name="sizeMMLineEdit"/>
+   </item>
+   <item row="8" column="1">
+    <widget class="QLineEdit" name="productPicLineEdit"/>
+   </item>
+   <item row="13" column="0">
+    <widget class="QLabel" name="diaPurityLabel">
+     <property name="text">
+      <string>DIA. PURITY</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="1">
+    <widget class="QLineEdit" name="diaColorLineEdit"/>
+   </item>
+   <item row="12" column="11">
+    <widget class="QLineEdit" name="totalAmountLineEdit"/>
+   </item>
+   <item row="4" column="13">
+    <widget class="QComboBox" name="diaCertiNameComboBox"/>
+   </item>
+   <item row="1" column="13">
+    <widget class="QLineEdit" name="starIdLineEdit"/>
+   </item>
+   <item row="7" column="3">
+    <widget class="QComboBox" name="metalPurityComboBox"/>
+   </item>
+   <item row="11" column="4" colspan="2">
+    <widget class="QLabel" name="stoneDetailLabel">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>STONE DETAILS</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="addressLabel">
+     <property name="text">
+      <string>ADDRESS</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="10">
+    <widget class="QLabel" name="payMethodLabel">
+     <property name="text">
+      <string>PAY. METHOD</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="11">
+    <widget class="QLineEdit" name="shopIdLineEdit"/>
+   </item>
+   <item row="6" column="6" rowspan="5" colspan="3">
+    <widget class="ImageClickLabel" name="imageLabel1">
+     <property name="text">
+      <string>IMAGE 1</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="5">
+    <widget class="QLineEdit" name="partyNameLineEdit"/>
+   </item>
+   <item row="2" column="1" colspan="5">
+    <widget class="QLineEdit" name="addressLineEdit"/>
+   </item>
+   <item row="0" column="1" colspan="4">
+    <widget class="QLineEdit" name="sellerNameLineEdit">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="5">
+    <widget class="QLineEdit" name="stPurityLineEdit"/>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="orderDateLabel">
+     <property name="text">
+      <string>ORDER DATE</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="13">
+    <widget class="QLineEdit" name="remainingLineEdit"/>
+   </item>
+   <item row="10" column="9" colspan="5">
+    <widget class="QLabel" name="paymentDetailsLabel">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>PAYMENT DETAILS</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="12">
+    <widget class="QLabel" name="settingLabourLabel">
+     <property name="text">
+      <string>SETTING 
+LEBOUR</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="12">
+    <widget class="QLabel" name="metalStempLabel">
+     <property name="text">
+      <string>METAL 
+STEMP</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="5">
+    <widget class="QLineEdit" name="stColorLineEdit"/>
+   </item>
+   <item row="15" column="4">
+    <widget class="QLabel" name="stPriceLabel">
+     <property name="text">
+      <string>ST. PRICE</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="4">
+    <widget class="QLabel" name="stColorLabel">
+     <property name="text">
+      <string>ST. COLOR</string>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="5">
+    <widget class="QLineEdit" name="stPriceLineEdit"/>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ImageClickLabel</class>
+   <extends>QLabel</extends>
+   <header>imageclicklabel.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

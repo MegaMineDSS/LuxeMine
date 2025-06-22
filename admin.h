@@ -41,8 +41,8 @@ private slots:
     void on_FancyDiamond_Price_clicked();
     void on_updateFancyDiamond_price_clicked();
     void on_upadateGold_Price_clicked();
-    void on_cbackup_clicked();
-    void on_rbackup_clicked();
+    // void on_cbackup_clicked();
+    // void on_rbackup_clicked();
     void on_deleteUser_triggered();
     void on_tableWidget_2_cellDoubleClicked(int row, int column); // New slot for PDF clicks
     void on_jewelry_menu_button_clicked();

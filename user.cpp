@@ -1,7 +1,7 @@
 #include "user.h"
 #include "ui_user.h"
 #include "DatabaseUtils.h"
-#include "BackupUtils.h"
+// #include "BackupUtils.h"
 #include "PdfUtils.h"
 #include "Utils.h"
 #include "cartitemwidget.h"
@@ -498,42 +498,42 @@ void User::on_makePdfButton_clicked()
     }
 }
 
-void User::on_rbackup_clicked()
-{
-    QString zipPath = QFileDialog::getOpenFileName(this, "Import Catalog Backup", "", "ZIP Files (*.zip)");
-    if (zipPath.isEmpty()) return;
+// void User::on_rbackup_clicked()
+// {
+//     QString zipPath = QFileDialog::getOpenFileName(this, "Import Catalog Backup", "", "ZIP Files (*.zip)");
+//     if (zipPath.isEmpty()) return;
 
-    if (BackupUtils::importAdminBackup(zipPath)) {
-        QMessageBox::information(this, "Success", "Catalog and images imported successfully!");
-        loadData();
-    } else {
-        QMessageBox::critical(this, "Error", "Failed to import catalog backup.");
-    }
-}
+//     if (BackupUtils::importAdminBackup(zipPath)) {
+//         QMessageBox::information(this, "Success", "Catalog and images imported successfully!");
+//         loadData();
+//     } else {
+//         QMessageBox::critical(this, "Error", "Failed to import catalog backup.");
+//     }
+// }
 
-void User::on_cbackup_clicked()
-{
-    if (currentUserId.isEmpty()) {
-        QMessageBox::warning(this, "Error", "No user logged in.");
-        return;
-    }
+// void User::on_cbackup_clicked()
+// {
+//     if (currentUserId.isEmpty()) {
+//         QMessageBox::warning(this, "Error", "No user logged in.");
+//         return;
+//     }
 
-    // Update the filter to expect a .zip file
-    QString filePath = QFileDialog::getSaveFileName(this, "Export Cart Backup", "", "Zip Archive (*.zip)");
-    if (filePath.isEmpty()) return;
+//     // Update the filter to expect a .zip file
+//     QString filePath = QFileDialog::getSaveFileName(this, "Export Cart Backup", "", "Zip Archive (*.zip)");
+//     if (filePath.isEmpty()) return;
 
-    // Call exportUserBackup with the selected file path
-    if (BackupUtils::exportUserBackup(filePath, currentUserId)) {
-        // Adjust the success message to reflect the actual file path (in case .zip was appended)
-        QString actualFilePath = filePath;
-        if (!actualFilePath.endsWith(".zip", Qt::CaseInsensitive)) {
-            actualFilePath += ".zip";
-        }
-        QMessageBox::information(this, "Success", "Cart backup exported to: " + actualFilePath);
-    } else {
-        QMessageBox::critical(this, "Error", "Failed to create cart backup.");
-    }
-}
+//     // Call exportUserBackup with the selected file path
+//     if (BackupUtils::exportUserBackup(filePath, currentUserId)) {
+//         // Adjust the success message to reflect the actual file path (in case .zip was appended)
+//         QString actualFilePath = filePath;
+//         if (!actualFilePath.endsWith(".zip", Qt::CaseInsensitive)) {
+//             actualFilePath += ".zip";
+//         }
+//         QMessageBox::information(this, "Success", "Cart backup exported to: " + actualFilePath);
+//     } else {
+//         QMessageBox::critical(this, "Error", "Failed to create cart backup.");
+//     }
+// }
 
 void User::loadUserCart(const QString &userId)
 {

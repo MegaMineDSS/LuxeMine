@@ -35,8 +35,8 @@ private slots:
     void on_cartItemQuantityChanged(int imageId, const QString &goldType, int newQuantity);
     void on_cartItemRemoveRequested(int imageId, const QString &goldType);
     void on_makePdfButton_clicked();
-    void on_rbackup_clicked();
-    void on_cbackup_clicked();
+    // void on_rbackup_clicked();
+    // void on_cbackup_clicked();
 
 public slots:
     void loadImage(int index);
