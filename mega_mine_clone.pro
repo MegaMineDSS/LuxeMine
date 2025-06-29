@@ -22,8 +22,7 @@ SOURCES += \
     ordermenu.cpp \
     pdflistdialog.cpp \
     pdfutils.cpp \
-    user.cpp\
-    databasemanager.cpp
+    user.cpp
 
 HEADERS += \
     CommonTypes.h \
@@ -41,8 +40,7 @@ HEADERS += \
     ordermenu.h \
     pdflistdialog.h \
     pdfutils.h \
-    user.h\
-    databasemanager.h
+    user.h
 
 FORMS += \
     addcatalog.ui \
@@ -55,17 +53,6 @@ FORMS += \
     user.ui
 
 
-# Include paths
-INCLUDEPATH += D:\quazip-install\include\QuaZip-Qt6-1.5\quazip\zlib.h
-INCLUDEPATH += D:/zlib-install/include/zlib.h
-
-# Library paths
-LIBS += -LD:\quazip-master\build\quazip -lquazip1-qt6
-LIBS += -LD:\quazip-master\build -lbzip2
-LIBS += -LD:/zlib-install/lib -lzlib
-# LIBS += -lz
-
-# DEFINES += QUAZIP_STATIC
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

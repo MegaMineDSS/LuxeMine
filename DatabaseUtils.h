@@ -10,6 +10,7 @@
 #include <QTableWidget>
 #include "CommonTypes.h"
 
+
 class DatabaseUtils
 {
 public:
@@ -54,6 +55,21 @@ public:
     static QList<QVariantList> fetchJewelryMenuItems();
     static bool insertJewelryMenuItem(int parentId, const QString &name, const QString &displayText);
     static bool deleteJewelryMenuItem(int id);
+
+    static QList<ImageRecord> getAllItems();
+
+
+    //ordermenu connections
+    static int insertDummyOrder(const QString &sellerName, const QString &sellerId, const QString &partyName);
+    static bool updateDummyOrder(int orderId, const QString &jobNo, const QString &orderNo);
+
+    static int getNextJobNumber();
+    static int getNextOrderNumberForSeller(const QString &sellerId);
+
+    static bool saveOrder(const OrderData &order);
+
+
+
 
 };
 
