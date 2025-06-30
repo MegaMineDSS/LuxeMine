@@ -261,6 +261,12 @@ void Admin::on_fancy_dia_button_clicked()
 void Admin::closeEvent(QCloseEvent *event)
 {
     // qDebug() << "Close event triggered";
+
+    // Closing AdminMenuButtons UI
+    if (newAdminMenuButtons && newAdminMenuButtons->isVisible()) {
+        newAdminMenuButtons->close();  // Ensure overlay is closed
+    }
+
     on_logout_clicked();
     // qDebug() << "Logout clicked executed";
     event->accept();
@@ -710,3 +716,83 @@ void Admin::on_delete_menu_item_clicked()
         }
     }
 }
+
+
+void Admin::on_admin_menu_push_button_clicked()
+{
+    if (!newAdminMenuButtons) {
+        newAdminMenuButtons = new AdminMenuButtons(this);
+        qApp->installEventFilter(this);  // Monitor all application events
+        newAdminMenuButtons->setWindowFlags(Qt::FramelessWindowHint);
+        newAdminMenuButtons->setAttribute(Qt::WA_DeleteOnClose, false);
+        newAdminMenuButtons->setFixedSize(250, 600);  // Size of the overlay menu
+
+
+        // finding the positioin of admin_menu_push_button in the screen
+        QPoint localPos = ui->admin_menu_push_button->mapTo(this, QPoint(0, ui->admin_menu_push_button->height()));
+        newAdminMenuButtons->move(localPos);
+        newAdminMenuButtons->raise();  // Bring to top of parent stack
+
+        connect(newAdminMenuButtons, &AdminMenuButtons::menuHidden, this, [=]() {
+            menuVisible = false;
+        });
+
+        // Connect signals
+        connect(newAdminMenuButtons, &AdminMenuButtons::showImagesClicked, this, &Admin::on_show_images_clicked);
+        connect(newAdminMenuButtons, &AdminMenuButtons::updatePriceClicked, this, &Admin::on_update_price_clicked);
+        connect(newAdminMenuButtons, &AdminMenuButtons::addDiamondClicked, this, &Admin::on_add_dia_clicked);
+        connect(newAdminMenuButtons, &AdminMenuButtons::showUsersClicked, this, &Admin::on_show_users_clicked);
+        connect(newAdminMenuButtons, &AdminMenuButtons::jewelryMenuClicked, this, &Admin::on_jewelry_menu_button_clicked);
+        connect(newAdminMenuButtons, &AdminMenuButtons::logoutClicked, this, &Admin::on_logout_clicked);
+    }
+
+
+    if (!menuVisible || !newAdminMenuButtons) {
+        QPoint localPos = ui->admin_menu_push_button->mapTo(this, QPoint(0, ui->admin_menu_push_button->height()));
+        newAdminMenuButtons->move(localPos);
+        newAdminMenuButtons->show();
+        newAdminMenuButtons->raise();
+        qApp->installEventFilter(this);
+        menuVisible = true;
+    } else {
+        newAdminMenuButtons->hide();
+        qApp->removeEventFilter(this);
+    }
+}
+
+void Admin::resizeEvent(QResizeEvent *event)
+{
+    if (menuVisible && newAdminMenuButtons) {
+        QPoint localPos = ui->admin_menu_push_button->mapTo(this, QPoint(0, ui->admin_menu_push_button->height()));
+        newAdminMenuButtons->move(localPos);
+    }
+    QDialog::resizeEvent(event);
+}
+
+void Admin::moveEvent(QMoveEvent *event)
+{
+    if (menuVisible && newAdminMenuButtons) {
+        QPoint localPos = ui->admin_menu_push_button->mapTo(this, QPoint(0, ui->admin_menu_push_button->height()));
+        newAdminMenuButtons->move(localPos);
+    }
+    QDialog::moveEvent(event);
+}
+
+
+bool Admin::eventFilter(QObject *obj, QEvent *event)
+{
+    if (menuVisible && newAdminMenuButtons && event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        QWidget *clickedWidget = QApplication::widgetAt(mouseEvent->globalPos());
+
+        if (clickedWidget && !newAdminMenuButtons->isAncestorOf(clickedWidget) &&
+            clickedWidget != newAdminMenuButtons) {
+            newAdminMenuButtons->hide();
+            menuVisible = false;
+            qApp->removeEventFilter(this);
+        }
+    }
+
+    return QDialog::eventFilter(obj, event);
+}
+
