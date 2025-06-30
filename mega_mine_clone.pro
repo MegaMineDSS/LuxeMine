@@ -15,7 +15,6 @@ SOURCES += \
     databaseutils.cpp \
     imageclicklabel.cpp \
     jewelrymenu.cpp \
-    loginwindow.cpp \
     main.cpp \
     mainwindow.cpp \
     orderlist.cpp \
@@ -35,7 +34,6 @@ HEADERS += \
     cartitemwidget.h \
     imageclicklabel.h \
     jewelrymenu.h \
-    loginwindow.h \
     mainwindow.h \
     orderlist.h \
     ordermenu.h \
@@ -47,23 +45,12 @@ HEADERS += \
 FORMS += \
     addcatalog.ui \
     admin.ui \
-    loginwindow.ui \
     mainwindow.ui \
     orderlist.ui \
     ordermenu.ui \
     pdflistdialog.ui \
     user.ui
 
-
-# Include paths
-INCLUDEPATH += D:\quazip-install\include\QuaZip-Qt6-1.5\quazip\zlib.h
-INCLUDEPATH += D:/zlib-install/include/zlib.h
-
-# Library paths
-LIBS += -LD:\quazip-master\build\quazip -lquazip1-qt6
-LIBS += -LD:\quazip-master\build -lbzip2
-LIBS += -LD:/zlib-install/lib -lzlib
-# LIBS += -lz
 
 # DEFINES += QUAZIP_STATIC
 

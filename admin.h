@@ -59,6 +59,8 @@ private:
     QSqlTableModel *fancyDiamondModel = nullptr;
     QStringList imagePaths;
     int currentIndex = 0;
+    bool m_menuVisible = false;
+
     // QStackedWidget *stackWidget;  // The stacked widget used in admin window
     bool checkLoginCredentials(const QString &username, const QString &password);  // Helper for login
     void populateJewelryMenuTable(); // Populate table with menu items

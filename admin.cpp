@@ -29,6 +29,19 @@ Admin::Admin(QWidget *parent)
     , currentIndex(0)
 {
     ui->setupUi(this);
+
+    // Only show menu toggle button; hide panel initially
+    // ui->adminMenuPanel->setVisible(false);
+    // ui->menuToggleButton->setVisible(true);
+    ui->admin_menu_panel_2->setVisible(false);
+    ui->admin_menu_button->setVisible(true);
+
+    // Connect toggle logic
+    connect(ui->admin_menu_button, &QPushButton::clicked, this, [this]() {
+        m_menuVisible = !m_menuVisible;
+        ui->admin_menu_panel_2->setVisible(m_menuVisible);
+    });
+
     setWindowSize(this);
     ui->stackedWidget->setCurrentIndex(0);
 
