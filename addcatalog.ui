@@ -6,107 +6,37 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>536</width>
-    <height>441</height>
+    <width>1221</width>
+    <height>639</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="13" column="1">
-    <spacer name="horizontalSpacer_23">
-     <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>110</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="3" column="1">
-    <widget class="QLabel" name="label_9">
-     <property name="font">
-      <font>
-       <pointsize>15</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Company name:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2" colspan="4">
-    <widget class="QLineEdit" name="designNO_lineEdit">
-     <property name="font">
-      <font>
-       <family>Arial</family>
-       <pointsize>-1</pointsize>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QLineEdit {
-    background-color: #F5F5F5; /* Light gray background */
-    border: 2px solid #D3D3D3; /* Subtle border */
-    border-radius: 8px; /* Rounded corners */
-    padding: 8px 12px; /* Comfortable padding */
-    font-size: 14px; /* Font size */
-    font-family: Arial, sans-serif; /* Clean font */
-    color: #333333; /* Dark gray text */
-    outline: none; /* Remove default outline */
-}
-
-QLineEdit:hover {
-    border: 2px solid #9E9E9E; /* Darker border on hover */
-}
-
-QLineEdit:focus {
-    border: 2px solid #3F51B5; /* Blue border on focus */
-    background-color: #FFFFFF; /* White background for focus */
-}
-
-QLineEdit:disabled {
-    background-color: #E0E0E0; /* Gray background for disabled state */
-    color: #A5A5A5; /* Light gray text for disabled state */
-    border: 2px solid #D3D3D3; /* Subtle border for disabled state */
+  <property name="styleSheet">
+   <string notr="true">QDialog {
+    background-color: #ECECEC; /* neutral light-gray */
+    color: #2B2B2B; /* dark charcoal */
+    font-family: 'Segoe UI', 'Poppins', 'Arial';
+    font-size: 14px;
 }
 </string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="10">
-    <spacer name="verticalSpacer_30">
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" rowspan="20">
+    <spacer name="verticalSpacer_4">
      <property name="orientation">
       <enum>Qt::Orientation::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>63</height>
+       <height>40</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="13" column="6">
-    <spacer name="horizontalSpacer_22">
-     <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>107</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="13" column="4">
+   <item row="20" column="5">
     <spacer name="horizontalSpacer_26">
      <property name="orientation">
       <enum>Qt::Orientation::Horizontal</enum>
@@ -119,58 +49,180 @@ QLineEdit:disabled {
      </property>
     </spacer>
    </item>
-   <item row="0" column="9">
-    <widget class="QPushButton" name="brows">
-     <property name="font">
-      <font>
-       <family>Times New Roman</family>
-       <pointsize>-1</pointsize>
-       <italic>false</italic>
-       <bold>true</bold>
-      </font>
+   <item row="4" column="14" rowspan="2">
+    <spacer name="verticalSpacer_30">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
      </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>63</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="19" column="11">
+    <widget class="QPushButton" name="addCatalog_cancel_button">
      <property name="styleSheet">
       <string notr="true">QPushButton {
-    background-color: #f4f4f4; /* Light gray background */
-    border: 2px solid #333333; /* Dark border for a more classic look */
-    border-radius: 4px; /* Slight rounding for a vintage look */
-    color: #333333; /* Dark text color */
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #E0E0E0, stop:1 #CFCFCF);
+    color: #2C2C2C;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
     font-size: 14px;
-    padding: 8px 18px;
+    font-weight: bold;
     text-align: center;
-    cursor: pointer;
-    font-family: 'Times New Roman', serif; /* Classic font family */
-    font-weight: bold; /* Bold font for emphasis */
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* Soft shadow */
-    transition: all 0.3s;
 }
-
 QPushButton:hover {
-    background-color: #e2e2e2; /* Lighter gray when hovered */
-    border-color: #888888; /* Change border color on hover */
-    transform: translateY(-1px); /* Slight lift effect */
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #D0D0D0, stop:1 #B0B0B0);
+    color: #1A1A1A;
 }
-
 QPushButton:pressed {
-    background-color: #d2d2d2; /* Darker gray when pressed */
-    border-color: #666666; /* Darker border when pressed */
-    transform: translateY(2px); /* Pressed effect */
+    background-color: #A0A0A0;
+    color: #000000;
 }
 </string>
      </property>
      <property name="text">
-      <string>browse</string>
+      <string>Cancel</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="6" rowspan="3" colspan="4">
+   <item row="2" column="1">
+    <widget class="QLabel" name="label_8">
+     <property name="font">
+      <font>
+       <pointsize>-1</pointsize>
+       <fontweight>Medium</fontweight>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: #2C2C2C;
+    font-size: 14px;
+    font-weight: 500;
+}
+QLabel#titleLabel {
+    font-size: 20px;
+    font-weight: bold;
+    color: #305C91;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Image type:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLabel" name="label_9">
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+       <fontweight>Medium</fontweight>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    font-size: 14pt;
+    color: #2C2C2C;
+    font-weight: 500;
+}
+QLabel#titleLabel {
+    font-size: 20pt;
+    font-weight: bold;
+    color: #305C91;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Company name:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="7" rowspan="6" colspan="7">
     <widget class="QTextEdit" name="note">
+     <property name="styleSheet">
+      <string notr="true">QTextEdit {
+    background-color: #F5F5F5;
+    border: 1.5px solid #B4B4B4;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #2C2C2C;
+    font-size: 13px;
+}
+</string>
+     </property>
      <property name="placeholderText">
       <string>Note.....</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="10">
+   <item row="20" column="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="14">
+    <spacer name="verticalSpacer_6">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="2" colspan="5">
+    <widget class="QLineEdit" name="companyName_lineEdit">
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>-1</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit {
+    background-color: #F3F3F3;
+    border: 1.5px solid #B4B4B4;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #2C2C2C;
+    font-size: 14px;
+}
+QLineEdit:focus {
+    border: 2px solid #305C91;
+    background-color: #FFFFFF;
+}
+QLineEdit:hover {
+    border: 1.5px solid #888;
+}
+</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="14">
     <spacer name="verticalSpacer_35">
      <property name="orientation">
       <enum>Qt::Orientation::Vertical</enum>
@@ -183,8 +235,8 @@ QPushButton:pressed {
      </property>
     </spacer>
    </item>
-   <item row="11" column="10">
-    <spacer name="verticalSpacer">
+   <item row="13" column="14">
+    <spacer name="verticalSpacer_3">
      <property name="orientation">
       <enum>Qt::Orientation::Vertical</enum>
      </property>
@@ -196,236 +248,7 @@ QPushButton:pressed {
      </property>
     </spacer>
    </item>
-   <item row="1" column="6" rowspan="5" colspan="4">
-    <widget class="QLabel" name="imageView_label_at_addImage">
-     <property name="styleSheet">
-      <string notr="true">border-color: rgb(11, 5, 12);</string>
-     </property>
-     <property name="text">
-      <string>Image</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="10">
-    <spacer name="verticalSpacer_33">
-     <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>63</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="10">
-    <spacer name="verticalSpacer_29">
-     <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>62</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLabel" name="label_5">
-     <property name="font">
-      <font>
-       <pointsize>15</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Image path:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="10">
-    <spacer name="verticalSpacer_36">
-     <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>62</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="13" column="8">
-    <spacer name="horizontalSpacer_21">
-     <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>107</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="13" column="9">
-    <widget class="QPushButton" name="save_insert">
-     <property name="font">
-      <font>
-       <family>Helvetica</family>
-       <pointsize>15</pointsize>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">/* Base style for QPushButton */
-QPushButton {
-    font-family: 'Helvetica', 'Arial', sans-serif;
-    font-size: 1em;
-    padding: 1em 2em;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    background-color: #006494; /* Button Color */
-    color: #fff;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    transition: transform ease-in 0.1s, box-shadow ease-in 0.25s;
-    box-shadow: 0 2px 25px rgba(0, 100, 148, 0.5); /* Box shadow with button color */
-}
-
-QPushButton:focus {
-    outline: 0;
-}
-
-QPushButton:before, QPushButton:after {
-    position: absolute;
-    content: '';
-    display: block;
-    width: 140%;
-    height: 100%;
-    left: -20%;
-    z-index: 0;
-    transition: all ease-in-out 0.5s;
-    background-repeat: no-repeat;
-}
-
-QPushButton:before {
-    display: none;
-    top: -75%;
-    background-image:
-        radial-gradient(circle, #006494 20%, transparent 20%),
-        radial-gradient(circle, transparent 20%, #006494 20%, transparent 30%),
-        radial-gradient(circle, #006494 20%, transparent 20%),
-        radial-gradient(circle, #006494 20%, transparent 20%),
-        radial-gradient(circle, transparent 10%, #006494 15%, transparent 20%),
-        radial-gradient(circle, #006494 20%, transparent 20%),
-        radial-gradient(circle, #006494 20%, transparent 20%),
-        radial-gradient(circle, #006494 20%, transparent 20%),
-        radial-gradient(circle, #006494 20%, transparent 20%);
-    background-size: 10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%, 10% 10%, 15% 15%, 10% 10%, 18% 18%;
-}
-
-QPushButton:after {
-    display: none;
-    bottom: -75%;
-    background-image:
-        radial-gradient(circle, #006494 20%, transparent 20%),
-        radial-gradient(circle, #006494 20%, transparent 20%),
-        radial-gradient(circle, transparent 10%, #006494 15%, transparent 20%),
-        radial-gradient(circle, #006494 20%, transparent 20%),
-        radial-gradient(circle, #006494 20%, transparent 20%),
-        radial-gradient(circle, #006494 20%, transparent 20%),
-        radial-gradient(circle, #006494 20%, transparent 20%);
-    background-size: 15% 15%, 20% 20%, 18% 18%, 20% 20%, 15% 15%, 10% 10%, 20% 20%;
-}
-
-/* Active state */
-QPushButton:pressed {
-    transform: scale(0.9);
-    background-color: #005682; /* Darker shade on click */
-    box-shadow: 0 2px 25px rgba(0, 100, 148, 0.2);
-}
-
-/* Animation for button */
-QPushButton.animate:before {
-    display: block;
-    animation: topBubbles ease-in-out 0.75s forwards;
-}
-
-QPushButton.animate:after {
-    display: block;
-    animation: bottomBubbles ease-in-out 0.75s forwards;
-}
-
-/* Keyframe animations */
-@keyframes topBubbles {
-    0% {
-        background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%, 25% 90%, 40% 90%, 55% 90%, 70% 90%;
-    }
-    50% {
-        background-position: 0% 80%, 0% 20%, 10% 40%, 20% 0%, 30% 30%, 22% 50%, 50% 50%, 65% 20%, 90% 30%;
-    }
-    100% {
-        background-position: 0% 70%, 0% 10%, 10% 30%, 20% -10%, 30% 20%, 22% 40%, 50% 40%, 65% 10%, 90% 20%;
-        background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
-    }
-}
-
-@keyframes bottomBubbles {
-    0% {
-        background-position: 10% -10%, 30% 10%, 55% -10%, 70% -10%, 85% -10%, 70% -10%, 70% 0%;
-    }
-    50% {
-        background-position: 0% 80%, 20% 80%, 45% 60%, 60% 100%, 75% 70%, 95% 60%, 105% 0%;
-    }
-    100% {
-        background-position: 0% 90%, 20% 90%, 45% 70%, 60% 110%, 75% 80%, 95% 70%, 110% 10%;
-        background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
-    }
-}
-</string>
-     </property>
-     <property name="text">
-      <string>Save/Insert</string>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="10">
-    <spacer name="verticalSpacer_32">
-     <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>63</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="1" column="10">
-    <spacer name="verticalSpacer_27">
-     <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>63</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="13" column="5">
+   <item row="20" column="6">
     <spacer name="horizontalSpacer_18">
      <property name="orientation">
       <enum>Qt::Orientation::Horizontal</enum>
@@ -438,47 +261,363 @@ QPushButton.animate:after {
      </property>
     </spacer>
    </item>
-   <item row="7" column="6" rowspan="3" colspan="4">
+   <item row="1" column="1">
+    <widget class="QLabel" name="label_7">
+     <property name="font">
+      <font>
+       <pointsize>-1</pointsize>
+       <fontweight>Medium</fontweight>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: #2C2C2C;
+    font-size: 14px;
+    font-weight: 500;
+}
+QLabel#titleLabel {
+    font-size: 20px;
+    font-weight: bold;
+    color: #305C91;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Design No:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="14">
+    <spacer name="verticalSpacer_27">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>63</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="12" column="14">
+    <spacer name="verticalSpacer_5">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="20" column="12">
+    <spacer name="horizontalSpacer_4">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="20" column="7">
+    <spacer name="horizontalSpacer_22">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>107</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="10" column="14">
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLabel" name="label_5">
+     <property name="font">
+      <font>
+       <pointsize>-1</pointsize>
+       <fontweight>Medium</fontweight>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: #2C2C2C;
+    font-size: 14px;
+    font-weight: 500;
+}
+QLabel#titleLabel {
+    font-size: 20px;
+    font-weight: bold;
+    color: #305C91;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Image path:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="20" column="9">
+    <spacer name="horizontalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="20" column="11">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="20" column="3">
+    <spacer name="horizontalSpacer_25">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>106</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="17" column="14">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="7" rowspan="5" colspan="7">
+    <widget class="QLabel" name="imageView_label_at_addImage">
+     <property name="styleSheet">
+      <string notr="true">QLabel#imageView_label_at_addImage {
+    border: 2px dashed #A0A0A0;
+    // background-color: #F7F7F7;
+    color: #808080;
+    font-style: italic;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>Image</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="20" column="8">
+    <spacer name="horizontalSpacer_19">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>106</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="15" column="14">
+    <spacer name="verticalSpacer_8">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="20" column="1">
+    <spacer name="horizontalSpacer_24">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>107</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="14">
+    <spacer name="verticalSpacer_34">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>63</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="2" colspan="5">
+    <widget class="QPushButton" name="jewelryButton">
+     <property name="font">
+      <font>
+       <pointsize>-1</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #E0E0E0, stop:1 #CFCFCF);
+    color: #2C2C2C;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+QPushButton:hover {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #D0D0D0, stop:1 #B0B0B0);
+    color: #1A1A1A;
+}
+QPushButton:pressed {
+    background-color: #A0A0A0;
+    color: #000000;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>select jewelry type</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="11" colspan="2">
+    <widget class="QPushButton" name="brows">
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>-1</pointsize>
+       <italic>false</italic>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #E0E0E0, stop:1 #CFCFCF);
+    color: #2C2C2C;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+QPushButton:hover {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #D0D0D0, stop:1 #B0B0B0);
+    color: #1A1A1A;
+}
+QPushButton:pressed {
+    background-color: #A0A0A0;
+    color: #000000;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>Browse</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="14">
+    <spacer name="verticalSpacer_29">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>62</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="7" rowspan="6" colspan="7">
     <widget class="QTableWidget" name="goldTable">
      <property name="styleSheet">
-      <string notr="true">/* Table Widget Styling */
-QTableWidget {
-    background-color: #2c2c2c;  /* Dark background */
-    border: 1px solid #b8860b;  /* Gold border */
-    color: white;  /* Text color */
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    selection-background-color: #ffd700;  /* Gold background when selected */
-    selection-color: black;  /* Text color when selected */
-    gridline-color: #d4af37;  /* Gold grid lines */
-    border-radius: 4px;
+      <string notr="true">QTableWidget {
+    background-color: #F2F2F2;
+    alternate-background-color: #E8E8E8;
+    border: 1px solid #B0B0B0;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #2C2C2C;
+    gridline-color: #D0D0D0;
 }
 
-/* Header Styling */
-QTableWidget QHeaderView::section {
-    background-color: #d4af37;  /* Gold background for header */
-    color: black;  /* Text color for headers */
-    font-weight: bold;
-    padding: 0px;
-    border: 1px solid #b8860b;  /* Gold border for headers */
-}
-
-/* Table Row Styling */
-QTableWidget::item {
-    padding: 0px;
-    border: 1px solid #d4af37;  /* Gold border for table cells */
-    border-radius: 4px;
-}
-
-/* Hover effect for rows */
 QTableWidget::item:hover {
-    background-color: #ffd700;  /* Gold background on hover */
-    color: black;  /* Change text color on hover */
+    background-color: #DADADA;
 }
 
-/* Alternating row color */
-QTableWidget::item:nth-child(even) {
-    background-color: #333;  /* Darker row for alternating effect */
+QHeaderView::section {
+    background-color: #DCDCDC;
+    border: 1px solid #B0B0B0;
+    font-size: 13px;
+    font-weight: bold;
+    color: #2B2B2B;
+    padding: 6px;
 }
 </string>
      </property>
@@ -494,25 +633,93 @@ QTableWidget::item:nth-child(even) {
      </column>
     </widget>
    </item>
-   <item row="13" column="3">
-    <spacer name="horizontalSpacer_25">
+   <item row="8" column="14" rowspan="2">
+    <spacer name="verticalSpacer_33">
      <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
+      <enum>Qt::Orientation::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>106</width>
-       <height>20</height>
+       <width>20</width>
+       <height>63</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="4" column="1" rowspan="9" colspan="5">
+   <item row="19" column="12">
+    <widget class="QPushButton" name="save_insert">
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>-1</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #E0E0E0, stop:1 #CFCFCF);
+    color: #2C2C2C;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+QPushButton:hover {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 #D0D0D0, stop:1 #B0B0B0);
+    color: #1A1A1A;
+}
+QPushButton:pressed {
+    background-color: #A0A0A0;
+    color: #000000;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>Save/Insert</string>
+     </property>
+    </widget>
+   </item>
+   <item row="16" column="14">
+    <spacer name="verticalSpacer_32">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>63</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="1" rowspan="15" colspan="6">
     <widget class="QGroupBox" name="groupBox">
      <property name="font">
       <font>
-       <pointsize>12</pointsize>
+       <pointsize>-1</pointsize>
+       <bold>true</bold>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox {
+    border: 1.5px solid #C2C2C2;
+    border-radius: 6px;
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #305C91;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 10px;
+}
+</string>
      </property>
      <property name="title">
       <string>Diamond and Stone detail:</string>
@@ -527,44 +734,27 @@ QTableWidget::item:nth-child(even) {
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">/* Table Widget Styling */
-QTableWidget {
-    background-color: #2c2c2c;  /* Dark background */
-    border: 1px solid #b8860b;  /* Gold border */
-    color: white;  /* Text color */
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    selection-background-color: #ffd700;  /* Gold background when selected */
-    selection-color: black;  /* Text color when selected */
-    gridline-color: #d4af37;  /* Gold grid lines */
-    border-radius: 4px;
+         <string notr="true">QTableWidget {
+    background-color: #F2F2F2;
+    alternate-background-color: #E8E8E8;
+    border: 1px solid #B0B0B0;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #2C2C2C;
+    gridline-color: #D0D0D0;
 }
 
-/* Header Styling */
-QTableWidget QHeaderView::section {
-    background-color: #d4af37;  /* Gold background for header */
-    color: black;  /* Text color for headers */
-    font-weight: bold;
-    padding: 0px;
-    border: 1px solid #b8860b;  /* Gold border for headers */
-}
-
-/* Table Row Styling */
-QTableWidget::item {
-    padding: 0px;
-    border: 1px solid #d4af37;  /* Gold border for table cells */
-    border-radius: 4px;
-}
-
-/* Hover effect for rows */
 QTableWidget::item:hover {
-    background-color: blue;  /* Gold background on hover */
-    color: black;  /* Change text color on hover */
+    background-color: #DADADA;
 }
 
-/* Alternating row color */
-QTableWidget::item:nth-child(even) {
-    background-color: #333;  /* Darker row for alternating effect */
+QHeaderView::section {
+    background-color: #DCDCDC;
+    border: 1px solid #B0B0B0;
+    font-size: 13px;
+    font-weight: bold;
+    color: #2B2B2B;
+    padding: 6px;
 }
 </string>
         </property>
@@ -594,44 +784,27 @@ QTableWidget::item:nth-child(even) {
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">/* Table Widget Styling */
-QTableWidget {
-    background-color: #2c2c2c;  /* Dark background */
-    border: 1px solid #b8860b;  /* Gold border */
-    color: white;  /* Text color */
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    selection-background-color: #ffd700;  /* Gold background when selected */
-    selection-color: black;  /* Text color when selected */
-    gridline-color: #d4af37;  /* Gold grid lines */
-    border-radius: 4px;
+         <string notr="true">QTableWidget {
+    background-color: #F2F2F2;
+    alternate-background-color: #E8E8E8;
+    border: 1px solid #B0B0B0;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #2C2C2C;
+    gridline-color: #D0D0D0;
 }
 
-/* Header Styling */
-QTableWidget QHeaderView::section {
-    background-color: #d4af37;  /* Gold background for header */
-    color: black;  /* Text color for headers */
-    font-weight: bold;
-    padding: 0px;
-    border: 1px solid #b8860b;  /* Gold border for headers */
-}
-
-/* Table Row Styling */
-QTableWidget::item {
-    padding: 0px;
-    border: 1px solid #d4af37;  /* Gold border for table cells */
-    border-radius: 4px;
-}
-
-/* Hover effect for rows */
 QTableWidget::item:hover {
-    background-color: #ffd700;  /* Gold background on hover */
-    color: black;  /* Change text color on hover */
+    background-color: #DADADA;
 }
 
-/* Alternating row color */
-QTableWidget::item:nth-child(even) {
-    background-color: #333;  /* Darker row for alternating effect */
+QHeaderView::section {
+    background-color: #DCDCDC;
+    border: 1px solid #B0B0B0;
+    font-size: 13px;
+    font-weight: bold;
+    color: #2B2B2B;
+    padding: 6px;
 }
 </string>
         </property>
@@ -655,35 +828,7 @@ QTableWidget::item:nth-child(even) {
      </layout>
     </widget>
    </item>
-   <item row="3" column="10">
-    <spacer name="verticalSpacer_34">
-     <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>63</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLabel" name="label_8">
-     <property name="font">
-      <font>
-       <pointsize>15</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Image type:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2" colspan="7">
+   <item row="0" column="2" colspan="8">
     <widget class="QLineEdit" name="imagPath_lineEdit">
      <property name="font">
       <font>
@@ -693,103 +838,39 @@ QTableWidget::item:nth-child(even) {
      </property>
      <property name="styleSheet">
       <string notr="true">QLineEdit {
-    background-color: #F5F5F5; /* Light gray background */
-    border: 2px solid #D3D3D3; /* Subtle border */
-    border-radius: 8px; /* Rounded corners */
-    padding: 8px 12px; /* Comfortable padding */
-    font-size: 14px; /* Font size */
-    font-family: Arial, sans-serif; /* Clean font */
-    color: #333333; /* Dark gray text */
-    outline: none; /* Remove default outline */
+    background-color: #F3F3F3;
+    border: 1.5px solid #B4B4B4;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #2C2C2C;
+    font-size: 14px;
 }
-
-QLineEdit:hover {
-    border: 2px solid #9E9E9E; /* Darker border on hover */
-}
-
 QLineEdit:focus {
-    border: 2px solid #3F51B5; /* Blue border on focus */
-    background-color: #FFFFFF; /* White background for focus */
+    border: 2px solid #305C91;
+    background-color: #FFFFFF;
 }
-
-QLineEdit:disabled {
-    background-color: #E0E0E0; /* Gray background for disabled state */
-    color: #A5A5A5; /* Light gray text for disabled state */
-    border: 2px solid #D3D3D3; /* Subtle border for disabled state */
+QLineEdit:hover {
+    border: 1.5px solid #888;
 }
 </string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="label_7">
-     <property name="font">
-      <font>
-       <pointsize>15</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Design No:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="10">
-    <spacer name="verticalSpacer_3">
+   <item row="11" column="14">
+    <spacer name="verticalSpacer_36">
      <property name="orientation">
       <enum>Qt::Orientation::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>62</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="12" column="10">
-    <spacer name="verticalSpacer_31">
-     <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>63</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="13" column="7">
-    <spacer name="horizontalSpacer_19">
-     <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>106</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="13" column="2">
-    <spacer name="horizontalSpacer_24">
-     <property name="orientation">
-      <enum>Qt::Orientation::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>107</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="3" column="2" colspan="4">
-    <widget class="QLineEdit" name="companyName_lineEdit">
+   <item row="1" column="2" colspan="5">
+    <widget class="QLineEdit" name="designNO_lineEdit">
      <property name="font">
       <font>
        <family>Arial</family>
@@ -798,36 +879,26 @@ QLineEdit:disabled {
      </property>
      <property name="styleSheet">
       <string notr="true">QLineEdit {
-    background-color: #F5F5F5; /* Light gray background */
-    border: 2px solid #D3D3D3; /* Subtle border */
-    border-radius: 8px; /* Rounded corners */
-    padding: 8px 12px; /* Comfortable padding */
-    font-size: 14px; /* Font size */
-    font-family: Arial, sans-serif; /* Clean font */
-    color: #333333; /* Dark gray text */
-    outline: none; /* Remove default outline */
+    background-color: #F3F3F3;
+    border: 1.5px solid #B4B4B4;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #2C2C2C;
+    font-size: 14px;
 }
-
-QLineEdit:hover {
-    border: 2px solid #9E9E9E; /* Darker border on hover */
-}
-
 QLineEdit:focus {
-    border: 2px solid #3F51B5; /* Blue border on focus */
-    background-color: #FFFFFF; /* White background for focus */
+    border: 2px solid #305C91;
+    background-color: #FFFFFF;
 }
-
-QLineEdit:disabled {
-    background-color: #E0E0E0; /* Gray background for disabled state */
-    color: #A5A5A5; /* Light gray text for disabled state */
-    border: 2px solid #D3D3D3; /* Subtle border for disabled state */
+QLineEdit:hover {
+    border: 1.5px solid #888;
 }
 </string>
      </property>
     </widget>
    </item>
-   <item row="8" column="10">
-    <spacer name="verticalSpacer_2">
+   <item row="14" column="14">
+    <spacer name="verticalSpacer_9">
      <property name="orientation">
       <enum>Qt::Orientation::Vertical</enum>
      </property>
@@ -839,30 +910,18 @@ QLineEdit:disabled {
      </property>
     </spacer>
    </item>
-   <item row="0" column="0" rowspan="14">
-    <spacer name="verticalSpacer_4">
+   <item row="20" column="4">
+    <spacer name="horizontalSpacer_5">
      <property name="orientation">
-      <enum>Qt::Orientation::Vertical</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>20</width>
-       <height>40</height>
+       <width>40</width>
+       <height>20</height>
       </size>
      </property>
     </spacer>
-   </item>
-   <item row="2" column="2" colspan="4">
-    <widget class="QPushButton" name="jewelryButton">
-     <property name="font">
-      <font>
-       <pointsize>15</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>select jewelry type</string>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>

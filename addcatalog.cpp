@@ -225,3 +225,15 @@ void AddCatalog::on_goldTable_cellChanged(int row, int column)
         if (ok) item->setText(QString::number(value, 'f', 3));
     }
 }
+
+
+
+void AddCatalog::on_addCatalog_cancel_button_clicked()
+{
+    if (parentWidget()) {
+        parentWidget()->show();
+    }
+
+    this->close();  // Close after showing parent
+}
+

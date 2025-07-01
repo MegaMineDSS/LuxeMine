@@ -24,6 +24,9 @@ private slots:
     void on_goldTable_cellChanged(int row, int column);
     void onJewelryItemSelected(const QString &item); // Handle selection from JewelryMenu
 
+
+    void on_addCatalog_cancel_button_clicked();
+
 protected:
     void keyPressEvent(QKeyEvent *event) override;
 
