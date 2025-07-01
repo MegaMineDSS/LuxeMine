@@ -3,6 +3,7 @@
 #include "Utils.h"
 #include <QRandomGenerator>
 #include "user.h"
+#include <QMessageBox>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -13,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     , loginWindow(nullptr)
     , newUser(nullptr)
     , newOrderMenu(nullptr)
+    , newOrderList(nullptr)
 {
     ui->setupUi(this);
 
@@ -74,30 +76,70 @@ void MainWindow::on_orderBookButton_clicked()
 
     // loginWindow = new LoginWindow(this);
 
+    // loginWindow = new LoginWindow(this);
+    // if (loginWindow->exec() == QDialog::Accepted) {
+    //     QString userName = loginWindow->getUserName();
+    //     QString userId = loginWindow->getUserId();
+
+    //     QString partyName = loginWindow->getPartyName();
+    //     QString partyAddress = loginWindow->getPartyAddress();
+    //     QString partyCity = loginWindow->getPartyCity();
+    //     QString partyState = loginWindow->getPartyState();
+    //     QString partyCountry = loginWindow->getPartyCountry();
+
+    //     newOrderMenu = new OrderMenu(nullptr);
+    //     newOrderMenu->setInitialInfo(userName, userId,
+    //                                  partyName, partyAddress, partyCity, partyState, partyCountry);
+
+    //     newOrderMenu->insertDummyOrder();
+    //     newOrderMenu->show();
+    // }
+
     loginWindow = new LoginWindow(this);
+
     if (loginWindow->exec() == QDialog::Accepted) {
+        QString role = loginWindow->getRole().toLower();
         QString userName = loginWindow->getUserName();
         QString userId = loginWindow->getUserId();
+        qDebug()<<role<<"---------------";
 
-        newOrderMenu = new OrderMenu(nullptr);
-        newOrderMenu->setSellerInfo(userName, userId);
-        newOrderMenu->insertDummyOrder();
-        newOrderMenu->show();
+        if (role == "seller" || role == "Seller") {
+            QString partyName = loginWindow->getPartyName();
+            QString partyAddress = loginWindow->getPartyAddress();
+            QString partyCity = loginWindow->getPartyCity();
+            QString partyState = loginWindow->getPartyState();
+            QString partyCountry = loginWindow->getPartyCountry();
+
+            newOrderMenu = new OrderMenu(nullptr);
+            newOrderMenu->setInitialInfo(userName, userId,
+                                         partyName, partyAddress, partyCity, partyState, partyCountry);
+            newOrderMenu->insertDummyOrder();
+            newOrderMenu->show();
+        } else if (role == "designer" || role == "manufacturer" || role == "accountant") {
+            newOrderList = new OrderList();
+            newOrderList->setAttribute(Qt::WA_DeleteOnClose);
+            newOrderList->show();
+        } else {
+            QMessageBox::warning(this, "Unknown Role", "This role is not supported.");
+        }
     }
 
+
 }
+
+
 
 
 void MainWindow::setRandomBackground()
 {
     // List of image paths from the .qrc file
     QStringList imagePaths = {
-        ":/Backgrounds/0.jpg",
+        // ":/Backgrounds/0.jpg",
         ":/Backgrounds/1.jpg",
         ":/Backgrounds/2.jpg",
         ":/Backgrounds/3.jpg",
         ":/Backgrounds/4.jpg",
-        ":/Backgrounds/5.jpg",
+        // ":/Backgrounds/5.jpg",
         ":/Backgrounds/6.jpg",
         ":/Backgrounds/7.jpg",
         ":/Backgrounds/8.jpg",
@@ -125,8 +167,8 @@ void MainWindow::setRandomBackground()
 
     };
 
-    // Generate a random index (0 to 4)
-    int randomIndex = QRandomGenerator::global()->bounded(29); // 0 to 4
+    // Generate a random index (0 to 29)
+    int randomIndex = QRandomGenerator::global()->bounded(27); // 0 to 29 eccept 0 and 5
 
     // Set the random image as the background
     QPixmap background(imagePaths[randomIndex]);

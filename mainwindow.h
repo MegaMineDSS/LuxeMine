@@ -15,6 +15,7 @@
 #include "addcatalog.h"
 #include "ordermenu.h"
 #include "loginwindow.h"
+#include "orderlist.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -43,6 +44,7 @@ private:
     AddCatalog *newAddCatalog = nullptr;
     OrderMenu *newOrderMenu = nullptr;
     LoginWindow *loginWindow = nullptr;
+    OrderList *newOrderList = nullptr;
 
     void setRandomBackground();
 

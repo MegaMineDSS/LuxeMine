@@ -1036,7 +1036,7 @@ bool DatabaseUtils::insertJewelryMenuItem(int parentId, const QString &name, con
     QSqlQuery query(db);
     query.prepare("INSERT INTO jewelry_menu (parent_id, name, display_text) VALUES (:parent_id, :name, :display_text)");
     if (parentId == -1) {
-        query.bindValue(":parent_id", QVariant(QVariant::Int)); // NULL for top-level categories
+        query.bindValue(":parent_id", QVariant()); // NULL for top-level categories
     } else {
         query.bindValue(":parent_id", parentId);
     }
@@ -1071,5 +1071,269 @@ bool DatabaseUtils::deleteJewelryMenuItem(int id)
     }
 
     db.close();
+    return success;
+}
+
+QList<ImageRecord> DatabaseUtils::getAllItems() {
+    QList<ImageRecord> items;
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "get_all_items_conn");
+    db.setDatabaseName("database/mega_mine_image.db");
+    if (!db.open()) {
+        qDebug() << "Error: Could not open database for getAllItems:" << db.lastError().text();
+        return items;
+    }
+
+    QSqlQuery query(db);
+    query.prepare("SELECT image_id, image_path, image_type, design_no, company_name, gold_weight, diamond, stone, time, note FROM image_data");
+
+    if (query.exec()) {
+        while (query.next()) {
+            ImageRecord record;
+            record.imageId = query.value(0).toInt();
+            record.imagePath = query.value(1).toString();
+            record.imageType = query.value(2).toString();
+            record.designNo = query.value(3).toString();
+            record.companyName = query.value(4).toString();
+            record.goldJson = query.value(5).toString();
+            record.diamondJson = query.value(6).toString();
+            record.stoneJson = query.value(7).toString();
+            record.time = query.value(8).toString();
+            record.note = query.value(9).toString();
+            items.append(record);
+        }
+    } else {
+        qDebug() << "Error: Failed to execute query in getAllItems:" << query.lastError().text();
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase("get_all_items_conn");
+    return items;
+}
+
+int DatabaseUtils::insertDummyOrder(const QString &sellerName, const QString &sellerId, const QString &partyName) {
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "insert_order_conn");
+    db.setDatabaseName("database/mega_mine_orderbook.db");
+
+    if (!db.open()) {
+        qDebug() << "❌ Failed to open DB:" << db.lastError().text();
+        return -1;
+    }
+
+    QSqlQuery query(db);
+    query.prepare(R"(
+        INSERT INTO "OrderBook-Detail"
+        (sellerName, sellerId, partyName, jobNo, orderNo, orderDate, deliveryDate)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    )");
+
+    query.addBindValue(sellerName);
+    query.addBindValue(sellerId);
+    query.addBindValue(partyName);
+    query.addBindValue("TEMP_JOB");
+    query.addBindValue("TEMP_ORDER");
+    query.addBindValue(QDate::currentDate().toString("yyyy-MM-dd"));
+    query.addBindValue(QDate::currentDate().addDays(1).toString("yyyy-MM-dd"));
+
+    if (!query.exec()) {
+        qDebug() << "❌ Insert failed:" << query.lastError().text();
+        db.close();
+        QSqlDatabase::removeDatabase("insert_order_conn");
+        return -1;
+    }
+
+    int newId = query.lastInsertId().toInt();
+    db.close();
+    QSqlDatabase::removeDatabase("insert_order_conn");
+    return newId;
+}
+
+bool DatabaseUtils::updateDummyOrder(int orderId, const QString &jobNo, const QString &orderNo) {
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "update_order_conn");
+    db.setDatabaseName("database/mega_mine_orderbook.db");
+
+    if (!db.open()) {
+        qDebug() << "❌ Failed to open DB for update:" << db.lastError().text();
+        return false;
+    }
+
+    QSqlQuery query(db);
+    query.prepare(R"(
+        UPDATE "OrderBook-Detail"
+        SET jobNo = ?, orderNo = ?
+        WHERE id = ?
+    )");
+
+    query.addBindValue(jobNo);
+    query.addBindValue(orderNo);
+    query.addBindValue(orderId);
+
+    bool success = query.exec();
+    if (!success) {
+        qDebug() << "❌ Update failed:" << query.lastError().text();
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase("update_order_conn");
+    return success;
+}
+
+int DatabaseUtils::getNextJobNumber() {
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "next_job_conn");
+    db.setDatabaseName("database/mega_mine_orderbook.db");
+
+    if (!db.open()) {
+        qDebug() << "❌ Failed to open DB in getNextJobNumber:" << db.lastError().text();
+        return 1;
+    }
+
+    QSqlQuery query(db);
+    query.prepare(R"(SELECT jobNo FROM "OrderBook-Detail" WHERE jobNo LIKE 'JOB%' ORDER BY id DESC LIMIT 1)");
+    if (query.exec() && query.next()) {
+        QString lastJobNo = query.value(0).toString();  // e.g., "JOB00023"
+        bool ok;
+        int number = lastJobNo.mid(3).toInt(&ok);       // strip "JOB" → 23
+        db.close();
+        QSqlDatabase::removeDatabase("next_job_conn");
+        return ok ? number + 1 : 1;
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase("next_job_conn");
+    return 1;
+}
+
+int DatabaseUtils::getNextOrderNumberForSeller(const QString &sellerId) {
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "next_order_conn");
+    db.setDatabaseName("database/mega_mine_orderbook.db");
+
+    if (!db.open()) {
+        qDebug() << "❌ Failed to open DB in getNextOrderNumberForSeller:" << db.lastError().text();
+        return 1;
+    }
+
+    QSqlQuery query(db);
+    query.prepare(R"(SELECT orderNo FROM "OrderBook-Detail"
+                     WHERE orderNo LIKE ? ORDER BY id DESC LIMIT 1)");
+    query.addBindValue(sellerId + "%");
+
+    if (query.exec() && query.next()) {
+        QString lastOrder = query.value(0).toString(); // e.g., SELL12300007
+        QString numericPart = lastOrder.mid(sellerId.length()); // "00007"
+        bool ok;
+        int number = numericPart.toInt(&ok);
+        db.close();
+        QSqlDatabase::removeDatabase("next_order_conn");
+        return ok ? number + 1 : 1;
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase("next_order_conn");
+    return 1;
+}
+
+bool DatabaseUtils::saveOrder(const OrderData &order) {
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "save_order_conn");
+    db.setDatabaseName("database/mega_mine_orderbook.db");
+
+    if (!db.open()) {
+        qDebug() << "Failed to open DB in saveOrder:" << db.lastError().text();
+        return false;
+    }
+
+    QSqlQuery query(db);
+    query.prepare(R"(
+        UPDATE "OrderBook-Detail" SET
+            sellerName = :sellerName, sellerId = :sellerId, partyName = :partyName,
+            jobNo = :jobNo, orderNo = :orderNo,
+            clientId = :clientId, agencyId = :agencyId, shopId = :shopId, reteailleId = :retailleId, starId = :starId,
+            address = :address, city = :city, state = :state, country = :country,
+            orderDate = :orderDate, deliveryDate = :deliveryDate,
+            productName = :productName, productPis = :productPis, approxProductWt = :approxProductWt, metalPrice = :metalPrice,
+            metalName = :metalName, metalPurity = :metalPurity, metalColor = :metalColor,
+            sizeNo = :sizeNo, sizeMM = :sizeMM, length = :length, width = :width, height = :height,
+            diaPacific = :diaPacific, diaPurity = :diaPurity, diaColor = :diaColor, diaPrice = :diaPrice,
+            stPacific = :stPacific, stPurity = :stPurity, stColor = :stColor, stPrice = :stPrice,
+            designNo1 = :designNo1, designNo2 = :designNo2,
+            image1Path = :image1Path, image2Path = :image2Path,
+            metalCertiName = :metalCertiName, metalCertiType = :metalCertiType,
+            diaCertiName = :diaCertiName, diaCertiTyoe = :diaCertiType,
+            pesSaki = :pesSaki, chainLock = :chainLock, polish = :polish,
+            settingLebour = :settingLabour, metalStemp = :metalStemp, paymentMethod = :paymentMethod,
+            totalAmount = :totalAmount, advance = :advance, remaining = :remaining,
+            note = :note, extraDetail = :extraDetail,
+            isSaved = 1
+        WHERE id = :id
+    )");
+
+    query.bindValue(":sellerName", order.sellerName);
+    query.bindValue(":sellerId", order.sellerId);
+    query.bindValue(":partyName", order.partyName);
+    query.bindValue(":jobNo", order.jobNo);
+    query.bindValue(":orderNo", order.orderNo);
+    query.bindValue(":clientId", order.clientId);
+    query.bindValue(":agencyId", order.agencyId);
+    query.bindValue(":shopId", order.shopId);
+    query.bindValue(":retailleId", order.retailleId);
+    query.bindValue(":starId", order.starId);
+    query.bindValue(":address", order.address);
+    query.bindValue(":city", order.city);
+    query.bindValue(":state", order.state);
+    query.bindValue(":country", order.country);
+    query.bindValue(":orderDate", order.orderDate);
+    query.bindValue(":deliveryDate", order.deliveryDate);
+    query.bindValue(":productName", order.productName);
+    query.bindValue(":productPis", order.productPis);
+    query.bindValue(":approxProductWt", order.approxProductWt);
+    query.bindValue(":metalPrice", order.metalPrice);
+    query.bindValue(":metalName", order.metalName);
+    query.bindValue(":metalPurity", order.metalPurity);
+    query.bindValue(":metalColor", order.metalColor);
+    query.bindValue(":sizeNo", order.sizeNo);
+    query.bindValue(":sizeMM", order.sizeMM);
+    query.bindValue(":length", order.length);
+    query.bindValue(":width", order.width);
+    query.bindValue(":height", order.height);
+    query.bindValue(":diaPacific", order.diaPacific);
+    query.bindValue(":diaPurity", order.diaPurity);
+    query.bindValue(":diaColor", order.diaColor);
+    query.bindValue(":diaPrice", order.diaPrice);
+    query.bindValue(":stPacific", order.stPacific);
+    query.bindValue(":stPurity", order.stPurity);
+    query.bindValue(":stColor", order.stColor);
+    query.bindValue(":stPrice", order.stPrice);
+    query.bindValue(":designNo1", order.designNo1);
+    query.bindValue(":designNo2", order.designNo2);
+    query.bindValue(":image1Path", order.image1Path);
+    query.bindValue(":image2Path", order.image2Path);
+    query.bindValue(":metalCertiName", order.metalCertiName);
+    query.bindValue(":metalCertiType", order.metalCertiType);
+    query.bindValue(":diaCertiName", order.diaCertiName);
+    query.bindValue(":diaCertiType", order.diaCertiType);
+    query.bindValue(":pesSaki", order.pesSaki);
+    query.bindValue(":chainLock", order.chainLock);
+    query.bindValue(":polish", order.polish);
+    query.bindValue(":settingLabour", order.settingLabour);
+    query.bindValue(":metalStemp", order.metalStemp);
+    query.bindValue(":paymentMethod", order.paymentMethod);
+    query.bindValue(":totalAmount", order.totalAmount);
+    query.bindValue(":advance", order.advance);
+    query.bindValue(":remaining", order.remaining);
+    query.bindValue(":note", order.note);
+    query.bindValue(":extraDetail", order.extraDetail);
+    query.bindValue(":id", order.id);
+
+    bool success = query.exec();
+    if (!success) {
+        qDebug() << "Update failed:" << query.lastError().text();
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase("save_order_conn");
     return success;
 }

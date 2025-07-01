@@ -6,7 +6,8 @@
 #include <QDialog>
 #include <QTableWidget>
 #include "CommonTypes.h"
-#include "databasemanager.h"
+// #include "databasemanager.h"
+#include "DatabaseUtils.h"
 
 namespace Ui {
 class User;
@@ -60,7 +61,7 @@ private:
     void saveCartToDatabase();
 
     Ui::User *ui;
-    DatabaseManager dbManager;
+    // DatabaseManager dbManager;
     QJsonObject goldData;
     int currentImageIndex;
     QList<ImageRecord> imageRecords;

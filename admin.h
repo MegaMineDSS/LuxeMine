@@ -8,6 +8,7 @@
 #include <QComboBox>
 #include <QTableWidget>
 #include <QPushButton>
+#include "adminmenubuttons.h"
 
 namespace Ui {
 class Admin;
@@ -50,8 +51,15 @@ private slots:
     void on_add_menu_item_clicked(); // Added for adding sub-items
     void on_delete_menu_item_clicked(); // Added for deleting items
 
+    // void on_pushButton_2_clicked();
+
+    void on_admin_menu_push_button_clicked();
+
 protected:
     void closeEvent(QCloseEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
+    void moveEvent(QMoveEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
 private:
     Ui::Admin *ui;
@@ -74,6 +82,9 @@ private:
     QPushButton *addCategoryButton = nullptr;
     QPushButton *addItemButton = nullptr;
     QPushButton *deleteItemButton = nullptr;
+
+    AdminMenuButtons *newAdminMenuButtons = nullptr;
+    bool menuVisible = false;
 
 };
 

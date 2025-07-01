@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     addcatalog.cpp \
     admin.cpp \
+    adminmenubuttons.cpp \
     cartitemwidget.cpp \
     databaseutils.cpp \
     imageclicklabel.cpp \
@@ -22,8 +23,7 @@ SOURCES += \
     ordermenu.cpp \
     pdflistdialog.cpp \
     pdfutils.cpp \
-    user.cpp\
-    databasemanager.cpp
+    user.cpp
 
 HEADERS += \
     CommonTypes.h \
@@ -32,6 +32,7 @@ HEADERS += \
     Utils.h \
     addcatalog.h \
     admin.h \
+    adminmenubuttons.h \
     cartitemwidget.h \
     imageclicklabel.h \
     jewelrymenu.h \
@@ -41,12 +42,12 @@ HEADERS += \
     ordermenu.h \
     pdflistdialog.h \
     pdfutils.h \
-    user.h\
-    databasemanager.h
+    user.h
 
 FORMS += \
     addcatalog.ui \
     admin.ui \
+    adminmenubuttons.ui \
     loginwindow.ui \
     mainwindow.ui \
     orderlist.ui \
@@ -55,17 +56,6 @@ FORMS += \
     user.ui
 
 
-# Include paths
-INCLUDEPATH += D:\quazip-install\include\QuaZip-Qt6-1.5\quazip\zlib.h
-INCLUDEPATH += D:/zlib-install/include/zlib.h
-
-# Library paths
-LIBS += -LD:\quazip-master\build\quazip -lquazip1-qt6
-LIBS += -LD:\quazip-master\build -lbzip2
-LIBS += -LD:/zlib-install/lib -lzlib
-# LIBS += -lz
-
-# DEFINES += QUAZIP_STATIC
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
