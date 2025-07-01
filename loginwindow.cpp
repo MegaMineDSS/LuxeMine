@@ -317,7 +317,7 @@ void LoginWindow::on_loginPushButton_clicked()
 
             if (!partyDb.open())
             {
-                qDebug() << "❌ Failed to open party DB:" << partyDb.lastError().text();
+                qDebug() << "Failed to open party DB:" << partyDb.lastError().text();
             }
             else
             {
