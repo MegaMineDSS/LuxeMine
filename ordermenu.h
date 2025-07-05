@@ -18,7 +18,7 @@ class OrderMenu : public QDialog
 public:
     // void setSellerInfo(const QString &name, const QString &id);
     void setInitialInfo(const QString &sellerName, const QString &sellerId,
-                        const QString &partyName, const QString &partyAddress,
+                        const QString &partyName, const QString &partyId, const QString &partyAddress,
                         const QString &partyCity, const QString &partyState,
                         const QString &partyCountry);
 
@@ -48,6 +48,7 @@ private:
     QString currentPartyCity;
     QString currentPartyState;
     QString currentPartyCountry;
+    QString currentPartyId;
 
     void setupMetalComboBoxes();
     void setupCertificateComboBoxes();

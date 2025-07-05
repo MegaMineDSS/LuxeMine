@@ -180,7 +180,7 @@ OrderMenu::~OrderMenu()
 }
 
 void OrderMenu::setInitialInfo(const QString &sellerName, const QString &sellerId,
-                               const QString &partyName, const QString &partyAddress,
+                               const QString &partyName, const QString &partyId, const QString &partyAddress,
                                const QString &partyCity, const QString &partyState,
                                const QString &partyCountry)
 {
@@ -204,6 +204,8 @@ void OrderMenu::setInitialInfo(const QString &sellerName, const QString &sellerI
     currentPartyCity = partyCity;
     currentPartyState = partyState;
     currentPartyCountry = partyCountry;
+    currentPartyId = partyId;
+
 }
 
 void OrderMenu::insertDummyOrder()
@@ -260,11 +262,27 @@ QString OrderMenu::selectAndSaveImage(const QString &prefix) {
 void OrderMenu::closeEvent(QCloseEvent *event)
 {
     if (!isSaved && dummyOrderId != -1) {
-        QSqlQuery cleanup;
+        QDir::setCurrent(QCoreApplication::applicationDirPath());
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "new_conn");
+
+
+        db.setDatabaseName("database/mega_mine_orderbook.db");
+        if (!db.open()) {
+            qDebug() << "Error:" << db.lastError().text();
+            return;
+        }
+
+        QSqlQuery cleanup(db);  // Associate with the "new_conn" connection
         cleanup.prepare("DELETE FROM \"OrderBook-Detail\" WHERE id = :id AND isSaved = 0");
         cleanup.bindValue(":id", dummyOrderId);
+        // qDebug()<<dummyOrderId;
         cleanup.exec();
+
+        db.close();
+
+
     }
+    QSqlDatabase::removeDatabase("new_conn");
     QDialog::closeEvent(event);
 }
 
@@ -281,6 +299,8 @@ void OrderMenu::on_savePushButton_clicked()
     order.orderDate = ui->orderDateDateEdit->date().toString("yyyy-MM-dd");
     order.deliveryDate = ui->deliveryDateDateEdit->date().toString("yyyy-MM-dd");
 
+    order.partyId = currentPartyId;
+    // qDebug()<<order.partyId<<"------oid";
     order.partyName = ui->partyNameLineEdit->text().trimmed();
     order.clientId = ui->clientIdLineEdit->text().trimmed();
     order.agencyId = ui->agencyIdLineEdit->text().trimmed();

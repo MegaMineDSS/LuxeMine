@@ -34,7 +34,7 @@ struct ImageRecord {
 
 struct OrderData {
     int id;
-    QString sellerName, sellerId, partyName, jobNo, orderNo;
+    QString sellerName, sellerId, partyId, partyName, jobNo, orderNo;
     QString clientId, agencyId, shopId, retailleId, starId;
     QString address, city, state, country;
     QString orderDate, deliveryDate;

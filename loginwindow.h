@@ -18,6 +18,7 @@ public:
     QString getUserName() const { return userName; }
     QString getUserId() const { return userId; }
     QString getPartyName() const { return partyName; }
+    QString getPartyId() const { return partyId; }
     QString getPartyAddress() const { return partyAddress; }
     QString getPartyCity() const { return partyCity; }
     QString getPartyState() const { return partyState; }
@@ -27,10 +28,6 @@ public:
 
 
 private slots:
-    void on_createAccountPushButton_clicked();
-
-    void on_savePushButton_clicked();
-
     void on_loginPushButton_clicked();
 
     void on_savePartyButton_clicked();
@@ -43,8 +40,6 @@ private slots:
 
     void on_backPushButton_clicked();
 
-    void set_comboBox_role();
-
     void set_comboBox_selectParty();
 
 private:
@@ -52,6 +47,7 @@ private:
     QString userName;
     QString userId;
     QString partyName;
+    QString partyId;
     QString partyAddress;
     QString partyCity;
     QString partyState;

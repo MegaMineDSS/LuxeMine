@@ -26,6 +26,9 @@ signals:
     void logoutClicked();
     void menuHidden();  ///< Emitted when the menu hides
 
+    void orderBookUsersPushButtonClicked();
+
+
 private:
     void hideEvent(QHideEvent *event);
 

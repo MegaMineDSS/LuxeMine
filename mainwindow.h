@@ -37,6 +37,11 @@ private slots:
     void on_pushButton_4_clicked();
     void on_orderBookButton_clicked();
 
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+    void showEvent(QShowEvent *event) override;
+
+
 private:
     Ui::MainWindow *ui;
     Admin *newAdmin = nullptr;
@@ -46,7 +51,10 @@ private:
     LoginWindow *loginWindow = nullptr;
     OrderList *newOrderList = nullptr;
 
+    QPixmap currentBackground;
+
     void setRandomBackground();
+    void updateBackground();
 
 };
 

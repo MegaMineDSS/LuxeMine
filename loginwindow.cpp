@@ -20,38 +20,6 @@ LoginWindow::~LoginWindow()
     delete ui;
 }
 
-void LoginWindow::set_comboBox_role()
-{
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");   // SQLite driver
-    db.setDatabaseName("database/luxeMineAuthentication.db"); // Path to your SQLite file
-
-    if (!db.open())
-    {
-        qDebug() << "Database connection failed:" << db.lastError().text();
-    }
-    else
-    {
-        qDebug() << "Database opened successfully!";
-    }
-
-    QSqlQuery selectRole("SELECT role FROM OrderBook_Roles");
-
-    if (!selectRole.exec())
-    {
-        qDebug() << "query not executed";
-        return;
-    }
-    ui->setRoleComboBox->clear();
-    ui->setRoleComboBox->addItem("-");
-    while (selectRole.next())
-    {
-        QString roleValue = selectRole.value(0).toString();
-        ui->setRoleComboBox->addItem(roleValue);
-    }
-    db.close();
-}
-
 void LoginWindow::set_comboBox_selectParty()
 {
     QDir::setCurrent(QCoreApplication::applicationDirPath());
@@ -67,7 +35,9 @@ void LoginWindow::set_comboBox_selectParty()
         qDebug() << "Database opened successfully!";
     }
 
-    QSqlQuery selectRole("SELECT name FROM Partys");
+    QSqlQuery selectRole(db);
+    selectRole.prepare("SELECT name, id FROM Partys WHERE userId = :uid");
+    selectRole.bindValue(":uid", userId);
 
     if (!selectRole.exec())
     {
@@ -78,17 +48,13 @@ void LoginWindow::set_comboBox_selectParty()
     ui->selectPartyCombobox->addItem("-");
     while (selectRole.next())
     {
-        QString roleValue = selectRole.value(0).toString();
-        ui->selectPartyCombobox->addItem(roleValue);
+        QString name = selectRole.value(0).toString();
+        QString id = selectRole.value(1).toString();
+        QString displayText = QString("%1 (%2)").arg(name).arg(id);
+        ui->selectPartyCombobox->addItem(displayText);
     }
 
     db.close();
-}
-
-void LoginWindow::on_createAccountPushButton_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(1);
-    set_comboBox_role();
 }
 
 void LoginWindow::on_savePartyButton_clicked()
@@ -147,7 +113,7 @@ void LoginWindow::on_savePartyButton_clicked()
 
     QMessageBox::information(this, "Success", "Party Added!");
 
-    ui->stackedWidget->setCurrentIndex(2);
+    ui->stackedWidget->setCurrentIndex(1);
     set_comboBox_selectParty();
     ui->partyNameLineEdit->clear();
     ui->setPartyIdLineEdit->clear();
@@ -164,17 +130,70 @@ void LoginWindow::on_savePartyButton_clicked()
 
 void LoginWindow::on_addPartyPushButton_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(3);
+    ui->stackedWidget->setCurrentIndex(2);
 }
 
 void LoginWindow::on_goPushButton_clicked()
 {
+    QString partyText = ui->selectPartyCombobox->currentText();  // e.g., "Client (12)"
+    if(partyText == "-"){
+        QMessageBox::warning(this, "Not Valid", "choose party name");
+        return;
+    }
+
+
+    QRegularExpression regex("^(.*) \\((.*)\\)$");
+    QRegularExpressionMatch match = regex.match(partyText);
+
+    QString name, idStr;
+
+    if (match.hasMatch()) {
+        name = match.captured(1).trimmed();
+        idStr = match.captured(2).trimmed();
+
+        // qDebug() << "Name:" << name << "ID (as string):" << idStr;
+    } else {
+        qDebug() << "Invalid combo box text format:" << partyText;
+    }
+
+    QSqlDatabase partyDb = QSqlDatabase::addDatabase("QSQLITE", "party_db");
+    partyDb.setDatabaseName("database/luxeMineAuthentication.db");
+
+    if (!partyDb.open())
+    {
+        qDebug() << "Failed to open party DB:" << partyDb.lastError().text();
+    }
+
+    QSqlQuery partyQuery(partyDb);
+    partyQuery.prepare("SELECT id, name, address, city, state, country FROM Partys WHERE userId = :uid AND id = :pid  LIMIT 1");
+    partyQuery.bindValue(":uid", userId);
+    partyQuery.bindValue(":pid",idStr);
+
+    if (partyQuery.exec() && partyQuery.next())
+    {
+        this->partyId = partyQuery.value("id").toString();
+        this->partyName = partyQuery.value("name").toString();
+        this->partyAddress = partyQuery.value("address").toString();
+        this->partyCity = partyQuery.value("city").toString();
+        this->partyState = partyQuery.value("state").toString();
+        this->partyCountry = partyQuery.value("country").toString();
+    }
+    else
+    {
+        qDebug() << "Party query failed:" << partyQuery.lastError().text();
+    }
+
+    partyDb.close();
+
+
+
+
     this->accept();
 }
 
 void LoginWindow::on_backPartyPushButton_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(2);
+    ui->stackedWidget->setCurrentIndex(1);
     set_comboBox_selectParty();
 }
 
@@ -183,92 +202,9 @@ void LoginWindow::on_backPushButton_clicked()
     ui->stackedWidget->setCurrentIndex(0);
 }
 
-void LoginWindow::on_savePushButton_clicked()
-{
-    QString userId = ui->setUserIdLineEdit->text().trimmed();
-    QString userName = ui->setUserNameLineEdit->text().trimmed();
-    QString password = ui->setPasswordLineEdit->text();
-    QString confirmPassword = ui->confirmPasswordLineEdit->text();
-    // QString role = ui->setRoleLineEdit->text().trimmed();
-    QString role = ui->setRoleComboBox->currentText();
-    QString date = QDate::currentDate().toString("yyyy-MM-dd");
-
-    // 1. Validation
-    if (userId.isEmpty() || userName.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || role.isEmpty())
-    {
-        QMessageBox::warning(this, "Input Error", "All fields are required.");
-        return;
-    }
-
-    if (password != confirmPassword)
-    {
-        QMessageBox::warning(this, "Password Error", "Passwords do not match.");
-        return;
-    }
-
-    // 2. Connect to DB
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-    qDebug() << "Current Path:" << QDir::currentPath();
-
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("database/mega_mine_authentication.db");
-
-    if (!db.open())
-    {
-        QMessageBox::critical(this, "Database Error", "Failed to connect to database.");
-        return;
-    }
-
-    // 3. Check for duplicate userId
-    QSqlQuery checkQuery;
-    checkQuery.prepare("SELECT userId FROM Login_DB WHERE userId = :userId");
-    checkQuery.bindValue(":userId", userId);
-
-    if (!checkQuery.exec())
-    {
-        QMessageBox::critical(this, "Error", "Failed to check existing user: " + checkQuery.lastError().text());
-        return;
-    }
-
-    if (checkQuery.next())
-    {
-        QMessageBox::warning(this, "Duplicate User", "User ID already exists.");
-        return;
-    }
-
-    // 4. Insert new user
-    QSqlQuery query;
-    query.prepare("INSERT INTO Login_DB (userId, userName, password, date, role) "
-                  "VALUES (:userId, :userName, :password, :date, :role)");
-    query.bindValue(":userId", userId);
-    query.bindValue(":userName", userName);
-    query.bindValue(":password", password);
-    query.bindValue(":date", date);
-    query.bindValue(":role", role);
-
-    if (!query.exec())
-    {
-        QMessageBox::critical(this, "Database Error", "Failed to save user: " + query.lastError().text());
-        return;
-    }
-
-    QMessageBox::information(this, "Success", "User account created successfully!");
-
-    // Go back to login page
-    ui->stackedWidget->setCurrentIndex(0);
-
-    // Clear form
-    ui->setUserIdLineEdit->clear();
-    ui->setUserNameLineEdit->clear();
-    ui->setPasswordLineEdit->clear();
-    ui->confirmPasswordLineEdit->clear();
-    // ui->setRoleLineEdit->clear();
-    ui->setRoleComboBox->setCurrentIndex(0);
-}
-
 void LoginWindow::on_loginPushButton_clicked()
 {
-    QString userId = ui->userIdLineEdit->text().trimmed();
+    userId = ui->userIdLineEdit->text().trimmed();
     QString password = ui->passwordLineEdit->text();
 
     if (userId.isEmpty() || password.isEmpty())
@@ -311,39 +247,8 @@ void LoginWindow::on_loginPushButton_clicked()
             this->userName = userName; // store in member
             this->userId = userId;
 
-            // ✅ Open Partys DB
-            QSqlDatabase partyDb = QSqlDatabase::addDatabase("QSQLITE", "party_db");
-            partyDb.setDatabaseName("database/luxeMineAuthentication.db");
 
-            if (!partyDb.open())
-            {
-                qDebug() << "Failed to open party DB:" << partyDb.lastError().text();
-            }
-            else
-            {
-                QSqlQuery partyQuery(partyDb);
-                partyQuery.prepare("SELECT name, address, city, state, country FROM Partys WHERE userId = :uid LIMIT 1");
-                partyQuery.bindValue(":uid", userId); // ✅ make sure name matches
-
-                if (partyQuery.exec() && partyQuery.next())
-                {
-                    this->partyName = partyQuery.value("name").toString();
-                    this->partyAddress = partyQuery.value("address").toString();
-                    this->partyCity = partyQuery.value("city").toString();
-                    this->partyState = partyQuery.value("state").toString();
-                    this->partyCountry = partyQuery.value("country").toString();
-                }
-                else
-                {
-                    qDebug() << "Party query failed:" << partyQuery.lastError().text();
-                }
-
-                partyDb.close();
-            }
-
-            // store in member
-            // this->accept();
-            ui->stackedWidget->setCurrentIndex(2);
+            ui->stackedWidget->setCurrentIndex(1);
             set_comboBox_selectParty();
         }
         else if (role == "Designer" || role == "Manufacturer" || role == "Accountant") {
@@ -359,4 +264,6 @@ void LoginWindow::on_loginPushButton_clicked()
     {
         QMessageBox::warning(this, "Login Failed", "Invalid User ID or Password.");
     }
+    db.close();
+    QSqlDatabase::removeDatabase("party_db");
 }

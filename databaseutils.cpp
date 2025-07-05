@@ -1124,13 +1124,14 @@ int DatabaseUtils::insertDummyOrder(const QString &sellerName, const QString &se
     QSqlQuery query(db);
     query.prepare(R"(
         INSERT INTO "OrderBook-Detail"
-        (sellerName, sellerId, partyName, jobNo, orderNo, orderDate, deliveryDate)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        (sellerName, sellerId,partyId, partyName, jobNo, orderNo, orderDate, deliveryDate)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     )");
 
     query.addBindValue(sellerName);
     query.addBindValue(sellerId);
     query.addBindValue(partyName);
+    query.addBindValue("TEMP_ID");
     query.addBindValue("TEMP_JOB");
     query.addBindValue("TEMP_ORDER");
     query.addBindValue(QDate::currentDate().toString("yyyy-MM-dd"));
@@ -1155,7 +1156,7 @@ bool DatabaseUtils::updateDummyOrder(int orderId, const QString &jobNo, const QS
     db.setDatabaseName("database/mega_mine_orderbook.db");
 
     if (!db.open()) {
-        qDebug() << "❌ Failed to open DB for update:" << db.lastError().text();
+        qDebug() << "Failed to open DB for update:" << db.lastError().text();
         return false;
     }
 
@@ -1172,7 +1173,7 @@ bool DatabaseUtils::updateDummyOrder(int orderId, const QString &jobNo, const QS
 
     bool success = query.exec();
     if (!success) {
-        qDebug() << "❌ Update failed:" << query.lastError().text();
+        qDebug() << "Update failed:" << query.lastError().text();
     }
 
     db.close();
@@ -1249,7 +1250,7 @@ bool DatabaseUtils::saveOrder(const OrderData &order) {
     QSqlQuery query(db);
     query.prepare(R"(
         UPDATE "OrderBook-Detail" SET
-            sellerName = :sellerName, sellerId = :sellerId, partyName = :partyName,
+            sellerName = :sellerName, sellerId = :sellerId, partyId = :partyId, partyName = :partyName,
             jobNo = :jobNo, orderNo = :orderNo,
             clientId = :clientId, agencyId = :agencyId, shopId = :shopId, reteailleId = :retailleId, starId = :starId,
             address = :address, city = :city, state = :state, country = :country,
@@ -1273,6 +1274,7 @@ bool DatabaseUtils::saveOrder(const OrderData &order) {
 
     query.bindValue(":sellerName", order.sellerName);
     query.bindValue(":sellerId", order.sellerId);
+    query.bindValue(":partyId",order.partyId);
     query.bindValue(":partyName", order.partyName);
     query.bindValue(":jobNo", order.jobNo);
     query.bindValue(":orderNo", order.orderNo);
@@ -1332,8 +1334,64 @@ bool DatabaseUtils::saveOrder(const OrderData &order) {
     if (!success) {
         qDebug() << "Update failed:" << query.lastError().text();
     }
+    // qDebug()<<"save order";
+    QSqlQuery addStatus(db);
+    addStatus.prepare(R"(INSERT INTO "Order-Status" (jobNo) VALUES (:jobNo))");
+    addStatus.bindValue(":jobNo", order.jobNo);
+
+    if(!addStatus.exec()){
+        qDebug()<<"not added "<<addStatus.lastError().text();
+        return false;
+    }
+
+
 
     db.close();
     QSqlDatabase::removeDatabase("save_order_conn");
     return success;
+}
+
+QList<QVariantList> DatabaseUtils::fetchOrderListDetails(){
+    QList<QVariantList> orderList;
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "order_list");
+    QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
+    db.setDatabaseName(dbPath);
+
+    if (!db.open()) {
+        qDebug() << "Database not open: " << db.lastError().text();
+        return orderList;
+    }
+
+    QSqlQuery query(db);
+    query.prepare(R"(
+        SELECT od.sellerId, od.partyId, os.jobNo, os.Designer, os.Manufacturer, os.Accountant
+        FROM "OrderBook-Detail" od
+        LEFT JOIN "Order-Status" os ON od.jobNo = os.jobNo
+    )");
+
+    if (!query.exec()) {
+        qDebug() << "Error executing query:" << query.lastError().text();
+        db.close();
+        QSqlDatabase::removeDatabase("order_list");
+        return orderList;
+    }
+
+    // No need for QMap if you want just a list
+    while (query.next()) {
+        QString sellerId     = query.value("sellerId").toString();
+        QString partyId      = query.value("partyId").toString();
+        QString jobNo        = query.value("jobNo").toString();
+        QString designer     = query.value("Designer").toString();
+        QString manufacturer = query.value("Manufacturer").toString();
+        QString accountant   = query.value("Accountant").toString();
+
+        QVariantList row = {sellerId, partyId, jobNo, designer, manufacturer, accountant};
+        orderList.append(row);  // Add each row to the list
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase("order_list");
+
+    return orderList;
+
 }

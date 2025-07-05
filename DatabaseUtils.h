@@ -67,6 +67,7 @@ public:
     static int getNextOrderNumberForSeller(const QString &sellerId);
 
     static bool saveOrder(const OrderData &order);
+    static QList<QVariantList> fetchOrderListDetails();
 
 
 

@@ -23,6 +23,11 @@ AdminMenuButtons::AdminMenuButtons(QWidget *parent) :
         this->hide();
     });
 
+    connect(ui->orderBookUsersPushButton, &QPushButton::clicked, this, [=]() {
+        emit orderBookUsersPushButtonClicked();
+        this->hide();
+    });
+
     connect(ui->show_users, &QPushButton::clicked, this, [=]() {
         emit showUsersClicked();
         this->hide();
@@ -52,3 +57,4 @@ AdminMenuButtons::~AdminMenuButtons()
 {
     delete ui;
 }
+

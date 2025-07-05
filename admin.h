@@ -55,6 +55,15 @@ private slots:
 
     void on_admin_menu_push_button_clicked();
 
+
+    void on_backToPageOnePushButton_clicked();
+
+    void on_saveOrderBookPushButton_clicked();
+
+    void on_orderBookUsersPushButton_clicked();
+
+    void set_comboBox_role();
+
 protected:
     void closeEvent(QCloseEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
