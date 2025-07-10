@@ -1,9 +1,5 @@
 #include "admin.h"
 #include "ui_admin.h"
-#include "ReadOnlyDelegate.h"
-#include "databaseutils.h"
-#include "Utils.h"
-#include "PdfListDialog.h"
 #include <QMessageBox>
 #include <QPixmap>
 #include <QSqlQuery>
@@ -18,6 +14,11 @@
 #include <QHBoxLayout>
 #include <QFormLayout>
 #include <QLabel>
+#include "ReadOnlyDelegate.h"
+#include "databaseutils.h"
+#include "Utils.h"
+#include "PdfListDialog.h"
+
 
 Admin::Admin(QWidget *parent)
     : QDialog(parent), ui(new Ui::Admin), roundDiamondModel(nullptr), fancyDiamondModel(nullptr), currentIndex(0)
