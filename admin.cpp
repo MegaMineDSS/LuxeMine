@@ -287,7 +287,7 @@ bool Admin::checkLoginCredentials(const QString &username, const QString &passwo
 void Admin::on_login_button_clicked()
 {
     QString username = ui->name_lineEdit->text();
-    QString password = ui->password_lineEdit->text();
+    QString password = ui->admin_password_lineEdit->text();
 
     if (username.isEmpty() || password.isEmpty())
     {
@@ -302,7 +302,7 @@ void Admin::on_login_button_clicked()
     }
 
     ui->name_lineEdit->clear();
-    ui->password_lineEdit->clear();
+    ui->admin_password_lineEdit->clear();
 }
 
 void Admin::on_round_dia_button_clicked()
@@ -969,3 +969,11 @@ void Admin::on_saveOrderBookPushButton_clicked()
     ui->confirmPasswordLineEdit->clear();
     ui->roleComboBox->setCurrentIndex(0);
 }
+
+void Admin::on_show_passwd_checkBox_toggled(bool checked)
+{
+    ui->admin_password_lineEdit->setEchoMode(checked ? QLineEdit::Normal : QLineEdit::Password);
+    // ui->passwordLineEdit->update();  //  Force repaint
+}
+
+

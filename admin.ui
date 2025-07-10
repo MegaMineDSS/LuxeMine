@@ -26,58 +26,6 @@
        </property>
        <widget class="QWidget" name="login">
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="2" column="0">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="2">
-          <spacer name="horizontalSpacer_66">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="5">
-          <spacer name="horizontalSpacer_59">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="1">
-          <spacer name="horizontalSpacer_16">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
          <item row="0" column="6">
           <spacer name="horizontalSpacer_15">
            <property name="orientation">
@@ -91,21 +39,8 @@
            </property>
           </spacer>
          </item>
-         <item row="4" column="0">
-          <spacer name="verticalSpacer_6">
-           <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="6" column="0">
-          <spacer name="verticalSpacer_60">
+         <item row="2" column="0">
+          <spacer name="verticalSpacer">
            <property name="orientation">
             <enum>Qt::Orientation::Vertical</enum>
            </property>
@@ -130,6 +65,19 @@
            </property>
           </spacer>
          </item>
+         <item row="0" column="2">
+          <spacer name="horizontalSpacer_66">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
          <item row="3" column="3" rowspan="2">
           <widget class="QFrame" name="frame">
            <property name="styleSheet">
@@ -139,7 +87,7 @@
 }
 
 QFrame &gt; * {
-    background: transparent;  /* Make sure inner components are transparent */
+    background: none;  /* Make sure inner components are transparent */
     border: none;  /* Remove borders from inner components */
 }
 </string>
@@ -152,52 +100,33 @@ QFrame &gt; * {
            </property>
            <layout class="QGridLayout" name="gridLayout_16">
             <item row="4" column="1" colspan="2">
-             <widget class="QCheckBox" name="checkBox">
+             <widget class="QCheckBox" name="show_passwd_checkBox">
               <property name="font">
                <font>
                 <pointsize>-1</pointsize>
-                <bold>true</bold>
+                <fontweight>DemiBold</fontweight>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">/* General QCheckBox Styling */
+               <string notr="true">/* Style for the Show Password checkbox */
 QCheckBox {
-    font-size: 14px; /* Font size for label text */
-    color: white; /* White text color */
-    font-weight: bold; /* Bold label */
-    spacing: 8px; /* Space between checkbox and text */
+    font-size: 14px;
+    color: #333;
+    spacing: 6px; /* spacing between checkbox and label text */
 }
 
-/* Checkbox Indicator */
-QCheckBox::indicator {
-    width: 16px;
-    height: 16px;
-    border-radius: 3px;
-    border: 2px solid #d4af37; /* Gold border */
-    background-color: #222222; /* Dark background */
+/* Optional: subtle hover effect */
+QCheckBox:hover {
+    color: #005fa3;
 }
 
-/* Checked State */
-QCheckBox::indicator:checked {
-    background-color: #d4af37; /* Gold color when checked */
-    border: 2px solid #ffffff; /* White border */
-}
-
-/* Hover Effect */
-QCheckBox::indicator:hover {
-    border: 2px solid #f7e09d; /* Light gold border on hover */
-}
-
-/* Disabled Checkbox */
-QCheckBox::indicator:disabled {
-    background-color: #555555; /* Greyed-out background */
-    border: 2px solid #666666; /* Greyed-out border */
-}
-
-QCheckBox:disabled {
-    color: #888888; /* Greyed-out text */
-}
-</string>
+/* Password input field */
+QLineEdit {
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 13px;
+}</string>
               </property>
               <property name="text">
                <string>Show Password</string>
@@ -231,7 +160,7 @@ QCheckBox:disabled {
              </spacer>
             </item>
             <item row="3" column="1" colspan="5">
-             <widget class="QLineEdit" name="password_lineEdit">
+             <widget class="QLineEdit" name="admin_password_lineEdit">
               <property name="font">
                <font>
                 <pointsize>-1</pointsize>
@@ -239,42 +168,20 @@ QCheckBox:disabled {
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">/* General LineEdit Styling */
-QLineEdit {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #1e1e1e, stop:1 #2e2e2e); /* Gradient background */
-    color: white; /* Text color */
-    font-size: 16px; /* Larger font for input text */
-    font-weight: bold; /* Bold text for better visibility */
-    border: 2px solid #444444; /* Subtle border */
-    border-radius: 15px; /* Rounded corners */
-    padding: 10px 15px; /* Padding inside the field */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.4); /* Subtle shadow for a raised effect */
+               <string notr="true">QLineEdit {
+    background-color: #F3F3F3;
+    border: 1.5px solid #B4B4B4;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #2C2C2C;
+    font-size: 14px;
 }
-
-/* Placeholder Text Styling */
-QLineEdit::placeholder {
-    color: #888888; /* Light grey placeholder text */
-    font-style: italic; /* Italicized placeholder text */
-}
-
-/* Focused LineEdit Styling */
 QLineEdit:focus {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #2e2e2e, stop:1 #3e3e3e); /* Slightly brighter gradient */
-    border: 2px solid #d4af37; /* Gold border for focus */
-    box-shadow: 0px 6px 10px rgba(212, 175, 55, 0.5); /* Gold glow when focused */
+    border: 2px solid #305C91;
+    background-color: #FFFFFF;
 }
-
-/* Disabled LineEdit Styling */
-QLineEdit:disabled {
-    background-color: #555555; /* Grey background for disabled state */
-    color: #bbbbbb; /* Faded text */
-    border: 2px solid #666666; /* Subtle grey border */
-}
-
-/* Hover Effect */
 QLineEdit:hover {
-    border: 2px solid #f7e09d; /* Light gold border on hover */
-    box-shadow: 0px 5px 8px rgba(247, 224, 157, 0.4); /* Light gold glow on hover */
+    border: 1.5px solid #888;
 }
 </string>
               </property>
@@ -347,40 +254,28 @@ QLineEdit:hover {
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">/* General QPushButton Styling */
-QPushButton {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #1e90ff, stop:1 #4682b4); /* Blue gradient */
-    color: white; /* White text */
-    font-size: 16px; /* Font size for text */
-    font-weight: bold; /* Bold text */
-    border: none; /* Remove border */
-    border-radius: 15px; /* Rounded corners */
-    padding: 10px 20px; /* Padding for comfortable size */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Subtle shadow for raised effect */
+               <string notr="true">QPushButton {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #e0e0e0, stop:0.5 #c0c0c0, stop:1 #a0a0a0); /* Subtle silver gradient */
+    color: #333333; /* Dark gray text for contrast */
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 25px; /* Slightly larger padding for elegance */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3), inset 0px 1px 2px rgba(255, 255, 255, 0.6); /* Soft shadow with inner glow */
+    text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.3); /* Subtle white text glow */
 }
 
-/* Hover Effect */
 QPushButton:hover {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #4682b4, stop:1 #1e90ff); /* Reverse gradient */
-    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.4); /* Enhance shadow on hover */
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #d0d0d0, stop:0.5 #b0b0b0, stop:1 #909090); /* Darker silver on hover */
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4), inset 0px 2px 3px rgba(255, 255, 255, 0.8); /* Enhanced glow on hover */
+    color: #1a1a1a; /* Slightly darker text for depth */
 }
 
-/* Pressed Effect */
 QPushButton:pressed {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #104e8b, stop:1 #1c6ba0); /* Darker blue gradient */
-    box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.5); /* Inset shadow */
-}
-
-/* Cancel Button Specific Styling */
-#cancelButton {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #ff6347, stop:1 #cd5c5c); /* Red gradient */
-    color: white;
-}
-
-#cancelButton:hover {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #cd5c5c, stop:1 #ff6347); /* Reverse red gradient */
-}
-</string>
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #b0b0b0, stop:0.5 #a0a0a0, stop:1 #808080); /* Pressed state */
+    box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.5), 0px 2px 4px rgba(0, 0, 0, 0.2); /* Inner shadow on press */
+}</string>
               </property>
               <property name="text">
                <string>CANCEL</string>
@@ -396,38 +291,31 @@ QPushButton:pressed {
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">/* General QPushButton Styling */
-QPushButton {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #1e90ff, stop:1 #4682b4); /* Blue gradient */
-    color: white; /* White text */
-    font-size: 16px; /* Font size for text */
-    font-weight: bold; /* Bold text */
-    border: none; /* Remove border */
-    border-radius: 15px; /* Rounded corners */
-    padding: 10px 20px; /* Padding for comfortable size */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Subtle shadow for raised effect */
+               <string notr="true">QPushButton {
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+        stop:0 #D0E9FF, stop:0.5 #85C1F2, stop:1 #5EA6E8); /* Light to medium blue gradient */
+    color: #1F1F1F;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 25px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25), inset 0px 1px 2px rgba(255, 255, 255, 0.4);
+    text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.3);
 }
 
-/* Hover Effect */
 QPushButton:hover {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #4682b4, stop:1 #1e90ff); /* Reverse gradient */
-    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.4); /* Enhance shadow on hover */
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+        stop:0 #649FD3, stop:0.5 #4A90E2, stop:1 #3C7DCB); /* Darker bluish gradient on hover */
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4), inset 0px 2px 3px rgba(255, 255, 255, 0.6);
+    color: #0D0D0D;
 }
 
-/* Pressed Effect */
 QPushButton:pressed {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #104e8b, stop:1 #1c6ba0); /* Darker blue gradient */
-    box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.5); /* Inset shadow */
-}
-
-/* Cancel Button Specific Styling */
-#cancelButton {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #ff6347, stop:1 #cd5c5c); /* Red gradient */
-    color: white;
-}
-
-#cancelButton:hover {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #cd5c5c, stop:1 #ff6347); /* Reverse red gradient */
+    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+        stop:0 #3C7DCB, stop:0.5 #2E6AB8, stop:1 #1F5AA2); /* Deep bluish press state */
+    box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.5), 0px 2px 4px rgba(0, 0, 0, 0.2);
+    color: #FFFFFF;
 }
 </string>
               </property>
@@ -458,42 +346,20 @@ QPushButton:pressed {
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">/* General LineEdit Styling */
-QLineEdit {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #1e1e1e, stop:1 #2e2e2e); /* Gradient background */
-    color: white; /* Text color */
-    font-size: 16px; /* Larger font for input text */
-    font-weight: bold; /* Bold text for better visibility */
-    border: 2px solid #444444; /* Subtle border */
-    border-radius: 15px; /* Rounded corners */
-    padding: 10px 15px; /* Padding inside the field */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.4); /* Subtle shadow for a raised effect */
+               <string notr="true">QLineEdit {
+    background-color: #F3F3F3;
+    border: 1.5px solid #B4B4B4;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #2C2C2C;
+    font-size: 14px;
 }
-
-/* Placeholder Text Styling */
-QLineEdit::placeholder {
-    color: #888888; /* Light grey placeholder text */
-    font-style: italic; /* Italicized placeholder text */
-}
-
-/* Focused LineEdit Styling */
 QLineEdit:focus {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #2e2e2e, stop:1 #3e3e3e); /* Slightly brighter gradient */
-    border: 2px solid #d4af37; /* Gold border for focus */
-    box-shadow: 0px 6px 10px rgba(212, 175, 55, 0.5); /* Gold glow when focused */
+    border: 2px solid #305C91;
+    background-color: #FFFFFF;
 }
-
-/* Disabled LineEdit Styling */
-QLineEdit:disabled {
-    background-color: #555555; /* Grey background for disabled state */
-    color: #bbbbbb; /* Faded text */
-    border: 2px solid #666666; /* Subtle grey border */
-}
-
-/* Hover Effect */
 QLineEdit:hover {
-    border: 2px solid #f7e09d; /* Light gold border on hover */
-    box-shadow: 0px 5px 8px rgba(247, 224, 157, 0.4); /* Light gold glow on hover */
+    border: 1.5px solid #888;
 }
 </string>
               </property>
@@ -567,18 +433,6 @@ QLineEdit:hover {
               </property>
              </spacer>
             </item>
-            <item row="1" column="2" colspan="3">
-             <widget class="QLabel" name="label_23">
-              <property name="styleSheet">
-               <string notr="true">/* General QLabel Styling */
-border-color: qradialgradient(spread:reflect, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));
-</string>
-              </property>
-              <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:700;&quot;&gt;*ADMIN LOGIN *&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="2">
              <spacer name="horizontalSpacer_72">
               <property name="orientation">
@@ -592,8 +446,66 @@ border-color: qradialgradient(spread:reflect, cx:0.5, cy:0.5, radius:0.5, fx:0.5
               </property>
              </spacer>
             </item>
+            <item row="1" column="1" colspan="5" alignment="Qt::AlignmentFlag::AlignHCenter">
+             <widget class="QLabel" name="label_23">
+              <property name="font">
+               <font>
+                <pointsize>22</pointsize>
+                <bold>true</bold>
+                <hintingpreference>PreferDefaultHinting</hintingpreference>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">/* General QLabel Styling */
+border-color: qradialgradient(spread:reflect, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));
+</string>
+              </property>
+              <property name="text">
+               <string>ADMIN PANEL</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
+         </item>
+         <item row="0" column="5">
+          <spacer name="horizontalSpacer_59">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="4" column="0">
+          <spacer name="verticalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="1">
+          <spacer name="horizontalSpacer_16">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>
@@ -3710,6 +3622,19 @@ QTableCornerButton::section {
                <layout class="QGridLayout" name="gridLayout_18">
                 <item row="2" column="0">
                  <widget class="QLabel" name="passwordLabel">
+                  <property name="styleSheet">
+                   <string notr="true">QLabel {
+    color: #2C2C2C;
+    font-size: 14px;
+    font-weight: 500;
+}
+QLabel#titleLabel {
+    font-size: 20px;
+    font-weight: bold;
+    color: #305C91;
+}
+</string>
+                  </property>
                   <property name="text">
                    <string>Password:</string>
                   </property>
@@ -3717,6 +3642,19 @@ QTableCornerButton::section {
                 </item>
                 <item row="0" column="0">
                  <widget class="QLabel" name="userNameLabel">
+                  <property name="styleSheet">
+                   <string notr="true">QLabel {
+    color: #2C2C2C;
+    font-size: 14px;
+    font-weight: 500;
+}
+QLabel#titleLabel {
+    font-size: 20px;
+    font-weight: bold;
+    color: #305C91;
+}
+</string>
+                  </property>
                   <property name="text">
                    <string>User Name:</string>
                   </property>
@@ -3724,6 +3662,19 @@ QTableCornerButton::section {
                 </item>
                 <item row="4" column="0">
                  <widget class="QLabel" name="roleLabel">
+                  <property name="styleSheet">
+                   <string notr="true">QLabel {
+    color: #2C2C2C;
+    font-size: 14px;
+    font-weight: 500;
+}
+QLabel#titleLabel {
+    font-size: 20px;
+    font-weight: bold;
+    color: #305C91;
+}
+</string>
+                  </property>
                   <property name="text">
                    <string>Role:</string>
                   </property>
@@ -3731,6 +3682,19 @@ QTableCornerButton::section {
                 </item>
                 <item row="1" column="0">
                  <widget class="QLabel" name="userIdLabel">
+                  <property name="styleSheet">
+                   <string notr="true">QLabel {
+    color: #2C2C2C;
+    font-size: 14px;
+    font-weight: 500;
+}
+QLabel#titleLabel {
+    font-size: 20px;
+    font-weight: bold;
+    color: #305C91;
+}
+</string>
+                  </property>
                   <property name="text">
                    <string>User ID:</string>
                   </property>
@@ -3745,25 +3709,119 @@ QTableCornerButton::section {
                 </item>
                 <item row="3" column="0">
                  <widget class="QLabel" name="confirmPasswordLabel">
+                  <property name="styleSheet">
+                   <string notr="true">QLabel {
+    color: #2C2C2C;
+    font-size: 14px;
+    font-weight: 500;
+}
+QLabel#titleLabel {
+    font-size: 20px;
+    font-weight: bold;
+    color: #305C91;
+}
+</string>
+                  </property>
                   <property name="text">
                    <string>Confirm Password:</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="1" colspan="2">
-                 <widget class="QLineEdit" name="userNameLineEdit"/>
+                 <widget class="QLineEdit" name="userNameLineEdit">
+                  <property name="styleSheet">
+                   <string notr="true">
+QLineEdit {
+    background-color: #F3F3F3;
+    border: 1.5px solid #B4B4B4;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: #2C2C2C;
+    font-size: 14px;
+	width: 200px;
+}
+QLineEdit:focus {
+    border: 2px solid #305C91;
+    background-color: #FFFFFF;
+}
+QLineEdit:hover {
+    border: 1.5px solid #888;
+}</string>
+                  </property>
+                 </widget>
                 </item>
                 <item row="1" column="1" colspan="2">
-                 <widget class="QLineEdit" name="userIdLineEdit"/>
+                 <widget class="QLineEdit" name="userIdLineEdit">
+                  <property name="styleSheet">
+                   <string notr="true">
+QLineEdit {
+    background-color: #F3F3F3;
+    border: 1.5px solid #B4B4B4;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: #2C2C2C;
+    font-size: 14px;
+}
+QLineEdit:focus {
+    border: 2px solid #305C91;
+    background-color: #FFFFFF;
+}
+QLineEdit:hover {
+    border: 1.5px solid #888;
+}</string>
+                  </property>
+                 </widget>
                 </item>
                 <item row="2" column="1" colspan="2">
-                 <widget class="QLineEdit" name="passwordLineEdit"/>
+                 <widget class="QLineEdit" name="passwordLineEdit">
+                  <property name="styleSheet">
+                   <string notr="true">
+QLineEdit {
+    background-color: #F3F3F3;
+    border: 1.5px solid #B4B4B4;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: #2C2C2C;
+    font-size: 14px;
+}
+QLineEdit:focus {
+    border: 2px solid #305C91;
+    background-color: #FFFFFF;
+}
+QLineEdit:hover {
+    border: 1.5px solid #888;
+}</string>
+                  </property>
+                 </widget>
                 </item>
                 <item row="3" column="1" colspan="2">
-                 <widget class="QLineEdit" name="confirmPasswordLineEdit"/>
+                 <widget class="QLineEdit" name="confirmPasswordLineEdit">
+                  <property name="styleSheet">
+                   <string notr="true">
+QLineEdit {
+    background-color: #F3F3F3;
+    border: 1.5px solid #B4B4B4;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: #2C2C2C;
+    font-size: 14px;
+}
+QLineEdit:focus {
+    border: 2px solid #305C91;
+    background-color: #FFFFFF;
+}
+QLineEdit:hover {
+    border: 1.5px solid #888;
+}</string>
+                  </property>
+                 </widget>
                 </item>
                 <item row="4" column="1" colspan="2">
-                 <widget class="QComboBox" name="roleComboBox"/>
+                 <widget class="QComboBox" name="roleComboBox">
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
+                 </widget>
                 </item>
                 <item row="5" column="1">
                  <widget class="QPushButton" name="backToPageOnePushButton">
@@ -3854,8 +3912,8 @@ QTableCornerButton::section {
  </widget>
  <tabstops>
   <tabstop>name_lineEdit</tabstop>
-  <tabstop>password_lineEdit</tabstop>
-  <tabstop>checkBox</tabstop>
+  <tabstop>admin_password_lineEdit</tabstop>
+  <tabstop>show_passwd_checkBox</tabstop>
   <tabstop>login_button</tabstop>
   <tabstop>cancel_button</tabstop>
   <tabstop>lineEdit_13</tabstop>
