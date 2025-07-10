@@ -2,9 +2,9 @@
 #define USER_H
 
 #include <QDialog>
+#include <QJsonObject>
 #include "CommonTypes.h"
 
-class QJsonObject;
 class QTableWidget;
 
 namespace Ui {
