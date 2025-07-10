@@ -1,13 +1,11 @@
 #ifndef USER_H
 #define USER_H
 
-
-#include <QJsonObject>
 #include <QDialog>
-#include <QTableWidget>
 #include "CommonTypes.h"
-// #include "databasemanager.h"
-#include "DatabaseUtils.h"
+
+class QJsonObject;
+class QTableWidget;
 
 namespace Ui {
 class User;
@@ -21,8 +19,6 @@ public:
     explicit User(QWidget *parent = nullptr);
     ~User();
 
-
-
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 
@@ -32,12 +28,9 @@ private slots:
     void on_nextImage_clicked();
     void on_cartMainpage_clicked();
     void on_backMainpage_clicked();
-    // void on_selectButton_clicked();
     void on_cartItemQuantityChanged(int imageId, const QString &goldType, int newQuantity);
     void on_cartItemRemoveRequested(int imageId, const QString &goldType);
     void on_makePdfButton_clicked();
-    // void on_rbackup_clicked();
-    // void on_cbackup_clicked();
 
 public slots:
     void loadImage(int index);
@@ -48,8 +41,6 @@ private:
     void setupUi();
     void setupMobileComboBox();
     void loadData();
-    // void loadImage(int index);
-    // void updateGoldWeight();
     void displayDiamondDetails();
     void displayStoneDetails();
     void updateCartDisplay();
@@ -61,7 +52,6 @@ private:
     void saveCartToDatabase();
 
     Ui::User *ui;
-    // DatabaseManager dbManager;
     QJsonObject goldData;
     int currentImageIndex;
     QList<ImageRecord> imageRecords;
@@ -72,7 +62,6 @@ private:
     QVector<SelectionData> selections;
     QWidget *cartItemsContainer;
     QString currentUserId;
-
 };
 
 #endif // USER_H

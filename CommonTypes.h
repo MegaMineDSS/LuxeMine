@@ -60,5 +60,35 @@ struct OrderData {
     QString note, extraDetail;
 };
 
+struct PartyData {
+    QString id;
+    QString name;
+    QString email;
+    int mobileNo;
+    QString address;
+    QString city;
+    QString state;
+    QString country;
+    int areaCode;
+    QString userId;
+    QString date;
+};
+
+struct PartyInfo {
+    QString id;
+    QString name;
+    QString address;
+    QString city;
+    QString state;
+    QString country;
+};
+
+struct LoginResult {
+    bool success = false;
+    QString userName;
+    QString role;
+};
+
+
 
 #endif // COMMONTYPES_H

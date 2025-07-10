@@ -70,6 +70,14 @@ public:
     static QList<QVariantList> fetchOrderListDetails();
 
 
+    //Login window connections
+    static QStringList fetchPartyNamesForUser(const QString &userId);
+    static bool insertParty(const PartyData &party);
+    static PartyInfo fetchPartyDetails(const QString &userId, const QString &partyId);
+    static LoginResult authenticateUser(const QString &userId, const QString &password);
+
+
+
 
 
 

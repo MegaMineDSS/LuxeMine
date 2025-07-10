@@ -1395,3 +1395,147 @@ QList<QVariantList> DatabaseUtils::fetchOrderListDetails(){
     return orderList;
 
 }
+
+QStringList DatabaseUtils::fetchPartyNamesForUser(const QString &userId)
+{
+    QStringList partyList;
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "fetch_party_conn");
+    db.setDatabaseName("database/luxeMineAuthentication.db");
+
+    if (!db.open()) {
+        qDebug() << "Database connection failed:" << db.lastError().text();
+        return partyList;
+    }
+
+    QSqlQuery query(db);
+    query.prepare("SELECT name, id FROM Partys WHERE userId = :uid");
+    query.bindValue(":uid", userId);
+
+    if (!query.exec()) {
+        qDebug() << "Party fetch query failed:" << query.lastError().text();
+        db.close();
+        QSqlDatabase::removeDatabase("fetch_party_conn");
+        return partyList;
+    }
+
+    partyList.append("-");
+    while (query.next()) {
+        QString name = query.value(0).toString();
+        QString id = query.value(1).toString();
+        QString displayText = QString("%1 (%2)").arg(name, id);
+        partyList.append(displayText);
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase("fetch_party_conn");
+    return partyList;
+}
+
+bool DatabaseUtils::insertParty(const PartyData &party)
+{
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "insert_party_conn");
+    db.setDatabaseName("database/luxeMineAuthentication.db");
+
+    if (!db.open()) {
+        qDebug() << "❌ Failed to open DB for party insert:" << db.lastError().text();
+        return false;
+    }
+
+    QSqlQuery query(db);
+    query.prepare(R"(
+        INSERT INTO Partys (id, name, email, mobileNo, address, city, state, country, areaCode, userId, date)
+        VALUES (:id, :name, :email, :mobileNo, :address, :city, :state, :country, :areaCode, :userId, :date)
+    )");
+
+    query.bindValue(":id", party.id);
+    query.bindValue(":name", party.name);
+    query.bindValue(":email", party.email);
+    query.bindValue(":mobileNo", party.mobileNo);
+    query.bindValue(":address", party.address);
+    query.bindValue(":city", party.city);
+    query.bindValue(":state", party.state);
+    query.bindValue(":country", party.country);
+    query.bindValue(":areaCode", party.areaCode);
+    query.bindValue(":userId", party.userId);
+    query.bindValue(":date", party.date);
+
+    bool success = query.exec();
+    if (!success)
+        qDebug() << "❌ Failed to insert party:" << query.lastError().text();
+
+    db.close();
+    QSqlDatabase::removeDatabase("insert_party_conn");
+    return success;
+}
+
+PartyInfo DatabaseUtils::fetchPartyDetails(const QString &userId, const QString &partyId)
+{
+    PartyInfo info;
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "fetch_party_detail_conn");
+    db.setDatabaseName("database/luxeMineAuthentication.db");
+
+    if (!db.open()) {
+        qDebug() << "❌ Failed to open DB in fetchPartyDetails:" << db.lastError().text();
+        return info;
+    }
+
+    QSqlQuery query(db);
+    query.prepare(R"(
+        SELECT id, name, address, city, state, country
+        FROM Partys
+        WHERE userId = :uid AND id = :pid
+        LIMIT 1
+    )");
+    query.bindValue(":uid", userId);
+    query.bindValue(":pid", partyId);
+
+    if (query.exec() && query.next()) {
+        info.id = query.value("id").toString();
+        info.name = query.value("name").toString();
+        info.address = query.value("address").toString();
+        info.city = query.value("city").toString();
+        info.state = query.value("state").toString();
+        info.country = query.value("country").toString();
+    } else {
+        qDebug() << "❌ Query failed in fetchPartyDetails:" << query.lastError().text();
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase("fetch_party_detail_conn");
+    return info;
+}
+
+LoginResult DatabaseUtils::authenticateUser(const QString &userId, const QString &password)
+{
+    LoginResult result;
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "auth_conn");
+    db.setDatabaseName("database/mega_mine_authentication.db");
+
+    if (!db.open()) {
+        qDebug() << "❌ Failed to open authentication DB:" << db.lastError().text();
+        QSqlDatabase::removeDatabase("auth_conn");
+        return result;
+    }
+
+    QSqlQuery query(db);
+    query.prepare("SELECT userName, role FROM Login_DB WHERE userId = :id AND password = :pwd");
+    query.bindValue(":id", userId);
+    query.bindValue(":pwd", password);
+
+    if (query.exec() && query.next()) {
+        result.success = true;
+        result.userName = query.value("userName").toString();
+        result.role = query.value("role").toString();
+    } else if (query.lastError().isValid()) {
+        qDebug() << "❌ Login query error:" << query.lastError().text();
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase("auth_conn");
+    return result;
+}
+

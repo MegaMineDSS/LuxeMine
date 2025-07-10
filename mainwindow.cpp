@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QRandomGenerator>
-#include "user.h"
+// #include "user.h"
 #include <QMessageBox>
 #include <QTimer>
 
@@ -119,7 +119,7 @@ void MainWindow::setRandomBackground()
         ":/Backgrounds/20.jpg", ":/Backgrounds/21.jpg", ":/Backgrounds/22.jpg",
         ":/Backgrounds/23.jpg", ":/Backgrounds/24.jpg", ":/Backgrounds/25.jpg",
         ":/Backgrounds/26.jpg", ":/Backgrounds/27.jpg", ":/Backgrounds/28.jpg",
-        ":/Backgrounds/29.jpg"
+        ":/Backgrounds/29.jpg", ":/Backgrounds/0.jpg",  ":/Backgrounds/5.jpg"
     };
 
     int randomIndex = QRandomGenerator::global()->bounded(1, 30); // avoid 0 and 5
