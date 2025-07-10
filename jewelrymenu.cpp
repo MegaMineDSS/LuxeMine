@@ -6,6 +6,33 @@ JewelryMenu::JewelryMenu(QObject *parent) : QObject(parent)
 {
     menu = new QMenu();
     populateMenu();
+    menu->setStyleSheet(R"(
+        QMenu {
+            background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,stop:0 #E0E0E0, stop:1 #F2F2F2);
+            color: #2C2C2C;
+            border: none;
+            border-radius: 6px;
+            padding: 3px 6px;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+        }
+        QMenu::item {
+            background-color: transparent;
+            padding: 8px 20px;
+            margin: 2px 0;
+            border-radius: 4px;
+        }
+        QMenu::item:selected {
+            background-color: #D0D0D0;
+            color: #1A1A1A;
+        }
+        QMenu::separator {
+            height: 1px;
+            background: #B0B0B0;
+            margin: 6px 10px;
+        }
+    )");
 }
 
 void JewelryMenu::populateMenu()
