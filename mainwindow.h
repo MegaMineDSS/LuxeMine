@@ -2,14 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QSqlDatabase>
 #include <QDebug>
-#include <QSqlQuery>
-#include <QSqlError>
-#include <QCoreApplication>
 #include <QPixmap>
 #include <QResizeEvent>
-#include <QPointer>
 #include "admin.h"
 #include "user.h"
 #include "addcatalog.h"

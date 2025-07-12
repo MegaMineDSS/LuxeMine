@@ -9,7 +9,6 @@
 #include <QTimer>
 #include <QRegularExpression>
 #include <QDir>
-#include <QFileDialog>
 
 
 User::User(QWidget *parent)

@@ -5,13 +5,12 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QCloseEvent>
-#include <QFileDialog>
 #include <QDesktopServices>
 #include <QUrl>
-#include <QFile>
 #include <QMenu>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QDir>
 #include <QFormLayout>
 #include <QLabel>
 #include "ReadOnlyDelegate.h"

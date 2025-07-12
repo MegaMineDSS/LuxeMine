@@ -1,10 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QRandomGenerator>
-// #include "user.h"
 #include <QMessageBox>
-#include <QTimer>
-
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

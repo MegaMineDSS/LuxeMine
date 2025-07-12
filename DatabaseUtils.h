@@ -7,9 +7,8 @@
 #include <QMap>
 #include <QSqlTableModel>
 #include <QPixmap>
-#include <QTableWidget>
 #include "CommonTypes.h"
-
+#include <QTableWidget>
 
 class DatabaseUtils
 {

@@ -3,8 +3,9 @@
 
 #include <QDialog>
 #include <QTableWidget>
-#include <QKeyEvent>
 #include "jewelrymenu.h"
+
+class QKeyEvent;
 
 namespace Ui {
 class AddCatalog;
@@ -31,8 +32,6 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;
 
 private:
-    // void addNewRow(QTableWidget *table);
-    // void addNewRowStone(QTableWidget *table);
     void setupGoldTable();
     void calculateGoldWeights(QTableWidgetItem *item);
     void addTableRow(QTableWidget *table, const QString &tableType);

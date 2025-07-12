@@ -2,10 +2,13 @@
 #define ORDERMENU_H
 
 #include <QDialog>
-#include <QFileDialog>
-#include <QDir>
-#include <QPixmap>
 #include "DatabaseUtils.h"
+
+// Forward declarations (if needed later)
+class QFileDialog;
+class QPixmap;
+class QDir;
+
 
 namespace Ui {
 class OrderMenu;
