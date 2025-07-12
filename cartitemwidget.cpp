@@ -1,5 +1,4 @@
 #include "cartitemwidget.h"
-#include <QHBoxLayout>
 
 CartItemWidget::CartItemWidget(int imageId, const QString &goldType, int itemCount, const QPixmap &image, QWidget *parent) :
     QWidget(parent),
@@ -8,7 +7,6 @@ CartItemWidget::CartItemWidget(int imageId, const QString &goldType, int itemCou
     itemCount(itemCount),
     image(image)
 {
-    QHBoxLayout *layout = new QHBoxLayout(this);
 
     // Image
     imageLabel = new QLabel(this);

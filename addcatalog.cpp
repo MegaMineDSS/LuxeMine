@@ -1,9 +1,7 @@
 #include "addcatalog.h"
 #include "ui_addcatalog.h"
-#include "DatabaseUtils.h"
 #include <QComboBox>
 #include <QDebug>
-#include "Utils.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QPixmap>
@@ -11,6 +9,9 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include "DatabaseUtils.h"
+#include "Utils.h"
+
 
 AddCatalog::AddCatalog(QWidget *parent)
     : QDialog(parent)

@@ -4,8 +4,8 @@
 #include <QWidget>
 #include <QLabel>
 #include <QPushButton>
-// #include <QSpinBox>
-// #include <QHBoxLayout>
+#include <QHBoxLayout>
+
 
 class CartItemWidget : public QWidget
 {
@@ -38,6 +38,7 @@ private:
     QPushButton *incrementButton;
     QPushButton *decrementButton;
     QPushButton *removeButton;
+    QHBoxLayout *layout = new QHBoxLayout(this);
 };
 
 #endif // CARTITEMWIDGET_H
