@@ -1,14 +1,15 @@
 #ifndef DATABASEUTILS_H
 #define DATABASEUTILS_H
 
-#include <QString>
-#include <QStringList>
 #include <QJsonArray>
 #include <QMap>
-#include <QSqlTableModel>
 #include <QPixmap>
-#include "CommonTypes.h"
+#include <QSqlTableModel>
+#include <QString>
+#include <QStringList>
 #include <QTableWidget>
+
+#include "CommonTypes.h"
 
 class DatabaseUtils
 {

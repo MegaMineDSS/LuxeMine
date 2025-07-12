@@ -1,5 +1,6 @@
 #include "addcatalog.h"
 #include "ui_addcatalog.h"
+
 #include <QComboBox>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -7,9 +8,10 @@
 #include <QDir>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QKeyEvent>
+
 #include "DatabaseUtils.h"
 #include "Utils.h"
-#include <QKeyEvent>
 
 
 AddCatalog::AddCatalog(QWidget *parent)

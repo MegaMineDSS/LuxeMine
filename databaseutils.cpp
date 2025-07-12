@@ -1,4 +1,3 @@
-#include "DatabaseUtils.h"
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -11,6 +10,8 @@
 #include <QJsonObject>
 #include <QHeaderView>
 #include <QCoreApplication>
+
+#include "DatabaseUtils.h"
 
 QStringList DatabaseUtils::fetchShapes(const QString &tableType)
 {

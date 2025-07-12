@@ -2,12 +2,14 @@
 #define ADMIN_H
 
 #include <QDialog>
+
+#include <QComboBox>
+#include <QLineEdit>
+#include <QPushButton>
 #include <QSqlTableModel>
 #include <QStringList>
-#include <QLineEdit>
-#include <QComboBox>
 #include <QTableWidget>
-#include <QPushButton>
+
 #include "adminmenubuttons.h"
 
 namespace Ui {

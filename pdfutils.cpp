@@ -1,9 +1,7 @@
-#include "PdfUtils.h"
 #include <QPdfWriter>
 #include <QPainter>
 #include <QFileDialog>
 #include <QMessageBox>
-#include "cartitemwidget.h"
 #include <QVBoxLayout>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -11,6 +9,9 @@
 #include <QPainterPath>
 #include <QDesktopServices>
 #include <QUrl>
+
+#include "PdfUtils.h"
+#include "cartitemwidget.h"
 
 
 PdfUtils::PdfUtils() {}

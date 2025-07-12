@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QTableWidget>
+
 #include "jewelrymenu.h"
 
 class QKeyEvent;

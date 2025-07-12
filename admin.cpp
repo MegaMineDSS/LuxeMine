@@ -1,5 +1,6 @@
 #include "admin.h"
 #include "ui_admin.h"
+
 #include <QMessageBox>
 #include <QPixmap>
 #include <QSqlQuery>
@@ -13,6 +14,7 @@
 #include <QDir>
 #include <QFormLayout>
 #include <QLabel>
+
 #include "ReadOnlyDelegate.h"
 #include "databaseutils.h"
 #include "Utils.h"

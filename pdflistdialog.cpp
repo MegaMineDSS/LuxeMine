@@ -1,5 +1,6 @@
 #include "pdflistdialog.h"
 #include "ui_pdflistdialog.h"
+
 #include <QTableWidgetItem>
 #include <QDesktopServices>
 #include <QUrl>

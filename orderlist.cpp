@@ -1,13 +1,15 @@
 #include "orderlist.h"
 #include "ui_orderlist.h"
+
 #include <QComboBox>
 #include <DatabaseUtils.h>
 #include <QMessageBox>
 #include <QDir>
 #include <QSqlError>
 #include <QSqlQuery>
-#include "jobsheet.h"
 #include <QMenu>
+
+#include "jobsheet.h"
 
 OrderList::OrderList(QWidget *parent, const QString &role)
     : QDialog(parent), ui(new Ui::OrderList)

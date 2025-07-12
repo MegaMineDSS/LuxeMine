@@ -2,6 +2,7 @@
 #define ORDERMENU_H
 
 #include <QDialog>
+
 #include "DatabaseUtils.h"
 
 // Forward declarations (if needed later)

@@ -1,8 +1,10 @@
 #ifndef PDFUTILS_H
 #define PDFUTILS_H
+
 #include <QString>
 #include <QWidget>
 #include <QTableWidget>
+
 #include "CommonTypes.h"
 
 class PdfUtils

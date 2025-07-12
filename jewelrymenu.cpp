@@ -1,6 +1,7 @@
+#include <QDebug>
+
 #include "jewelrymenu.h"
 #include "DatabaseUtils.h"
-#include <QDebug>
 
 JewelryMenu::JewelryMenu(QObject *parent) : QObject(parent)
 {

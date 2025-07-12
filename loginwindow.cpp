@@ -1,9 +1,11 @@
 #include "loginwindow.h"
 #include "ui_loginwindow.h"
+
 #include <QMessageBox>
 #include <QDate>
 #include <QDir>
 #include <QDebug>
+
 #include "DatabaseUtils.h"
 
 LoginWindow::LoginWindow(QWidget *parent)

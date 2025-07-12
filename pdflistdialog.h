@@ -2,7 +2,9 @@
 #define PDFLISTDIALOG_H
 
 #include <QDialog>
+
 #include <QList>
+
 #include "CommonTypes.h"
 
 namespace Ui {

@@ -2,15 +2,16 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QDebug>
+
 #include <QPixmap>
 #include <QResizeEvent>
-#include "admin.h"
-#include "user.h"
+
 #include "addcatalog.h"
-#include "ordermenu.h"
+#include "admin.h"
 #include "loginwindow.h"
 #include "orderlist.h"
+#include "ordermenu.h"
+#include "user.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

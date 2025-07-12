@@ -2,9 +2,10 @@
 #define CARTITEMWIDGET_H
 
 #include <QWidget>
+
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
-#include <QHBoxLayout>
 
 
 class CartItemWidget : public QWidget

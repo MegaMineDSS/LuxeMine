@@ -1,8 +1,9 @@
-#include "mainwindow.h"
 #include <QApplication>
-#include <QStyleFactory>
-#include <QPalette>
 #include <QGuiApplication>
+#include <QPalette>
+#include <QStyleFactory>
+
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {

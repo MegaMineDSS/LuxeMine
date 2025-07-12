@@ -1,14 +1,16 @@
 #include "user.h"
 #include "ui_user.h"
-#include "DatabaseUtils.h"
-#include "PdfUtils.h"
-#include "Utils.h"
-#include "cartitemwidget.h"
+
 #include <QMessageBox>
 #include <QPixmap>
 #include <QTimer>
 #include <QRegularExpression>
 #include <QDir>
+
+#include "DatabaseUtils.h"
+#include "PdfUtils.h"
+#include "Utils.h"
+#include "cartitemwidget.h"
 
 
 User::User(QWidget *parent)
