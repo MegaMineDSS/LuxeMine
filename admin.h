@@ -64,6 +64,9 @@ private slots:
 
     void set_comboBox_role();
 
+
+    void on_show_passwd_checkBox_toggled(bool checked);
+
 protected:
     void closeEvent(QCloseEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
