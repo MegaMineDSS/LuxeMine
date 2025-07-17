@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-#include "DatabaseUtils.h"
+#include "databaseutils.h"
 
 // Forward declarations (if needed later)
 class QFileDialog;

@@ -9,7 +9,7 @@
 #include <QStringList>
 #include <QTableWidget>
 
-#include "CommonTypes.h"
+#include "commontypes.h"
 
 class DatabaseUtils
 {

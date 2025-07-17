@@ -5,7 +5,7 @@
 
 #include <QList>
 
-#include "CommonTypes.h"
+#include "commontypes.h"
 
 namespace Ui {
 class PdfListDialog;

@@ -15,9 +15,9 @@
 #include <QFormLayout>
 #include <QLabel>
 
-#include "ReadOnlyDelegate.h"
+#include "readonlydelegate.h"
 #include "databaseutils.h"
-#include "Utils.h"
+#include "utils.h"
 #include "PdfListDialog.h"
 
 
