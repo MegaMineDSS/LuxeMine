@@ -10,8 +10,8 @@
 #include <QJsonObject>
 #include <QKeyEvent>
 
-#include "DatabaseUtils.h"
-#include "Utils.h"
+#include "databaseutils.h"
+#include "utils.h"
 
 
 AddCatalog::AddCatalog(QWidget *parent)

@@ -17,6 +17,7 @@ SOURCES += \
     admin.cpp \
     adminmenubuttons.cpp \
     cartitemwidget.cpp \
+    commontypes.cpp \
     databaseutils.cpp \
     imageclicklabel.cpp \
     jewelrymenu.cpp \
@@ -29,17 +30,17 @@ SOURCES += \
     pch.cpp \
     pdflistdialog.cpp \
     pdfutils.cpp \
-    user.cpp
+    readonlydelegate.cpp \
+    user.cpp \
+    utils.cpp
 
 HEADERS += \
-    CommonTypes.h \
-    DatabaseUtils.h \
-    ReadOnlyDelegate.h \
-    Utils.h \
     addcatalog.h \
     admin.h \
     adminmenubuttons.h \
     cartitemwidget.h \
+    commontypes.h \
+    databaseutils.h \
     imageclicklabel.h \
     jewelrymenu.h \
     jobsheet.h \
@@ -50,7 +51,9 @@ HEADERS += \
     pch.h \
     pdflistdialog.h \
     pdfutils.h \
-    user.h
+    readonlydelegate.h \
+    user.h \
+    utils.h
 
 FORMS += \
     addcatalog.ui \

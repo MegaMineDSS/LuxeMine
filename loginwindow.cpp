@@ -6,7 +6,7 @@
 #include <QDir>
 #include <QDebug>
 
-#include "DatabaseUtils.h"
+#include "databaseutils.h"
 
 LoginWindow::LoginWindow(QWidget *parent)
     : QDialog(parent), ui(new Ui::LoginWindow)

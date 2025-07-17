@@ -5,7 +5,7 @@
 #include <QWidget>
 #include <QTableWidget>
 
-#include "CommonTypes.h"
+#include "commontypes.h"
 
 class PdfUtils
 {

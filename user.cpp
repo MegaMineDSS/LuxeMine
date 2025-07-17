@@ -7,9 +7,9 @@
 #include <QRegularExpression>
 #include <QDir>
 
-#include "DatabaseUtils.h"
+#include "databaseutils.h"
 #include "PdfUtils.h"
-#include "Utils.h"
+#include "utils.h"
 #include "cartitemwidget.h"
 
 

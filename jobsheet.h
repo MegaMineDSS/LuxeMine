@@ -2,6 +2,7 @@
 #define JOBSHEET_H
 
 #include <QDialog>
+#include <QKeyEvent>
 
 namespace Ui {
 class JobSheet;
@@ -15,7 +16,12 @@ public:
     explicit JobSheet(QWidget *parent = nullptr);
     ~JobSheet();
 
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+
+
 private:
+    void addTableRow(QTableWidget *table);
     Ui::JobSheet *ui;
 };
 
