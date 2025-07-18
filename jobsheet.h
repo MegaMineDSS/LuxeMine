@@ -13,7 +13,8 @@ class JobSheet : public QDialog
     Q_OBJECT
 
 public:
-    explicit JobSheet(QWidget *parent = nullptr);
+    explicit JobSheet(QWidget *parent = nullptr, const QString &jobNo = QString());
+
     ~JobSheet();
 
 protected:
@@ -22,6 +23,7 @@ protected:
 
 private:
     void addTableRow(QTableWidget *table);
+    void set_value(const QString &jobNo);
     Ui::JobSheet *ui;
 };
 

@@ -64,6 +64,8 @@ private slots:
 
     void on_orderBookUsersPushButton_clicked();
 
+    void on_orderBookRequestPushButton_clicked();
+
     void set_comboBox_role();
 
 

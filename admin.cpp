@@ -156,6 +156,10 @@ void Admin::on_orderBookUsersPushButton_clicked()
     set_comboBox_role();
 }
 
+void Admin::on_orderBookRequestPushButton_clicked(){
+    ui->Admin_panel->setCurrentIndex(6);
+}
+
 void Admin::on_show_users_clicked()
 {
     ui->Admin_panel->setCurrentIndex(3);
@@ -826,6 +830,7 @@ void Admin::on_admin_menu_push_button_clicked()
         connect(newAdminMenuButtons, &AdminMenuButtons::jewelryMenuClicked, this, &Admin::on_jewelry_menu_button_clicked);
         connect(newAdminMenuButtons, &AdminMenuButtons::logoutClicked, this, &Admin::on_logout_clicked);
         connect(newAdminMenuButtons, &AdminMenuButtons::orderBookUsersPushButtonClicked, this, &Admin::on_orderBookUsersPushButton_clicked);
+        connect(newAdminMenuButtons, &AdminMenuButtons::orderBookRequestPushButtonClicked, this, &Admin::on_orderBookRequestPushButton_clicked);
     }
 
     if (!menuVisible || !newAdminMenuButtons)
@@ -974,7 +979,6 @@ void Admin::on_saveOrderBookPushButton_clicked()
 void Admin::on_show_passwd_checkBox_toggled(bool checked)
 {
     ui->admin_password_lineEdit->setEchoMode(checked ? QLineEdit::Normal : QLineEdit::Password);
-    // ui->passwordLineEdit->update();  //  Force repaint
 }
 
 

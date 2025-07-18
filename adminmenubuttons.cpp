@@ -28,6 +28,11 @@ AdminMenuButtons::AdminMenuButtons(QWidget *parent) :
         this->hide();
     });
 
+    connect(ui->orderBookRequestPushButton, &QPushButton::clicked, this, [=](){
+        emit orderBookRequestPushButtonClicked();
+        this->hide();
+    });
+
     connect(ui->show_users, &QPushButton::clicked, this, [=]() {
         emit showUsersClicked();
         this->hide();
@@ -42,6 +47,8 @@ AdminMenuButtons::AdminMenuButtons(QWidget *parent) :
         emit logoutClicked();
         this->hide();
     });
+
+
 
 
     this->setFixedSize(800, 600);

@@ -27,6 +27,7 @@ signals:
     void menuHidden();  ///< Emitted when the menu hides
 
     void orderBookUsersPushButtonClicked();
+    void orderBookRequestPushButtonClicked();
 
 
 private:
