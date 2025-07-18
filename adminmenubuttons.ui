@@ -535,6 +535,105 @@ QPushButton#updateButton {
     </widget>
    </item>
    <item>
+    <widget class="QPushButton" name="orderBookRequestPushButton">
+     <property name="styleSheet">
+      <string notr="true">/* General Button Styling */
+QPushButton {
+    background-color: #3b3b3b;  /* Dark background */
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #d4af37;  /* Gold border */
+    border-radius: 10px;
+    padding: 12px 20px;
+    min-width: 100px;  /* Minimum width for consistency */
+    text-align: center;  /* Align text to the left for icons */
+    transition: all 0.3s ease;  /* Smooth transition */
+}
+
+/* Hover Effect */
+QPushButton:hover {
+    background-color: #f0a500;  /* Lighter gold on hover */
+    color: black;  /* Darker text on hover */
+    border-color: #ffcc00;  /* Brighter gold border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);  /* Slight shadow on hover */
+}
+
+/* Pressed Effect */
+QPushButton:pressed {
+    background-color: #b57d2a;  /* Darker gold when pressed */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);  /* Inset shadow when pressed */
+}
+
+/* Specific Buttons with Icons */
+QPushButton#showImage {
+    background-image: url(:/icons/show_image.png);  /* Replace with actual image path */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;  /* Padding for the icon */
+}
+QPushButton#addNewImage {
+    background-image: url(:/icons/add_new_image.png);  /* Image for Add New Image */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updatePrice {
+    background-image: url(:/icons/update_price.png);  /* Image for Update Price */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#addDiamond {
+    background-image: url(:/icons/add_diamond.png);  /* Image for Add Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#showAdmin {
+    background-image: url(:/icons/show_admin.png);  /* Image for Show Admin */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#shareBackup {
+    background-image: url(:/icons/share_backup.png);  /* Image for Share Backup */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#logout {
+    background-image: url(:/icons/logout.png);  /* Image for Logout */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#goldButton {
+    background-image: url(:/icons/gold.png);  /* Image for Gold */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#diamondButton {
+    background-image: url(:/icons/diamond.png);  /* Image for Diamond */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+QPushButton#updateButton {
+    background-image: url(:/icons/update.png);  /* Image for Update */
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 50px;
+}
+</string>
+     </property>
+     <property name="text">
+      <string>OrderBook Request</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="show_users">
      <property name="font">
       <font>

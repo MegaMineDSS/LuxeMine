@@ -22,6 +22,7 @@ OrderMenu::OrderMenu(QWidget *parent)
     ui->setupUi(this);
     // setFixedSize(this->size());
     // setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint);
+    setWindowTitle("Order Menu");
     setMinimumSize(100, 100);
     setMaximumSize(1150, 440);
     resize(1150, 440);

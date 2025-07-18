@@ -55,34 +55,24 @@ void OrderList::onTableRightClick(const QPoint &pos)
     QAction *selectedAction = contextMenu.exec(ui->orderListTableWidget->viewport()->mapToGlobal(pos));
     if (selectedAction == jobSheetAction)
     {
-        int row = index.row();
-        int columnCount = ui->orderListTableWidget->columnCount();
 
-        QStringList rowData;
-        for (int col = 0; col < columnCount; ++col)
-        {
-            QTableWidgetItem *item = ui->orderListTableWidget->item(row, col);
-            if (item)
-                rowData << item->text();
-            else if (QComboBox *combo = qobject_cast<QComboBox*>(ui->orderListTableWidget->cellWidget(row, col)))
-                rowData << combo->currentText();
-            else
-                rowData << ""; // fallback if empty
+        int row = index.row();
+        int jobNoColumn = 3;  // Replace with actual column index if different
+
+        QTableWidgetItem *jobNoItem = ui->orderListTableWidget->item(row, jobNoColumn);
+        QString jobNo;
+
+        if (jobNoItem)
+            jobNo = jobNoItem->text();
+        else
+            jobNo = ""; // Fallback if cell is empty
+
+        if (jobNo.isEmpty()) {
+            QMessageBox::warning(this, "Missing Data", "Job No is empty.");
+            return;
         }
 
-        // Example: print row data or pass to JobSheet
-        qDebug() << "Right-clicked row data:" << rowData;
-
-        QDir::setCurrent(QCoreApplication::applicationDirPath());
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "fetch_jobsheet_detail");
-        db.setDatabaseName("database/mega_mine_orderbook.db");
-        if (!db.open()) return ;
-
-
-
-
-        QSqlDatabase::removeDatabase("fetch_jobsheet_detail");
-        JobSheet *sheet = new JobSheet(this);
+        JobSheet *sheet = new JobSheet(this, jobNo);
         sheet->exec(); // Just open the dialog
 
     }
