@@ -23,6 +23,10 @@ public:
 private slots:
     void onTableRightClick(const QPoint &pos);
 
+    void openJobSheet(const QString &jobNo);
+
+    void printJobSheet(const QString &jobNo);
+
 
 private:
     void show_order_list_designer();

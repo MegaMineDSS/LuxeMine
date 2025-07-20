@@ -24,6 +24,8 @@ protected:
 private:
     void addTableRow(QTableWidget *table);
     void set_value(const QString &jobNo);
+    void loadImageForDesignNo();
+    void saveDesignNoAndImagePath(const QString &designNo, const QString &imagePath);
     Ui::JobSheet *ui;
 };
 
