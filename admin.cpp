@@ -156,9 +156,169 @@ void Admin::on_orderBookUsersPushButton_clicked()
     set_comboBox_role();
 }
 
-void Admin::on_orderBookRequestPushButton_clicked(){
-    ui->Admin_panel->setCurrentIndex(6);
+void Admin::handleStatusChangeApproval(int requestId, bool approved, int rowInTable) {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "status_change_update_conn");
+    db.setDatabaseName("database/mega_mine_orderbook.db");
+
+    if (!db.open()) {
+        qDebug() << "❌ DB Open Failed:" << db.lastError().text();
+        QMessageBox::critical(this, "DB Error", db.lastError().text());
+        return;
+    }
+    qDebug() << "✅ DB Connected";
+
+    QString jobNo, role, toStatus;
+
+    if (approved) {
+        QSqlQuery selectQuery(db);
+        selectQuery.prepare(R"(
+            SELECT jobNo, role, toStatus
+            FROM StatusChangeRequests
+            WHERE id = :id
+        )");
+        selectQuery.bindValue(":id", requestId);
+
+        if (!selectQuery.exec() || !selectQuery.next()) {
+            qDebug() << "❌ SELECT failed:" << selectQuery.lastError().text();
+            db.close();
+            return;
+        }
+
+        jobNo = selectQuery.value("jobNo").toString();
+        role = selectQuery.value("role").toString();
+        toStatus = selectQuery.value("toStatus").toString();
+        qDebug() << "➡️  Approving request for job:" << jobNo << " role:" << role << " toStatus:" << toStatus;
+
+        QStringList roleOrder = {"Designer", "Manufacturer", "Accountant"};
+        int roleIndex = roleOrder.indexOf(role);
+        if (roleIndex == -1) {
+            qDebug() << "❌ Invalid role:" << role;
+            db.close();
+            return;
+        }
+
+        QStringList setParts;
+        for (int i = 0; i < roleOrder.size(); ++i) {
+            if (i == roleIndex)
+                setParts << QString("%1 = '%2'").arg(roleOrder[i], toStatus);
+            else if (i > roleIndex)
+                setParts << QString("%1 = 'Pending'").arg(roleOrder[i]);
+        }
+
+        QString updateSQL = QString(R"(
+            UPDATE "Order-Status"
+            SET %1
+            WHERE jobNo = '%2'
+        )").arg(setParts.join(", "), jobNo);
+
+        qDebug() << "📝 SQL:" << updateSQL;
+        QSqlQuery updateQuery(db);
+        if (!updateQuery.exec(updateSQL)) {
+            qDebug() << "❌ Failed to update Order-Status:" << updateQuery.lastError().text();
+            db.close();
+            return;
+        }
+        qDebug() << "✅ Order-Status updated.";
+    }
+
+    QString newStatus = approved ? "Approved" : "Declined";
+    QString statusSQL = QString(R"(
+        UPDATE StatusChangeRequests
+        SET status = '%1'
+        WHERE id = %2
+    )").arg(newStatus).arg(requestId);
+
+    qDebug() << "📝 Updating request status:" << statusSQL;
+    QSqlQuery statusQuery(db);
+    if (!statusQuery.exec(statusSQL)) {
+        qDebug() << "❌ Failed to update StatusChangeRequests:" << statusQuery.lastError().text();
+        db.close();
+        return;
+    }
+
+    db.close();
+    qDebug() << "✅ DB changes successful. Removing row from UI.";
+
+    // Remove the row from the table
+    ui->jobsheet_request_table->removeRow(rowInTable);
 }
+
+
+
+
+
+
+void Admin::on_orderBookRequestPushButton_clicked() {
+    ui->Admin_panel->setCurrentIndex(6);
+
+    ui->jobsheet_request_table->setRowCount(0);
+    ui->jobsheet_request_table->setColumnCount(7);  // 6 fields + 1 action column
+    ui->jobsheet_request_table->setHorizontalHeaderLabels({
+        "Job No", "User ID", "From", "To", "Requested At", "Role", "Action"
+    });
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "status_change_conn");
+    db.setDatabaseName("database/mega_mine_orderbook.db");
+
+    if (!db.open()) {
+        QMessageBox::critical(this, "DB Error", db.lastError().text());
+        return;
+    }
+
+    QSqlQuery query(db);
+    if (!query.exec("SELECT id, jobNo, userId, fromStatus, toStatus, requestTime, role FROM StatusChangeRequests WHERE status=\"Pending\"")) {
+        QMessageBox::critical(this, "Query Error", query.lastError().text());
+        db.close();
+        return;
+    }
+
+    int row = 0;
+    while (query.next()) {
+        int id = query.value(0).toInt();
+        ui->jobsheet_request_table->insertRow(row);
+
+        for (int col = 1; col <= 6; ++col) {  // skip id (col 0)
+            QTableWidgetItem *item = new QTableWidgetItem(query.value(col).toString());
+            item->setTextAlignment(Qt::AlignCenter);
+            ui->jobsheet_request_table->setItem(row, col - 1, item);
+        }
+
+        // Add approve/reject buttons in last column
+        QWidget *actionWidget = new QWidget();
+        QHBoxLayout *layout = new QHBoxLayout(actionWidget);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setAlignment(Qt::AlignCenter);
+
+        QPushButton *approveButton = new QPushButton("✔️");
+        QPushButton *rejectButton = new QPushButton("❌");
+
+        approveButton->setToolTip("Approve Request");
+        rejectButton->setToolTip("Reject Request");
+
+        layout->addWidget(approveButton);
+        layout->addWidget(rejectButton);
+
+        ui->jobsheet_request_table->setCellWidget(row, 6, actionWidget);
+
+        // Store the id in button properties
+        approveButton->setProperty("requestId", id);
+        rejectButton->setProperty("requestId", id);
+
+        connect(approveButton, &QPushButton::clicked, this, [=]() {
+            handleStatusChangeApproval(id, true, row);
+        });
+
+        connect(rejectButton, &QPushButton::clicked, this, [=]() {
+            handleStatusChangeApproval(id, false, row);
+        });
+
+        ++row;
+    }
+
+    db.close();
+}
+
+
 
 void Admin::on_show_users_clicked()
 {

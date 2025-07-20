@@ -555,6 +555,19 @@ QPushButton:disabled {
            </property>
           </widget>
          </item>
+         <item row="7" column="1">
+          <spacer name="horizontalSpacer_14">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
          <item row="1" column="0" rowspan="6" colspan="3">
           <widget class="QStackedWidget" name="Admin_panel">
            <property name="currentIndex">
@@ -3887,21 +3900,57 @@ QLineEdit:hover {
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="orderBookRequest"/>
+           <widget class="QWidget" name="orderBookRequest">
+            <widget class="QTableWidget" name="jobsheet_request_table">
+             <property name="geometry">
+              <rect>
+               <x>85</x>
+               <y>51</y>
+               <width>721</width>
+               <height>421</height>
+              </rect>
+             </property>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Job No.</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>User ID</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Form Status</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>To Status</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Request Time</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>New Column</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Status</string>
+              </property>
+             </column>
+            </widget>
+           </widget>
           </widget>
-         </item>
-         <item row="7" column="1">
-          <spacer name="horizontalSpacer_14">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </widget>

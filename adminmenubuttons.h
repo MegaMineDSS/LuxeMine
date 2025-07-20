@@ -30,6 +30,9 @@ signals:
     void orderBookRequestPushButtonClicked();
 
 
+private slots:
+
+
 private:
     void hideEvent(QHideEvent *event);
 
