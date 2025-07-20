@@ -66,6 +66,9 @@ private slots:
 
     void on_orderBookRequestPushButton_clicked();
 
+    void handleStatusChangeApproval(int requestId, bool approved, int rowInTable);
+
+
     void set_comboBox_role();
 
 
