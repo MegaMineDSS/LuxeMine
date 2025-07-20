@@ -9,11 +9,18 @@
 #include <QSqlQuery>
 #include <QMenu>
 
+#include <QAxObject>
+
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
 
+
 #include "jobsheet.h"
+
+#include "header/xlsxdocument.h"
+
+using namespace QXlsx;
 
 OrderList::OrderList(QWidget *parent, const QString &role)
     : QDialog(parent), ui(new Ui::OrderList)
@@ -72,17 +79,171 @@ void OrderList::onTableRightClick(const QPoint &pos)
             return;
         }
 
-        JobSheet *sheet = new JobSheet(this, jobNo);
-        sheet->exec(); // Just open the dialog
+        openJobSheet(jobNo);
 
     }
+}
 
+void OrderList::openJobSheet(const QString &jobNo){
+    JobSheet *sheet = new JobSheet(this, jobNo);
+    sheet->exec(); // Just open the dialog
+}
+
+void OrderList::printJobSheet(const QString &jobNo){
+    // Set working directory
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+
+    // Open database connection
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "set_jobsheet");
+    db.setDatabaseName("database/mega_mine_orderbook.db");
+
+    if (!db.open()) {
+        qDebug() << "Failed to open database:" << db.lastError().text();
+        return;
+    }
+
+    QSqlQuery query(db);
+    query.prepare(R"(
+                SELECT partyId, jobNo, orderNo, clientId, orderDate, deliveryDate,
+                       productPis, designNo1, metalPurity, metalColor, sizeNo, sizeMM,
+                       length, width, height, image1path
+                FROM "OrderBook-Detail"
+                WHERE jobNo = :jobNo
+    )");
+
+    query.bindValue(":jobNo", jobNo);
+
+    if (!query.exec()) {
+        qDebug() << "Query failed:" << query.lastError().text();
+        return;
+    }
+
+    // QString filePath = "sample_excel.xlsx";
+    QString filePath = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/sample_excel.xlsx");
+
+
+    if (!QFile::exists(filePath)) {
+        QMessageBox::critical(this, "Error", "Excel template file not found.");
+        return;
+    }
+
+
+    // QAxObject *excel = new QAxObject("Excel.Application", this);
+    QAxObject *excel = new QAxObject("Excel.Application", this);
+    if (excel->isNull()) {
+        QMessageBox::critical(this, "Error", "Excel is not available on this system.");
+        return;
+    }
+
+    // 🚀 Optimization: Disable slow Excel features
+    excel->setProperty("DisplayAlerts", false);     // Prevents popups like "Save changes?"
+    excel->setProperty("ScreenUpdating", false);    // Avoids UI redraw in Excel
+    excel->setProperty("EnableEvents", false);      // Disables background event triggers
+
+    excel->setProperty("Visible", false);
+
+    QAxObject *workbooks = excel->querySubObject("Workbooks");
+    QAxObject *workbook = workbooks->querySubObject("Open(const QString&)", filePath);
+    QAxObject *sheet = workbook->querySubObject("Worksheets(int)", 1); // Sheet1
+
+
+    if(query.next()){
+        sheet->querySubObject("Range(const QString&)", "B3")->setProperty("Value", query.value("partyId").toString());
+        sheet->querySubObject("Range(const QString&)", "H5")->setProperty("Value", query.value("jobNo").toString());
+        sheet->querySubObject("Range(const QString&)", "H4")->setProperty("Value", query.value("orderNo").toString());
+        sheet->querySubObject("Range(const QString&)", "H3")->setProperty("Value", query.value("clientId").toString());
+
+        // Read and parse order date
+        QString rawOrderDate = query.value("orderDate").toString();
+        QDate orderDate = QDate::fromString(rawOrderDate, "yyyy-MM-dd");  // Correct format
+
+        if (orderDate.isValid()) {
+            QAxObject *orderCell = sheet->querySubObject("Range(const QString&)", "H2");
+            orderCell->setProperty("Value", orderDate.toString("MM/dd/yyyy"));  // Excel-compatible
+            orderCell->setProperty("NumberFormat", "mm/dd/yyyy");               // Force Excel to treat it as date
+        } else {
+            qWarning() << "Invalid order date:" << rawOrderDate;
+        }
+
+        // Read and parse delivery date
+        QString rawDeliveryDate = query.value("deliveryDate").toString();
+        QDate deliveryDate = QDate::fromString(rawDeliveryDate, "yyyy-MM-dd");  // Correct format
+
+        if (deliveryDate.isValid()) {
+            QAxObject *deliveryCell = sheet->querySubObject("Range(const QString&)", "A6");
+            deliveryCell->setProperty("Value", deliveryDate.toString("MM/dd/yyyy"));
+            deliveryCell->setProperty("NumberFormat", "mm/dd/yyyy");
+        } else {
+            qWarning() << "Invalid delivery date:" << rawDeliveryDate;
+        }
+
+
+
+        sheet->querySubObject("Range(const QString&)", "B4")->setProperty("Value", QString::number(query.value("productPis").toInt()));
+        sheet->querySubObject("Range(const QString&)", "F4")->setProperty("Value", query.value("designNo1").toString());
+        sheet->querySubObject("Range(const QString&)", "B6")->setProperty("Value", query.value("metalPurity").toString());
+        sheet->querySubObject("Range(const QString&)", "C6")->setProperty("Value", query.value("metalColor").toString());
+        sheet->querySubObject("Range(const QString&)", "D6")->setProperty("Value", QString::number(query.value("sizeNo").toDouble()));
+        sheet->querySubObject("Range(const QString&)", "E6")->setProperty("Value", QString::number(query.value("sizeMM").toDouble()));
+        sheet->querySubObject("Range(const QString&)", "F6")->setProperty("Value", QString::number(query.value("length").toDouble()));
+        sheet->querySubObject("Range(const QString&)", "G6")->setProperty("Value", QString::number(query.value("width").toDouble()));
+        sheet->querySubObject("Range(const QString&)", "H6")->setProperty("Value", QString::number(query.value("height").toDouble()));
+
+        // --- IMAGE HANDLING ---
+        QString imageRelPath = query.value("image1path").toString();
+        QString imageFullPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + imageRelPath);
+        QString nativeImagePath = QDir::toNativeSeparators(imageFullPath); // ✅ REQUIRED for Excel/Windows
+
+        QFile imageFile(nativeImagePath);
+        if (!imageFile.exists()) {
+            QMessageBox::warning(this, "Image Not Found", "Image not found at:\n" + nativeImagePath);
+        } else {
+            QAxObject *shapes = sheet->querySubObject("Shapes");
+
+            // Optional: Reset working directory
+            QDir::setCurrent(QCoreApplication::applicationDirPath());
+
+            // qDebug() << "Full image path for Excel:" << nativeImagePath;
+
+            QAxObject *picture = shapes->querySubObject("AddPicture(const QString&, bool, bool, double, double, double, double)",
+                                                        nativeImagePath,
+                                                        false,  // LinkToFile
+                                                        true,   // SaveWithDocument
+                                                        570.0,  // Left (column J)
+                                                        20.0,   // Top (row 2)
+                                                        172.0,  // Width (J to N)
+                                                        130.0); // Height (rows 2–9)
+
+            if (!picture || picture->isNull()) {
+                QMessageBox::warning(this, "Image Insert Error", "Failed to insert image into Excel:\n" + nativeImagePath);
+            }
+        }
+
+
+
+        // Save changes
+        workbook->dynamicCall("Save()");
+
+        // ✅ Print the document (silent print to default printer)
+        workbook->dynamicCall("PrintOut()");
+
+        // Close Excel
+        workbook->dynamicCall("Close()");
+        excel->dynamicCall("Quit()");
+
+        delete excel;
+
+    }
+    QMessageBox::information(this, "Success", "Excel updated and sent to printer.");
+
+    db.close();
+    QSqlDatabase::removeDatabase("set_jobsheet");
 }
 
 void OrderList::show_order_list_designer()
 {
-    ui->orderListTableWidget->setColumnCount(7); // Including Sr No
-    QStringList headers = {"Sr No", "User ID", "Party ID", "Job No", "Designer Status", "Manufacturer Status", "Accountant Status", "Job Sheet"};
+    ui->orderListTableWidget->setColumnCount(9); // Including Sr No
+    QStringList headers = {"Sr No", "User ID", "Party ID", "Job No", "Designer Status", "Manufacturer Status", "Accountant Status", "Job Sheet","Print"};
     ui->orderListTableWidget->setHorizontalHeaderLabels(headers);
 
     QList<QVariantList> orderList = DatabaseUtils::fetchOrderListDetails();
@@ -253,6 +414,26 @@ void OrderList::show_order_list_designer()
                 ui->orderListTableWidget->setItem(row, col + 1, item);
             }
         }
+
+        // Job Sheet Button
+        QPushButton *jobSheetBtn = new QPushButton("Job Sheet");
+        connect(jobSheetBtn, &QPushButton::clicked, this, [=]() {
+            QString jobNoForBtn = order[2].toString(); // Assuming column 2 is Job No
+
+            openJobSheet(jobNoForBtn);
+        });
+        ui->orderListTableWidget->setCellWidget(row, 7, jobSheetBtn); // Column index 7
+
+        // Print Button
+        QPushButton *printBtn = new QPushButton("Print");
+        connect(printBtn, &QPushButton::clicked, this, [=]() {
+            QString jobNoForBtn = order[2].toString();
+            // QMessageBox::information(this, "Print", "Print clicked for Job No: " + jobNoForBtn);
+            printJobSheet(jobNoForBtn);
+            // TODO: Implement actual Print logic
+        });
+        ui->orderListTableWidget->setCellWidget(row, 8, printBtn); // Column index 8
+
     }
 
     ui->orderListTableWidget->resizeColumnsToContents();

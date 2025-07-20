@@ -17,6 +17,41 @@ JobSheet::JobSheet(QWidget *parent, const QString &jobNo)
     setMaximumSize(1410, 910);
     resize(1410, 910);
 
+    QList<QLineEdit*> lineEdits = findChildren<QLineEdit*>();
+    for (QLineEdit* edit : lineEdits) {
+        if (edit != ui->desigNoLineEdit) {
+            edit->setReadOnly(true);  // Optional: light gray to indicate read-only
+        }
+    }
+
+    QList<QDateEdit*> dateEdits = findChildren<QDateEdit*>();
+    for (QDateEdit* dateEdit : dateEdits) {
+        dateEdit->setEnabled(false);
+    }
+
+    QList<QTextEdit*> textEdits = findChildren<QTextEdit*>();
+    for (QTextEdit* textEdit : textEdits) {
+        textEdit->setReadOnly(true);
+    }
+
+    QList<QComboBox*> comboBoxes = findChildren<QComboBox*>();
+    for (QComboBox* combo : comboBoxes) {
+        combo->setEnabled(false);
+    }
+
+    QList<QTableWidget*> tableWidgets = findChildren<QTableWidget*>();
+    for (QTableWidget* table : tableWidgets) {
+        table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    }
+
+    QList<QLabel*> labels = findChildren<QLabel*>();
+    for (QLabel* label : labels) {
+        if (label != ui->productImageLabel) {
+            label->setEnabled(false);
+        }
+    }
+
+
     set_value(jobNo);
     ui->extraNoteTextEdit->setText(R"(ACKNOWLEDGMENT OF ENTRUSTMENT
 We Hereby acknowledge receipt of the following goods mentioned overleaf which you have entrusted to melus and to which IAve hold in trust for you for the following purpose and on following conditions.
@@ -28,6 +63,7 @@ We Hereby acknowledge receipt of the following goods mentioned overleaf which yo
 
     ui->extraNoteTextEdit->setStyleSheet("font-size: 7.3pt;");
 
+    connect(ui->desigNoLineEdit, &QLineEdit::returnPressed, this, &JobSheet::loadImageForDesignNo);
 
 }
 
@@ -74,7 +110,7 @@ void JobSheet::set_value(const QString &jobNo)
     query.prepare(R"(
         SELECT sellerId, partyId, jobNo, orderNo, clientId, orderDate, deliveryDate,
                productPis, designNo1, metalPurity, metalColor, sizeNo, sizeMM,
-               length, width, height
+               length, width, height, image1path
         FROM "OrderBook-Detail"
         WHERE jobNo = :jobNo
     )");
@@ -112,10 +148,115 @@ void JobSheet::set_value(const QString &jobNo)
         ui->lengthLineEdit->setText(QString::number(query.value("length").toDouble()));
         ui->widthLineEdit->setText(QString::number(query.value("width").toDouble()));
         ui->heightLineEdit->setText(QString::number(query.value("height").toDouble()));
+
+        // ✅ Load image if image1path exists
+        QString imagePath = query.value("image1path").toString();
+        QString fullPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + imagePath);
+
+        QPixmap pixmap(fullPath);
+        if (!pixmap.isNull()) {
+            ui->productImageLabel->setPixmap(pixmap.scaled(ui->productImageLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        } else {
+            qDebug() << "⚠️ Could not load image for design from:" << fullPath;
+        }
+
     } else {
         qDebug() << "No record found for jobNo:" << jobNo;
     }
 
     db.close();  // Always close the DB
     QSqlDatabase::removeDatabase("set_jobsheet");
+}
+
+void JobSheet::loadImageForDesignNo()
+{
+    QString designNo = ui->desigNoLineEdit->text().trimmed();
+    if (designNo.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "Design number is empty.");
+        return;
+    }
+
+    // Set working directory
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+
+    // Open the image database
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "image_conn");
+    db.setDatabaseName("database/mega_mine_image.db");
+
+    if (!db.open()) {
+        QMessageBox::critical(this, "Database Error", "Failed to open image database:\n" + db.lastError().text());
+        return;
+    }
+
+    QSqlQuery query(db);
+    query.prepare("SELECT image_path FROM image_data WHERE design_no = :designNo");
+    query.bindValue(":designNo", designNo);
+
+    if (!query.exec()) {
+        QMessageBox::critical(this, "Query Error", "Failed to execute query:\n" + query.lastError().text());
+        db.close();
+        QSqlDatabase::removeDatabase("image_conn");
+        return;
+    }
+
+    if (query.next()) {
+        QString imagePath = query.value("image_path").toString();
+        QString fullPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + imagePath);
+
+        QPixmap pixmap(fullPath);
+        if (!pixmap.isNull()) {
+            ui->productImageLabel->setPixmap(pixmap.scaled(ui->productImageLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+            // ✅ Save to OrderBook-Detail table
+            saveDesignNoAndImagePath(designNo, imagePath);
+
+        } else {
+            QMessageBox::warning(this, "Image Error", "Image not found at path:\n" + fullPath);
+        }
+    } else {
+        QMessageBox::information(this, "Not Found", "No image found for design number: " + designNo);
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase("image_conn");
+}
+
+void JobSheet::saveDesignNoAndImagePath(const QString &designNo, const QString &imagePath)
+{
+    QString jobNo = ui->jobNoLineEdit->text().trimmed();
+    if (jobNo.isEmpty()) {
+        QMessageBox::warning(this, "Missing Data", "Job No is missing. Cannot save image path.");
+        return;
+    }
+
+    // Set working directory
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "save_design_image");
+    db.setDatabaseName("database/mega_mine_orderbook.db");
+
+    if (!db.open()) {
+        QMessageBox::critical(this, "DB Error", "Failed to open orderbook DB:\n" + db.lastError().text());
+        return;
+    }
+
+    QSqlQuery query(db);
+    query.prepare(R"(
+        UPDATE "OrderBook-Detail"
+        SET designNo1 = :designNo, image1path = :imagePath
+        WHERE jobNo = :jobNo
+    )");
+
+    query.bindValue(":designNo", designNo);
+    query.bindValue(":imagePath", imagePath);
+    query.bindValue(":jobNo", jobNo);
+
+    if (!query.exec()) {
+        QMessageBox::critical(this, "Query Error", "Failed to update OrderBook-Detail:\n" + query.lastError().text());
+    } else {
+        qDebug() << "✅ Design number and image path updated for jobNo:" << jobNo;
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase("save_design_image");
 }
