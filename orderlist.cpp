@@ -118,8 +118,15 @@ void OrderList::printJobSheet(const QString &jobNo){
         return;
     }
 
-    // QString filePath = "sample_excel.xlsx";
-    QString filePath = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/sample_excel.xlsx");
+    QString templatePath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/sample_excel.xlsx");
+    QString tempPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/temp_jobsheet_" + jobNo + ".xlsx");
+
+    if (!QFile::copy(templatePath, tempPath)) {
+        QMessageBox::critical(this, "Error", "Failed to create temporary Excel file.");
+        return;
+    }
+
+    QString filePath = QDir::toNativeSeparators(tempPath);  // Use the copy for editing
 
 
     if (!QFile::exists(filePath)) {
@@ -205,21 +212,30 @@ void OrderList::printJobSheet(const QString &jobNo){
 
             // qDebug() << "Full image path for Excel:" << nativeImagePath;
 
+            // Get the top-left cell of the target range
+            QAxObject *anchorCell = sheet->querySubObject("Range(const QString&)", "J2");
+            double left = anchorCell->property("Left").toDouble();
+            double top = anchorCell->property("Top").toDouble();
+
+            // Get the total width and height of merged range J2:N9
+            QAxObject *mergeRange = sheet->querySubObject("Range(const QString&)", "J2:N9");
+            double width = mergeRange->property("Width").toDouble();
+            double height = mergeRange->property("Height").toDouble();
+
+            // Insert the image using accurate placement
             QAxObject *picture = shapes->querySubObject("AddPicture(const QString&, bool, bool, double, double, double, double)",
                                                         nativeImagePath,
                                                         false,  // LinkToFile
                                                         true,   // SaveWithDocument
-                                                        570.0,  // Left (column J)
-                                                        20.0,   // Top (row 2)
-                                                        172.0,  // Width (J to N)
-                                                        130.0); // Height (rows 2–9)
+                                                        left,
+                                                        top,
+                                                        width,
+                                                        height);
 
             if (!picture || picture->isNull()) {
                 QMessageBox::warning(this, "Image Insert Error", "Failed to insert image into Excel:\n" + nativeImagePath);
             }
         }
-
-
 
         // Save changes
         workbook->dynamicCall("Save()");
@@ -231,13 +247,29 @@ void OrderList::printJobSheet(const QString &jobNo){
         workbook->dynamicCall("Close()");
         excel->dynamicCall("Quit()");
 
-        delete excel;
-
+        auto cleanupAxObject = [](QAxObject* obj) {
+            if (obj) {
+                obj->clear(); // Releases the COM object
+                delete obj;
+            }
+        };
+        // cleanupAxObject(picture);
+        // cleanupAxObject(shapes);
+        cleanupAxObject(sheet);
+        cleanupAxObject(workbook);
+        cleanupAxObject(workbooks);
+        cleanupAxObject(excel);
     }
     QMessageBox::information(this, "Success", "Excel updated and sent to printer.");
 
     db.close();
     QSqlDatabase::removeDatabase("set_jobsheet");
+
+    if (QFile::exists(tempPath)) {
+        QFile::remove(tempPath);
+    }
+
+
 }
 
 void OrderList::show_order_list_designer()
