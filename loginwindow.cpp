@@ -7,6 +7,7 @@
 #include <QDebug>
 
 #include "databaseutils.h"
+#include "orderlist.h"
 
 LoginWindow::LoginWindow(QWidget *parent)
     : QDialog(parent), ui(new Ui::LoginWindow)
@@ -149,3 +150,21 @@ void LoginWindow::on_loginPushButton_clicked()
         QMessageBox::information(this, "Info", "Role not supported yet.");
     }
 }
+
+void LoginWindow::on_orderListPushButton_clicked()
+{
+    if (userId.isEmpty() || role.isEmpty()) {
+        QMessageBox::warning(this, "Error", "You must log in first.");
+        return;
+    }
+
+    OrderList *orderListWindow = new OrderList(parentWidget(), role);
+    orderListWindow->setAttribute(Qt::WA_DeleteOnClose);
+    orderListWindow->show();
+    orderListWindow->raise();           // bring to front
+    orderListWindow->activateWindow();  // focus it
+
+    this->done(QDialog::Rejected);
+}
+
+

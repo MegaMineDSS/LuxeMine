@@ -42,6 +42,8 @@ private slots:
 
     void set_comboBox_selectParty();
 
+    void on_orderListPushButton_clicked();
+
 private:
     Ui::LoginWindow *ui;
     QString userName;
