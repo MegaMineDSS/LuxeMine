@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">
+</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
     <number>4</number>
@@ -583,6 +587,9 @@
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="itemDesignLabel">
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string>ITEM DESIGN</string>
      </property>

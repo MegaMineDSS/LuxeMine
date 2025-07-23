@@ -18,7 +18,9 @@ public:
     ~OrderList();
 
     void setRoleAndUserInfo(const QString& role, const QString& userId, const QString& userName);
+    void setRoleAndUserRole(const QString &role);
 
+    QString userRole;
 
 private slots:
     void onTableRightClick(const QPoint &pos);
@@ -29,11 +31,13 @@ private slots:
 
 
 private:
-    void show_order_list_designer();
+    void show_order_list_with_role(const QString &role, int editableStatusCol);
+    void populateCommonOrderRow(int row, const QVariantList &order);
+
     Ui::OrderList *ui;
     LoginWindow *loginWindow = nullptr;
 
-    QString userRole;
+
     QString userId;
     QString userName;
 };

@@ -6,21 +6,45 @@
 #include <QSqlError>
 #include <QDir>
 
-JobSheet::JobSheet(QWidget *parent, const QString &jobNo)
+#include <QDebug>
+
+JobSheet::JobSheet(QWidget *parent, const QString &jobNo, const QString &role)
     : QDialog(parent),
-    ui(new Ui::JobSheet)
+    ui(new Ui::JobSheet),
+    userRole(role)
 {
     ui->setupUi(this);
 
     setWindowTitle("Job Sheet");
     setMinimumSize(100, 100);
-    setMaximumSize(1410, 910);
-    resize(1410, 910);
+    setWindowFlags(Qt::Window | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+
+    ui->gridLayout->setContentsMargins(4,4,4,4);
+
+
+
+    int maxWidth = 1410;
+    int maxHeight = 910;
+
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->availableGeometry();
+
+    int screenWidth = screenGeometry.width() * 0.8;
+    int screenHeight = screenGeometry.height() * 0.8;
+
+    // Choose the smaller between 80% of 1410×910 vs 80% of screen
+    finalWidth = qMin(maxWidth, screenWidth);
+    finalHeight = qMin(maxHeight, screenHeight);
+
+    resize(finalWidth, finalHeight);
+    move(screenGeometry.center() - rect().center());
 
     QList<QLineEdit*> lineEdits = findChildren<QLineEdit*>();
     for (QLineEdit* edit : lineEdits) {
         if (edit != ui->desigNoLineEdit) {
-            edit->setReadOnly(true);  // Optional: light gray to indicate read-only
+            edit->setReadOnly(true);
+        } else if (userRole != "designer") {
+            edit->setReadOnly(true);  // disable even this for non-designers
         }
     }
 
@@ -48,6 +72,8 @@ JobSheet::JobSheet(QWidget *parent, const QString &jobNo)
     for (QLabel* label : labels) {
         if (label != ui->productImageLabel) {
             label->setEnabled(false);
+        } else if (userRole != "designer") {
+            label->setEnabled(false); // restrict image even for label if not designer
         }
     }
 
@@ -63,13 +89,39 @@ We Hereby acknowledge receipt of the following goods mentioned overleaf which yo
 
     ui->extraNoteTextEdit->setStyleSheet("font-size: 7.3pt;");
 
-    connect(ui->desigNoLineEdit, &QLineEdit::returnPressed, this, &JobSheet::loadImageForDesignNo);
-
+    if (userRole == "designer") {
+        connect(ui->desigNoLineEdit, &QLineEdit::returnPressed, this, &JobSheet::loadImageForDesignNo);
+    }
 }
 
 JobSheet::~JobSheet()
 {
     delete ui;
+}
+
+void JobSheet::resizeEvent(QResizeEvent *event)
+{
+    QDialog::resizeEvent(event);  // Call base class
+
+    int windowW = width();
+    int windowH = height();
+
+    int baseW = finalWidth;   // Store 1410 * 0.8 or whatever you use
+    int baseH = finalHeight;
+
+    int marginLeftRight = 4;
+    int marginTopBottom = 4;
+
+    // If window is larger than base, add extra margin to center content
+    if (windowW > baseW)
+        marginLeftRight = (windowW - baseW) / 2;
+
+    if (windowH > baseH)
+        marginTopBottom = (windowH - baseH) / 2;
+
+    // Apply new margins
+    ui->gridLayout->setContentsMargins(marginLeftRight, marginTopBottom,
+                                       marginLeftRight, marginTopBottom);
 }
 
 
@@ -154,9 +206,12 @@ void JobSheet::set_value(const QString &jobNo)
         QString fullPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + imagePath);
 
         QPixmap pixmap(fullPath);
-        if (!pixmap.isNull()) {
-            ui->productImageLabel->setPixmap(pixmap.scaled(ui->productImageLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        } else {
+        if (!imagePath.isNull()) {
+            ui->productImageLabel->setScaledContents(true);
+            ui->productImageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+            ui->productImageLabel->setPixmap(pixmap);
+        }
+        else {
             qDebug() << "⚠️ Could not load image for design from:" << fullPath;
         }
 
