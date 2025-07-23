@@ -259,19 +259,16 @@ void Admin::on_orderBookRequestPushButton_clicked() {
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "status_change_conn");
     db.setDatabaseName("database/mega_mine_orderbook.db");
-
     if (!db.open()) {
         QMessageBox::critical(this, "DB Error", db.lastError().text());
         return;
     }
-
     QSqlQuery query(db);
     if (!query.exec("SELECT id, jobNo, userId, fromStatus, toStatus, requestTime, role FROM StatusChangeRequests WHERE status=\"Pending\"")) {
         QMessageBox::critical(this, "Query Error", query.lastError().text());
         db.close();
         return;
     }
-
     int row = 0;
     while (query.next()) {
         int id = query.value(0).toInt();
@@ -305,11 +302,13 @@ void Admin::on_orderBookRequestPushButton_clicked() {
         rejectButton->setProperty("requestId", id);
 
         connect(approveButton, &QPushButton::clicked, this, [=]() {
-            handleStatusChangeApproval(id, true, row);
+            int actualRow = ui->jobsheet_request_table->indexAt(approveButton->parentWidget()->pos()).row();
+            handleStatusChangeApproval(id, true, actualRow);
         });
 
         connect(rejectButton, &QPushButton::clicked, this, [=]() {
-            handleStatusChangeApproval(id, false, row);
+            int actualRow = ui->jobsheet_request_table->indexAt(rejectButton->parentWidget()->pos()).row();
+            handleStatusChangeApproval(id, false, actualRow);
         });
 
         ++row;
