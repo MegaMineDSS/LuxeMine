@@ -1623,7 +1623,7 @@ bool DatabaseUtils::saveOrder(const OrderData &order) {
     return true;
 }
 
-QList<QVariantList> DatabaseUtils::fetchOrderListDetails() {
+QList<QVariantList> DatabaseUtils:: fetchOrderListDetails() {
     QList<QVariantList> orderList;
 
     QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
@@ -1638,7 +1638,15 @@ QList<QVariantList> DatabaseUtils::fetchOrderListDetails() {
     {
         QSqlQuery query(db);
         query.prepare(R"(
-            SELECT od.sellerId, od.partyId, os.jobNo, os.Designer, os.Manufacturer, os.Accountant
+            SELECT od.sellerId,
+                   od.partyId,
+                   os.jobNo,
+                   os.Manager,
+                   os.Designer,
+                   os.Manufacturer,
+                   os.Accountant,
+                   od.orderDate,
+                   od.deliveryDate
             FROM "OrderBook-Detail" od
             LEFT JOIN "Order-Status" os ON od.jobNo = os.jobNo
         )");
@@ -1652,7 +1660,7 @@ QList<QVariantList> DatabaseUtils::fetchOrderListDetails() {
 
         while (query.next()) {
             QVariantList row;
-            for (int i = 0; i < 6; ++i) {
+            for (int i = 0; i < 9; ++i) {
                 row.append(query.value(i));
             }
             orderList.append(row);

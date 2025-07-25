@@ -93,7 +93,7 @@ void MainWindow::on_orderBookButton_clicked()
                                          partyName, partyId, partyAddress, partyCity, partyState, partyCountry);
             newOrderMenu->insertDummyOrder();
             newOrderMenu->show();
-        } else if (role == "seller" || role == "designer" || role == "manufacturer" || role == "accountant") {
+        } else if (role == "seller" || role == "designer" || role == "manufacturer" || role == "accountant" || role == "manager") {
             newOrderList = new OrderList(nullptr, role);
             newOrderList->setAttribute(Qt::WA_DeleteOnClose);
             newOrderList->show();

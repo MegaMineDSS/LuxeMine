@@ -17,35 +17,43 @@
 #include <QSqlQuery>
 #include <QSqlError>
 
-
 #include "jobsheet.h"
 
 #include "header/xlsxdocument.h"
 
 using namespace QXlsx;
-
+// RPD  Casting Bagging
 OrderList::OrderList(QWidget *parent, const QString &role)
     : QDialog(parent), ui(new Ui::OrderList)
 {
+
     ui->setupUi(this);
 
     ui->orderListTableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->orderListTableWidget, &QTableWidget::customContextMenuRequested,
             this, &OrderList::onTableRightClick);
 
-    ui->orderListTableWidget->setColumnCount(9); // Including Sr No
-    QStringList headers = {"Sr No", "User ID", "Party ID", "Job No", "Designer Status", "Manufacturer Status", "Accountant Status", "Job Sheet","Print"};
+    ui->orderListTableWidget->setColumnCount(12);
+    QStringList headers = {
+        "Sr No", "User ID", "Party ID", "Job No",
+        "Manager Status", "Designer Status", "Manufacturer Status", "Accountant Status",
+        "Order Date", "Delivery Date",
+        "Job Sheet", "Print"
+    };
+
     ui->orderListTableWidget->setHorizontalHeaderLabels(headers);
     setRoleAndUserRole(role);
-    // qDebug()<<"---------"<<role;
+
     if (role == "designer") {
-        show_order_list_with_role("Designer", 3);
+        show_order_list_with_role("Designer", 4);
     } else if (role == "manufacturer") {
-        show_order_list_with_role("Manufacturer", 4);
+        show_order_list_with_role("Manufacturer", 5);
     } else if (role == "accountant") {
-        show_order_list_with_role("Accountant", 5);
+        show_order_list_with_role("Accountant", 6);
     } else if (role == "Seller"){
         show_order_list_with_role("Seller", 1);
+    } else if (role == "manager") {
+        show_order_list_with_role("Manager", 3); // editable column index for manager
     }
 }
 
@@ -68,12 +76,17 @@ OrderList::~OrderList()
 
 void OrderList::populateCommonOrderRow(int row, const QVariantList &order)
 {
-    // Sr No (read-only)
+    if (order.size() < 9) {
+        qDebug() << "❌ Error: order list size too small:" << order.size();
+        return;
+    }
+
+    // Sr No
     QTableWidgetItem *srItem = new QTableWidgetItem(QString::number(row + 1));
     srItem->setFlags(srItem->flags() & ~Qt::ItemIsEditable);
     ui->orderListTableWidget->setItem(row, 0, srItem);
 
-    // User ID, Party ID, Job No (read-only)
+    // User ID, Party ID, Job No
     for (int col = 0; col <= 2; ++col)
     {
         QTableWidgetItem *item = new QTableWidgetItem(order[col].toString());
@@ -81,21 +94,31 @@ void OrderList::populateCommonOrderRow(int row, const QVariantList &order)
         ui->orderListTableWidget->setItem(row, col + 1, item);
     }
 
-    QString jobNo = order[2].toString(); // Job No assumed at col 2
+    QString jobNo = order[2].toString();
+
+    // Order Date
+    QTableWidgetItem *orderDateItem = new QTableWidgetItem(order[7].toString());
+    orderDateItem->setFlags(orderDateItem->flags() & ~Qt::ItemIsEditable);
+    ui->orderListTableWidget->setItem(row, 8, orderDateItem);
+
+    // Delivery Date
+    QTableWidgetItem *deliveryDateItem = new QTableWidgetItem(order[8].toString());
+    deliveryDateItem->setFlags(deliveryDateItem->flags() & ~Qt::ItemIsEditable);
+    ui->orderListTableWidget->setItem(row, 9, deliveryDateItem);
 
     // Job Sheet Button
     QPushButton *jobSheetBtn = new QPushButton("Job Sheet");
     connect(jobSheetBtn, &QPushButton::clicked, this, [=]() {
         openJobSheet(jobNo);
     });
-    ui->orderListTableWidget->setCellWidget(row, 7, jobSheetBtn);
+    ui->orderListTableWidget->setCellWidget(row, 10, jobSheetBtn);
 
     // Print Button
     QPushButton *printBtn = new QPushButton("Print");
     connect(printBtn, &QPushButton::clicked, this, [=]() {
         printJobSheet(jobNo);
     });
-    ui->orderListTableWidget->setCellWidget(row, 8, printBtn);
+    ui->orderListTableWidget->setCellWidget(row, 11, printBtn);
 }
 
 void OrderList::onTableRightClick(const QPoint &pos)
@@ -361,52 +384,136 @@ void OrderList::show_order_list_with_role(const QString &role, int editableStatu
     }
 
     ui->orderListTableWidget->setRowCount(orderList.size());
+
     // Hide irrelevant status columns based on role
-    // qDebug()<<"---------"<<role;
     if (role == "Designer") {
-        ui->orderListTableWidget->setColumnHidden(5, true); // Manufacturer Status
-        ui->orderListTableWidget->setColumnHidden(6, true); // Accountant Status
+        ui->orderListTableWidget->setColumnHidden(6, true); // Manufacturer
+        ui->orderListTableWidget->setColumnHidden(7, true); // Accountant
+        ui->orderListTableWidget->setColumnHidden(4, true); // Manager
     } else if (role == "Manufacturer") {
-        ui->orderListTableWidget->setColumnHidden(4, true); // Designer Status
-        ui->orderListTableWidget->setColumnHidden(6, true); // Accountant Status
+        ui->orderListTableWidget->setColumnHidden(5, true); // Designer
+        ui->orderListTableWidget->setColumnHidden(7, true); // Accountant
+        ui->orderListTableWidget->setColumnHidden(4, true); // Manager
     } else if (role == "Accountant") {
-        ui->orderListTableWidget->setColumnHidden(4, true); // Designer Status
-        ui->orderListTableWidget->setColumnHidden(5, true); // Manufacturer Status
+        ui->orderListTableWidget->setColumnHidden(4, true); // Manager
+        ui->orderListTableWidget->setColumnHidden(5, true); // Designer
+        ui->orderListTableWidget->setColumnHidden(6, true); // Manufacturer
     } else if (role == "Seller") {
-        ui->orderListTableWidget->setColumnHidden(7, true); // Designer Status
-        ui->orderListTableWidget->setColumnHidden(8, true); // Manufacturer Status
+        ui->orderListTableWidget->setColumnHidden(10, true); //Show jobsheet
+        ui->orderListTableWidget->setColumnHidden(11, true); //Print
+    } else if (role == "Manager") {
+        ui->orderListTableWidget->setColumnHidden(5, true); // Designer
+        ui->orderListTableWidget->setColumnHidden(6, true); // Manufacturer
+        ui->orderListTableWidget->setColumnHidden(7, true); // Accountant
     }
 
-
-    QStringList statusOptions = {"Pending", "Working", "Completed"};
+    QStringList statusOptions;
+    if (role == "Manager") {
+        statusOptions = {"Pending", "Approved", "Design Checked", "RPD", "Casting", "Bagging", "QC Done"};
+    } else {
+        statusOptions = {"Pending", "Working", "Completed"};
+    }
 
     for (int row = 0; row < orderList.size(); ++row) {
         const QVariantList &order = orderList[row];
 
-        if ((role == "Manufacturer" && order[3].toString() != "Completed") ||
-            (role == "Accountant" && order[4].toString() != "Completed")) {
+        QString managerStatus      = order[3].toString(); // Manager
+        QString designerStatus     = order[4].toString(); // Designer
+        QString manufacturerStatus = order[5].toString(); // Manufacturer
+
+        bool hideRow = false;
+
+        if (role == "Designer" && managerStatus != "Approved") {
+            hideRow = true;
+        }
+        else if (role == "Manufacturer" && managerStatus != "Bagging") {
+            hideRow = true;
+        }
+        else if (role == "Accountant" && managerStatus != "QC Done") {
+            hideRow = true;
+        }
+        // Manager sees all stages where it is Manager's turn
+        else if (role == "Manager") {
+            if (managerStatus == "Pending") {
+                hideRow = false;  // Show to approve
+            }
+            else if (managerStatus == "Approved") {
+                if (designerStatus == "Completed")
+                    hideRow = false;  // ✅ Show to review designer work
+                else
+                    hideRow = true;   // Designer hasn't finished yet
+            }
+            else if (managerStatus == "Design Checked") {
+                hideRow = false;  // Manager sets RPD
+            }
+            else if (managerStatus == "RPD") {
+                hideRow = false;  // Manager sets Casting
+            }
+            else if (managerStatus == "Casting") {
+                hideRow = false;  // Manager sets Bagging
+            }
+            else if (managerStatus == "Bagging") {
+                if (manufacturerStatus == "Completed")
+                    hideRow = false;  // ✅ Show for QC
+                else
+                    hideRow = true;   // Manufacturer still working
+            }
+            else if (managerStatus == "QC Done") {
+                hideRow = true;  // All done — Manager's role ends
+            }
+            else {
+                hideRow = true; // Fallback — unknown manager state
+            }
+        }
+
+        if (hideRow) {
             ui->orderListTableWidget->setRowHidden(row, true);
             continue;
         }
 
+        //Set common columns
         populateCommonOrderRow(row, order);
 
         QString jobNo = order[2].toString(); // Column 2 is jobNo
 
-        for (int col = 3; col <= 5; ++col) {
+        for (int col = 3; col <= 6; ++col) {
             QString currentStatus = order[col].toString();
 
-            if (col == editableStatusCol) {
+            if (col == editableStatusCol && editableStatusCol != 1) {
                 // Check if prerequisite role's status is "Completed"
                 bool allowEdit = true;
                 QString prerequisiteRoleStatus;
 
-                if (role == "Manufacturer") {
-                    prerequisiteRoleStatus = order[3].toString(); // Designer status at col=3
-                    allowEdit = (prerequisiteRoleStatus == "Completed");
+                if (role == "Manager") {
+                    QString mState = managerStatus;
+                    QString dState = designerStatus;
+                    QString mfState = manufacturerStatus;
+
+                    // Allow edit only when it's manager's current turn
+                    if (mState == "Pending") {
+                        allowEdit = true; // Approve order
+                    } else if (mState == "Approved" && dState == "Completed") {
+                        allowEdit = true; // After designer work
+                    } else if (mState == "Design Checked") {
+                        allowEdit = true; // Can set RPD
+                    } else if (mState == "RPD") {
+                        allowEdit = true; // Can set Casting
+                    } else if (mState == "Casting") {
+                        allowEdit = true; // Can set Bagging
+                    } else if (mState == "Bagging" && mfState == "Completed") {
+                        allowEdit = true; // Can perform QC
+                    } else {
+                        allowEdit = false;
+                    }
+                } else if (role == "Manufacturer") {
+                    prerequisiteRoleStatus = order[3].toString();
+                    allowEdit = (prerequisiteRoleStatus == "Bagging");
                 } else if (role == "Accountant") {
-                    prerequisiteRoleStatus = order[4].toString(); // Manufacturer status at col=4
-                    allowEdit = (prerequisiteRoleStatus == "Completed");
+                    prerequisiteRoleStatus = order[4].toString();
+                    allowEdit = (prerequisiteRoleStatus == "QC Done");
+                } else if (role == "Designer") {
+                    prerequisiteRoleStatus = order[3].toString();
+                    allowEdit = (prerequisiteRoleStatus == "Approved");
                 }
 
                 QComboBox *combo = new QComboBox();
@@ -425,17 +532,27 @@ void OrderList::show_order_list_with_role(const QString &role, int editableStatu
                 // Disable combo if not allowed
                 if (!allowEdit) {
                     combo->setEnabled(false);
-                    QString reason = (role == "Manufacturer")
-                                         ? "Designer must complete their work first."
-                                         : "Manufacturer must complete their work first.";
+                    QString reason;
+                    if (role == "Designer") reason = "Manager has not yet approved this design.";
+                    else if (role == "Manufacturer") reason = "Designer must complete their work first.";
+                    else if (role == "Accountant") reason = "Manufacturer must complete the job first.";
+                    else if (role == "Manager") reason = "This is not Manager’s current stage.";
                     combo->setToolTip(reason);
                 } else {
                     connect(combo, &QComboBox::currentTextChanged, this,
                             [=, currentStatusCopy = currentStatus](const QString &newStatus) mutable {
-                                QStringList statusOrder = {"Pending", "Working", "Completed"};
+
+                                QStringList statusOrder;
+                                if (role == "Manager") {
+                                    statusOrder = {"Pending", "Approved", "Design Checked", "RPD", "Casting", "Bagging", "QC Done"};
+                                } else {
+                                    statusOrder = {"Pending", "Working", "Completed"};
+                                }
+
                                 int oldIndex = statusOrder.indexOf(currentStatusCopy);
                                 int newIndex = statusOrder.indexOf(newStatus);
 
+                                // Restrict invalid backward transitions
                                 if (newIndex < oldIndex) {
                                     QMessageBox::StandardButton reply = QMessageBox::question(
                                         nullptr,
@@ -461,9 +578,9 @@ void OrderList::show_order_list_with_role(const QString &role, int editableStatu
 
                                         QSqlQuery query(db);
                                         query.prepare(R"(
-                                INSERT INTO StatusChangeRequests (jobNo, userId, fromStatus, toStatus, requestTime, role)
-                                VALUES (:jobNo, :userId, :fromStatus, :toStatus, :requestTime, :role)
-                            )");
+                                                            INSERT INTO StatusChangeRequests (jobNo, userId, fromStatus, toStatus, requestTime, role)
+                                                            VALUES (:jobNo, :userId, :fromStatus, :toStatus, :requestTime, :role)
+                                                        )");
 
                                         query.bindValue(":jobNo", jobNo);
                                         query.bindValue(":userId", order[0].toString());
@@ -475,7 +592,7 @@ void OrderList::show_order_list_with_role(const QString &role, int editableStatu
                                         if (!query.exec()) {
                                             qDebug() << "Failed to insert request: " << query.lastError().text();
                                         } else {
-                                            QMessageBox::information(this, "Request Sent", "Your request has been recorded.");
+                                            QMessageBox::information(nullptr, "Request Sent", "Your request has been recorded.");
                                         }
 
                                         db.close();
@@ -487,6 +604,7 @@ void OrderList::show_order_list_with_role(const QString &role, int editableStatu
 
                                 applyColor(newStatus);
 
+                                // ✅ Save updated status to DB
                                 QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "update_status");
                                 db.setDatabaseName(QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db"));
 
@@ -509,8 +627,8 @@ void OrderList::show_order_list_with_role(const QString &role, int editableStatu
                                 db.close();
                                 QSqlDatabase::removeDatabase("update_status");
                             });
-                }
 
+                }
                 ui->orderListTableWidget->setCellWidget(row, col + 1, combo);
             }
             else {
@@ -520,6 +638,5 @@ void OrderList::show_order_list_with_role(const QString &role, int editableStatu
             }
         }
     }
-
     ui->orderListTableWidget->resizeColumnsToContents();
 }

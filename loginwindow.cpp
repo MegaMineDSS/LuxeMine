@@ -140,11 +140,12 @@ void LoginWindow::on_loginPushButton_clicked()
     this->role = result.role;
     this->userName = result.userName;
     this->userId = userId;
-
+    // qDebug()<<role<<"-----------";
     if (role.compare("Seller", Qt::CaseInsensitive) == 0) {
         ui->stackedWidget->setCurrentIndex(1);
         set_comboBox_selectParty();
-    } else if (role == "Designer" || role == "Manufacturer" || role == "Accountant") {
+    } else if (role == "Designer" || role == "Manufacturer" || role == "Accountant" || role == "Manager") {
+        // qDebug()<<role<<"-----------";
         this->accept(); // Valid user, return control to main
     } else {
         QMessageBox::information(this, "Info", "Role not supported yet.");
