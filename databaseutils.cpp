@@ -1638,15 +1638,12 @@ QList<QVariantList> DatabaseUtils:: fetchOrderListDetails() {
     {
         QSqlQuery query(db);
         query.prepare(R"(
-            SELECT od.sellerId,
-                   od.partyId,
-                   os.jobNo,
-                   os.Manager,
-                   os.Designer,
-                   os.Manufacturer,
-                   os.Accountant,
-                   od.orderDate,
-                   od.deliveryDate
+            SELECT
+                od.sellerId, od.partyId, os.jobNo,
+                os.Manager, os.Designer, os.Manufacturer, os.Accountant,
+                od.orderDate, od.deliveryDate, od.image1Path,
+                os.Order_Approve, os.Design_Approve, os.Quality_Approve,
+                os.Order_Note, os.Design_Note, os.Quality_Note
             FROM "OrderBook-Detail" od
             LEFT JOIN "Order-Status" os ON od.jobNo = os.jobNo
         )");
@@ -1660,7 +1657,7 @@ QList<QVariantList> DatabaseUtils:: fetchOrderListDetails() {
 
         while (query.next()) {
             QVariantList row;
-            for (int i = 0; i < 9; ++i) {
+            for (int i = 0; i < 16; ++i) {
                 row.append(query.value(i));
             }
             orderList.append(row);

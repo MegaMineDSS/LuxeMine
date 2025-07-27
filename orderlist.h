@@ -33,6 +33,11 @@ private slots:
 private:
     void show_order_list_with_role(const QString &role, int editableStatusCol);
     void populateCommonOrderRow(int row, const QVariantList &order);
+    void hideIrrelevantColumns(const QString &role);
+    QStringList getStatusOptions(const QString &role);
+    bool shouldShowRow(const QString &role, const QVariantList &order);
+    void setupStatusCombo(int row, int col, const QString &role, const QString &currentStatus,
+                          const QString &jobNo, const QVariantList &order, const int &editableStatusCol);
 
     Ui::OrderList *ui;
     LoginWindow *loginWindow = nullptr;

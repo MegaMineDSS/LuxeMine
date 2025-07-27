@@ -12,6 +12,7 @@
 #include <QProgressDialog>
 
 #include <QAxObject>
+#include <QInputDialog>
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -33,27 +34,30 @@ OrderList::OrderList(QWidget *parent, const QString &role)
     connect(ui->orderListTableWidget, &QTableWidget::customContextMenuRequested,
             this, &OrderList::onTableRightClick);
 
-    ui->orderListTableWidget->setColumnCount(12);
     QStringList headers = {
         "Sr No", "User ID", "Party ID", "Job No",
         "Manager Status", "Designer Status", "Manufacturer Status", "Accountant Status",
         "Order Date", "Delivery Date",
-        "Job Sheet", "Print"
+        "Job Sheet", "Print", "Image",
+        "Order Approval", "Design Approval", "Quality Approval",
+        "Order Note", "Design Note", "Quality Note"
     };
-
+    ui->orderListTableWidget->setColumnCount(headers.size());
     ui->orderListTableWidget->setHorizontalHeaderLabels(headers);
+    ui->orderListTableWidget->setSortingEnabled(true);  // ✅ Add this line
     setRoleAndUserRole(role);
-
+    // qDebug()<<"---------"<<role;
     if (role == "designer") {
-        show_order_list_with_role("Designer", 4);
+        show_order_list_with_role("designer", 4);
     } else if (role == "manufacturer") {
-        show_order_list_with_role("Manufacturer", 5);
+        show_order_list_with_role("manufacturer", 5);
     } else if (role == "accountant") {
-        show_order_list_with_role("Accountant", 6);
+        show_order_list_with_role("accountant", 6);
     } else if (role == "Seller"){
-        show_order_list_with_role("Seller", 1);
+        // qDebug()<<"---------"<<role;
+        show_order_list_with_role("seller", 1);
     } else if (role == "manager") {
-        show_order_list_with_role("Manager", 3); // editable column index for manager
+        show_order_list_with_role("manager", 3); // editable column index for manager
     }
 }
 
@@ -76,7 +80,7 @@ OrderList::~OrderList()
 
 void OrderList::populateCommonOrderRow(int row, const QVariantList &order)
 {
-    if (order.size() < 9) {
+    if (order.size() < 10) {
         qDebug() << "❌ Error: order list size too small:" << order.size();
         return;
     }
@@ -119,6 +123,34 @@ void OrderList::populateCommonOrderRow(int row, const QVariantList &order)
         printJobSheet(jobNo);
     });
     ui->orderListTableWidget->setCellWidget(row, 11, printBtn);
+
+    // Show Image Button
+    QPushButton *showImgBtn = new QPushButton("Show Img");
+    connect(showImgBtn, &QPushButton::clicked, this, [=]() {
+        QString imagePath = QCoreApplication::applicationDirPath() + "/" + order[9].toString();
+        QPixmap pixmap(imagePath);
+        if (pixmap.isNull()) {
+            QMessageBox::warning(this, "Image Error", "⚠️ Failed to load image:\n" + imagePath);
+            return;
+        }
+
+        QLabel *label = new QLabel;
+        label->setPixmap(pixmap.scaled(600, 600, Qt::KeepAspectRatio));
+        label->setWindowTitle("Image Preview: " + jobNo);
+        label->setAttribute(Qt::WA_DeleteOnClose);
+        label->show();
+    });
+    ui->orderListTableWidget->setCellWidget(row, 12, showImgBtn); // Place in new column 12
+
+    int approvalColStart = 13;
+    ui->orderListTableWidget->setItem(row, approvalColStart,     new QTableWidgetItem(order[10].toString())); // Order_Approve
+    ui->orderListTableWidget->setItem(row, approvalColStart + 1, new QTableWidgetItem(order[11].toString())); // Design_Approve
+    ui->orderListTableWidget->setItem(row, approvalColStart + 2, new QTableWidgetItem(order[12].toString())); // Quality_Approve
+    ui->orderListTableWidget->setItem(row, approvalColStart + 3, new QTableWidgetItem(order[13].toString())); // Order_Note
+    ui->orderListTableWidget->setItem(row, approvalColStart + 4, new QTableWidgetItem(order[14].toString())); // Design_Note
+    ui->orderListTableWidget->setItem(row, approvalColStart + 5, new QTableWidgetItem(order[15].toString())); // Quality_Note
+
+
 }
 
 void OrderList::onTableRightClick(const QPoint &pos)
@@ -375,6 +407,346 @@ void OrderList::printJobSheet(const QString &jobNo){
 
 }
 
+
+
+
+void OrderList::setupStatusCombo(int row, int col, const QString &role, const QString &currentStatus,
+                                 const QString &jobNo, const QVariantList &order, const int &editableStatusCol)
+{
+    QStringList statusOptions = getStatusOptions(role);
+    QComboBox *combo = new QComboBox();
+
+    QString managerStatus      = order[3].toString();
+    QString designerStatus     = order[4].toString();
+    QString manufacturerStatus = order[5].toString();
+
+    QStringList allowedStates;
+    QStringList possibleStates = getStatusOptions(role);  // Full ordered list
+
+    int currentIndex = possibleStates.indexOf(currentStatus);
+
+    // ✅ Always show all previous states
+    for (int i = 0; i <= currentIndex; ++i) {
+        allowedStates << possibleStates[i];
+    }
+
+    // ✅ Then add only the valid next forward state
+    if (role == "manager") {
+        if (currentStatus == "Pending") {
+            allowedStates << "Order Checked";
+        } else if (currentStatus == "Order Checked" && designerStatus == "Completed") {
+            allowedStates << "Design Checked";
+        } else if (currentStatus == "Design Checked") {
+            allowedStates << "RPD";
+        } else if (currentStatus == "RPD") {
+            allowedStates << "Casting";
+        } else if (currentStatus == "Casting") {
+            allowedStates << "Bagging";
+        } else if (currentStatus == "Bagging" && manufacturerStatus == "Completed") {
+            allowedStates << "QC Done";
+        }
+    } else {
+        allowedStates = possibleStates;  // For other roles
+    }
+
+    allowedStates.removeDuplicates();  // Just in case
+    combo->addItems(allowedStates);
+    combo->setCurrentText(currentStatus);
+
+    auto applyColor = [combo](const QString &status) {
+        QString color;
+        if      (status == "Pending")        color = "#ffcccc";   // Light red
+        else if (status == "Working")        color = "#fff5ba";   // Light yellow
+        else if (status == "Completed")      color = "#ccffcc";   // Light green
+        else if (status == "Order Checked")  color = "#ffd8a8";   // Light orange
+        else if (status == "Design Checked") color = "#fff5ba";   // Light yellow
+        else if (status == "RPD")            color = "#cce5ff";   // Light blue
+        else if (status == "Casting")        color = "#d1c4e9";   // Light purple
+        else if (status == "Bagging")        color = "#e6ee9c";   // Light lime
+        else if (status == "QC Done")        color = "#ccffcc";   // Light green
+        combo->setStyleSheet("QComboBox { background-color: " + color + "; }");
+    };
+
+    applyColor(currentStatus);
+
+    // --- Permission Check ---
+    bool forwardAllowed = false;
+
+    if (role == "manager") {
+        if (managerStatus == "Pending") forwardAllowed = true;
+        else if (managerStatus == "Order Checked" && designerStatus == "Completed") forwardAllowed = true;
+        else if (managerStatus == "Design Checked") forwardAllowed = true;
+        else if (managerStatus == "RPD") forwardAllowed = true;
+        else if (managerStatus == "Casting") forwardAllowed = true;
+        else if (managerStatus == "Bagging" && manufacturerStatus == "Completed") forwardAllowed = true;
+    }
+
+    // ✅ Manager can always edit combo box (to select prev state for request)
+    bool allowEdit = (role == "manager") ||
+                     (role == "designer" && managerStatus == "Order Checked") ||
+                     (role == "manufacturer" && managerStatus == "Bagging") ||
+                     (role == "accountant" && managerStatus == "QC Done");
+
+
+    if (!allowEdit) {
+        combo->setEnabled(false);
+        QString reason;
+        if (role == "designer")      reason = "manager has not yet Order Checked this design.";
+        else if (role == "manufacturer") reason = "designer must complete their work first.";
+        else if (role == "accountant")   reason = "manufacturer must complete the job first.";
+        else if (role == "manager")      reason = "This is not manager’s current stage.";
+        combo->setToolTip(reason);
+    } else {
+        connect(combo, &QComboBox::currentTextChanged, this,
+                [=, currentStatusCopy = currentStatus](const QString &newStatus) mutable {
+
+                    QStringList statusOrder = getStatusOptions(role);
+                    int oldIndex = statusOrder.indexOf(currentStatusCopy);
+                    int newIndex = statusOrder.indexOf(newStatus);
+
+                    // Prevent backward transition
+                    if (newIndex < oldIndex) {
+                        QMessageBox::StandardButton reply = QMessageBox::question(
+                            nullptr,
+                            "Admin Approval Needed",
+                            QString("Changing status from '%1' to '%2' is not allowed directly.\n"
+                                    "Do you want to request this change from Admin?")
+                                .arg(currentStatusCopy, newStatus),
+                            QMessageBox::Yes | QMessageBox::No
+                            );
+
+                        combo->blockSignals(true);
+                        combo->setCurrentText(currentStatusCopy);
+                        applyColor(currentStatusCopy);
+                        combo->blockSignals(false);
+
+                        if (reply == QMessageBox::Yes) {
+                            QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "request_status");
+                            db.setDatabaseName(QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db"));
+
+                            if (db.open()) {
+                                // 🟡 Ask for optional note
+                                QString note = QInputDialog::getText(
+                                    this,
+                                    "Request Note",
+                                    "Optionally enter a note for this request:",
+                                    QLineEdit::Normal,
+                                    ""
+                                    );
+
+                                QSqlQuery query(db);
+                                query.prepare(R"(
+                                                INSERT INTO StatusChangeRequests
+                                                (jobNo, userId, fromStatus, toStatus, requestTime, role, note)
+                                                VALUES
+                                                (:jobNo, :userId, :fromStatus, :toStatus, :requestTime, :role, :note)
+                                            )");
+
+                                query.bindValue(":jobNo", jobNo);
+                                query.bindValue(":userId", userId);
+                                query.bindValue(":fromStatus", currentStatusCopy);
+                                query.bindValue(":toStatus", newStatus);
+                                query.bindValue(":requestTime", QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
+                                query.bindValue(":role", role);
+                                query.bindValue(":note", note);
+
+                                if (query.exec()) {
+                                    QMessageBox::information(this, "Request Sent", "Your request has been recorded.");
+                                } else {
+                                    qDebug() << "Failed to insert request: " << query.lastError().text();
+                                }
+
+                                db.close();
+                                QSqlDatabase::removeDatabase("request_status");
+                            } else {
+                                qDebug() << "Failed to open DB for request: " << db.lastError().text();
+                            }
+                        }
+
+                        return;
+                    }
+
+                    applyColor(newStatus);
+
+                    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "update_status");
+                    db.setDatabaseName(QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db"));
+
+                    if (!db.open()) {
+                        qDebug() << "Failed to open DB: " << db.lastError().text();
+                        return;
+                    }
+
+                    bool allowStatusChange = true;
+
+                    if (role == "manager") {
+                        if (newStatus == "Order Checked") {
+                            QMessageBox msgBox(this);
+                            msgBox.setWindowTitle("Approve Order?");
+                            msgBox.setText("Do you approve the order check?");
+                            msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+
+                            // Remove close button
+                            msgBox.setWindowFlags(msgBox.windowFlags() & ~Qt::WindowCloseButtonHint);
+
+                            // Optional: Make it modal and disable ESC key
+                            msgBox.setWindowModality(Qt::ApplicationModal);
+                            msgBox.setEscapeButton(nullptr);  // Prevent ESC key from closing
+
+                            int reply = msgBox.exec();
+                            int approved = (reply == QMessageBox::Yes) ? 1 : 0;
+                            QString note = "";
+                            if(approved == 0){
+                                note = QInputDialog::getText(this, "Rejection Note", "Please enter reason:");
+                                allowStatusChange = false;
+                            }
+                            QSqlQuery query(db);
+                            query.prepare(R"(UPDATE "Order-Status"
+                                             SET Order_Approve = :approved,
+                                                 Order_Note = CASE WHEN :approved = 1 THEN '' ELSE :note END
+                                             WHERE jobNo = :jobNo)");
+                            query.bindValue(":approved", approved);
+                            query.bindValue(":note", note);
+                            query.bindValue(":jobNo", jobNo);
+                            query.exec();
+                        } else if (newStatus == "Design Checked") {
+                            QMessageBox msgBox(this);
+                            msgBox.setWindowTitle("Approve Design?");
+                            msgBox.setText("Do you approve the design check?");
+                            msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+
+                            // Remove close button
+                            msgBox.setWindowFlags(msgBox.windowFlags() & ~Qt::WindowCloseButtonHint);
+
+                            // Optional: Make it modal and disable ESC key
+                            msgBox.setWindowModality(Qt::ApplicationModal);
+                            msgBox.setEscapeButton(nullptr);  // Prevent ESC key from closing
+
+                            int reply = msgBox.exec();
+                            int approved = (reply == QMessageBox::Yes) ? 1 : 0;
+                            QString note = "";
+                            if(approved == 0){
+                                note = QInputDialog::getText(this, "Rejection Note", "Please enter reason:");
+                                allowStatusChange = false;
+                            }
+                            QSqlQuery query(db);
+                            query.prepare(R"(UPDATE "Order-Status"
+                                             SET Design_Approve = :approved,
+                                                 Design_Note = CASE WHEN :approved = 1 THEN '' ELSE :note END,
+                                                 Designer = CASE WHEN :approved = 0 THEN 'Working' ELSE Designer END
+                                             WHERE jobNo = :jobNo)");
+                            query.bindValue(":approved", approved);
+                            query.bindValue(":note", note);
+                            query.bindValue(":jobNo", jobNo);
+                            query.exec();
+                        } else if (newStatus == "QC Done") {
+                            QMessageBox msgBox(this);
+                            msgBox.setWindowTitle("Approve Quality?");
+                            msgBox.setText("Do you approve the quality check?");
+                            msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+
+                            // Remove close button
+                            msgBox.setWindowFlags(msgBox.windowFlags() & ~Qt::WindowCloseButtonHint);
+
+                            // Optional: Make it modal and disable ESC key
+                            msgBox.setWindowModality(Qt::ApplicationModal);
+                            msgBox.setEscapeButton(nullptr);  // Prevent ESC key from closing
+
+                            int reply = msgBox.exec();
+                            int approved = (reply == QMessageBox::Yes) ? 1 : 0;
+                            QString note = "";
+                            if(approved == 0){
+                                note = QInputDialog::getText(this, "Rejection Note", "Please enter reason:");
+                                allowStatusChange = false;
+                            }
+                            QSqlQuery query(db);
+                            query.prepare(R"(UPDATE "Order-Status"
+                                             SET Quality_Approve = :approved,
+                                                 Quality_Note = CASE WHEN :approved = 1 THEN '' ELSE :note END,
+                                                 Manufacturer = CASE WHEN :approved = 0 THEN 'Working' ELSE Manufacturer END
+                                             WHERE jobNo = :jobNo)");
+                            query.bindValue(":approved", approved);
+                            query.bindValue(":note", note);
+                            query.bindValue(":jobNo", jobNo);
+                            query.exec();
+                        }
+                    }
+
+                    if (allowStatusChange) {
+                        QSqlQuery updateQuery(db);
+                        updateQuery.prepare(QString("UPDATE \"Order-Status\" SET %1 = :status WHERE jobNo = :jobNo").arg(role));
+                        updateQuery.bindValue(":status", newStatus);
+                        updateQuery.bindValue(":jobNo", jobNo);
+
+                        if (updateQuery.exec()) {
+                            currentStatusCopy = newStatus;
+                            // qDebug() << "Reloading UI for role:" << userRole << "col:" << editableStatusCol;
+                            show_order_list_with_role(userRole, editableStatusCol);
+                        } else {
+                            qDebug() << "Update failed: " << updateQuery.lastError().text();
+                        }
+                    } else {show_order_list_with_role(userRole, editableStatusCol);}
+                    db.close();
+                    QSqlDatabase::removeDatabase("update_status");
+                });
+    }
+
+    ui->orderListTableWidget->setCellWidget(row, col, combo);
+}
+
+bool OrderList::shouldShowRow(const QString &role, const QVariantList &order)
+{
+    QString managerStatus      = order[3].toString();
+    QString designerStatus     = order[4].toString();
+    QString manufacturerStatus = order[5].toString();
+
+    if (role == "designer" && managerStatus == "Order Checked")
+        return true;
+
+    if (role == "manufacturer" && managerStatus == "Bagging")
+        return true;
+
+    if (role == "accountant" && managerStatus == "QC Done")
+        return true;
+
+    if (role == "manager")
+        return true;
+
+    if (role == "seller")
+        return true;
+
+    return false;
+}
+
+QStringList OrderList::getStatusOptions(const QString &role)
+{
+    if (role == "manager") {
+        return { "Pending", "Order Checked", "Design Checked", "RPD", "Casting", "Bagging", "QC Done" };
+    } else {
+        return { "Pending", "Working", "Completed" };
+    }
+}
+
+void OrderList::hideIrrelevantColumns(const QString &role)
+{
+    QMap<QString, QList<int>> roleColumnMap = {
+        { "designer",      {4, 6, 7, 13, 15} },
+        { "manufacturer",  { 4, 5, 7, 13, 14} },
+        { "accountant",    {4, 5, 6, 12} },
+        { "seller",        {10, 11, 12, 14, 15, 17, 18} },
+        { "manager",       {12} }
+    };
+
+    for (int col = 0; col < ui->orderListTableWidget->columnCount(); ++col) {
+        ui->orderListTableWidget->setColumnHidden(col, false); // Show all first
+    }
+
+    if (roleColumnMap.contains(role)) {
+        for (int col : roleColumnMap[role]) {
+            ui->orderListTableWidget->setColumnHidden(col, true);
+        }
+    }
+}
+
 void OrderList::show_order_list_with_role(const QString &role, int editableStatusCol)
 {
     QList<QVariantList> orderList = DatabaseUtils::fetchOrderListDetails();
@@ -382,261 +754,35 @@ void OrderList::show_order_list_with_role(const QString &role, int editableStatu
         QMessageBox::information(this, "No Orders", "No orders found");
         return;
     }
-
+    // qDebug()<<"---------"<<role;
     ui->orderListTableWidget->setRowCount(orderList.size());
 
-    // Hide irrelevant status columns based on role
-    if (role == "Designer") {
-        ui->orderListTableWidget->setColumnHidden(6, true); // Manufacturer
-        ui->orderListTableWidget->setColumnHidden(7, true); // Accountant
-        ui->orderListTableWidget->setColumnHidden(4, true); // Manager
-    } else if (role == "Manufacturer") {
-        ui->orderListTableWidget->setColumnHidden(5, true); // Designer
-        ui->orderListTableWidget->setColumnHidden(7, true); // Accountant
-        ui->orderListTableWidget->setColumnHidden(4, true); // Manager
-    } else if (role == "Accountant") {
-        ui->orderListTableWidget->setColumnHidden(4, true); // Manager
-        ui->orderListTableWidget->setColumnHidden(5, true); // Designer
-        ui->orderListTableWidget->setColumnHidden(6, true); // Manufacturer
-    } else if (role == "Seller") {
-        ui->orderListTableWidget->setColumnHidden(10, true); //Show jobsheet
-        ui->orderListTableWidget->setColumnHidden(11, true); //Print
-    } else if (role == "Manager") {
-        ui->orderListTableWidget->setColumnHidden(5, true); // Designer
-        ui->orderListTableWidget->setColumnHidden(6, true); // Manufacturer
-        ui->orderListTableWidget->setColumnHidden(7, true); // Accountant
-    }
-
-    QStringList statusOptions;
-    if (role == "Manager") {
-        statusOptions = {"Pending", "Approved", "Design Checked", "RPD", "Casting", "Bagging", "QC Done"};
-    } else {
-        statusOptions = {"Pending", "Working", "Completed"};
-    }
+    hideIrrelevantColumns(role);
+    QStringList statusOptions = getStatusOptions(role);
 
     for (int row = 0; row < orderList.size(); ++row) {
         const QVariantList &order = orderList[row];
 
-        QString managerStatus      = order[3].toString(); // Manager
-        QString designerStatus     = order[4].toString(); // Designer
-        QString manufacturerStatus = order[5].toString(); // Manufacturer
-
-        bool hideRow = false;
-
-        if (role == "Designer" && managerStatus != "Approved") {
-            hideRow = true;
-        }
-        else if (role == "Manufacturer" && managerStatus != "Bagging") {
-            hideRow = true;
-        }
-        else if (role == "Accountant" && managerStatus != "QC Done") {
-            hideRow = true;
-        }
-        // Manager sees all stages where it is Manager's turn
-        else if (role == "Manager") {
-            if (managerStatus == "Pending") {
-                hideRow = false;  // Show to approve
-            }
-            else if (managerStatus == "Approved") {
-                if (designerStatus == "Completed")
-                    hideRow = false;  // ✅ Show to review designer work
-                else
-                    hideRow = true;   // Designer hasn't finished yet
-            }
-            else if (managerStatus == "Design Checked") {
-                hideRow = false;  // Manager sets RPD
-            }
-            else if (managerStatus == "RPD") {
-                hideRow = false;  // Manager sets Casting
-            }
-            else if (managerStatus == "Casting") {
-                hideRow = false;  // Manager sets Bagging
-            }
-            else if (managerStatus == "Bagging") {
-                if (manufacturerStatus == "Completed")
-                    hideRow = false;  // ✅ Show for QC
-                else
-                    hideRow = true;   // Manufacturer still working
-            }
-            else if (managerStatus == "QC Done") {
-                hideRow = true;  // All done — Manager's role ends
-            }
-            else {
-                hideRow = true; // Fallback — unknown manager state
-            }
-        }
-
-        if (hideRow) {
+        if (!shouldShowRow(role, order)) {
             ui->orderListTableWidget->setRowHidden(row, true);
             continue;
         }
 
-        //Set common columns
         populateCommonOrderRow(row, order);
-
-        QString jobNo = order[2].toString(); // Column 2 is jobNo
+        QString jobNo = order[2].toString();
 
         for (int col = 3; col <= 6; ++col) {
+
             QString currentStatus = order[col].toString();
-
             if (col == editableStatusCol && editableStatusCol != 1) {
-                // Check if prerequisite role's status is "Completed"
-                bool allowEdit = true;
-                QString prerequisiteRoleStatus;
-
-                if (role == "Manager") {
-                    QString mState = managerStatus;
-                    QString dState = designerStatus;
-                    QString mfState = manufacturerStatus;
-
-                    // Allow edit only when it's manager's current turn
-                    if (mState == "Pending") {
-                        allowEdit = true; // Approve order
-                    } else if (mState == "Approved" && dState == "Completed") {
-                        allowEdit = true; // After designer work
-                    } else if (mState == "Design Checked") {
-                        allowEdit = true; // Can set RPD
-                    } else if (mState == "RPD") {
-                        allowEdit = true; // Can set Casting
-                    } else if (mState == "Casting") {
-                        allowEdit = true; // Can set Bagging
-                    } else if (mState == "Bagging" && mfState == "Completed") {
-                        allowEdit = true; // Can perform QC
-                    } else {
-                        allowEdit = false;
-                    }
-                } else if (role == "Manufacturer") {
-                    prerequisiteRoleStatus = order[3].toString();
-                    allowEdit = (prerequisiteRoleStatus == "Bagging");
-                } else if (role == "Accountant") {
-                    prerequisiteRoleStatus = order[4].toString();
-                    allowEdit = (prerequisiteRoleStatus == "QC Done");
-                } else if (role == "Designer") {
-                    prerequisiteRoleStatus = order[3].toString();
-                    allowEdit = (prerequisiteRoleStatus == "Approved");
-                }
-
-                QComboBox *combo = new QComboBox();
-                combo->addItems(statusOptions);
-                combo->setCurrentText(currentStatus);
-
-                auto applyColor = [combo](const QString &status) {
-                    QString color;
-                    if (status == "Pending") color = "#ffcccc";
-                    else if (status == "Working") color = "#fff5ba";
-                    else if (status == "Completed") color = "#ccffcc";
-                    combo->setStyleSheet("QComboBox { background-color: " + color + "; }");
-                };
-                applyColor(currentStatus);
-
-                // Disable combo if not allowed
-                if (!allowEdit) {
-                    combo->setEnabled(false);
-                    QString reason;
-                    if (role == "Designer") reason = "Manager has not yet approved this design.";
-                    else if (role == "Manufacturer") reason = "Designer must complete their work first.";
-                    else if (role == "Accountant") reason = "Manufacturer must complete the job first.";
-                    else if (role == "Manager") reason = "This is not Manager’s current stage.";
-                    combo->setToolTip(reason);
-                } else {
-                    connect(combo, &QComboBox::currentTextChanged, this,
-                            [=, currentStatusCopy = currentStatus](const QString &newStatus) mutable {
-
-                                QStringList statusOrder;
-                                if (role == "Manager") {
-                                    statusOrder = {"Pending", "Approved", "Design Checked", "RPD", "Casting", "Bagging", "QC Done"};
-                                } else {
-                                    statusOrder = {"Pending", "Working", "Completed"};
-                                }
-
-                                int oldIndex = statusOrder.indexOf(currentStatusCopy);
-                                int newIndex = statusOrder.indexOf(newStatus);
-
-                                // Restrict invalid backward transitions
-                                if (newIndex < oldIndex) {
-                                    QMessageBox::StandardButton reply = QMessageBox::question(
-                                        nullptr,
-                                        "Admin Approval Needed",
-                                        QString("Changing status from '%1' to '%2' is not allowed directly.\n"
-                                                "Do you want to request this change from Admin?")
-                                            .arg(currentStatusCopy, newStatus),
-                                        QMessageBox::Yes | QMessageBox::No);
-
-                                    combo->blockSignals(true);
-                                    combo->setCurrentText(currentStatusCopy);
-                                    applyColor(currentStatusCopy);
-                                    combo->blockSignals(false);
-
-                                    if (reply == QMessageBox::Yes) {
-                                        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "request_status");
-                                        db.setDatabaseName(QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db"));
-
-                                        if (!db.open()) {
-                                            qDebug() << "Failed to open DB for request: " << db.lastError().text();
-                                            return;
-                                        }
-
-                                        QSqlQuery query(db);
-                                        query.prepare(R"(
-                                                            INSERT INTO StatusChangeRequests (jobNo, userId, fromStatus, toStatus, requestTime, role)
-                                                            VALUES (:jobNo, :userId, :fromStatus, :toStatus, :requestTime, :role)
-                                                        )");
-
-                                        query.bindValue(":jobNo", jobNo);
-                                        query.bindValue(":userId", order[0].toString());
-                                        query.bindValue(":fromStatus", currentStatusCopy);
-                                        query.bindValue(":toStatus", newStatus);
-                                        query.bindValue(":requestTime", QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
-                                        query.bindValue(":role", role);
-
-                                        if (!query.exec()) {
-                                            qDebug() << "Failed to insert request: " << query.lastError().text();
-                                        } else {
-                                            QMessageBox::information(nullptr, "Request Sent", "Your request has been recorded.");
-                                        }
-
-                                        db.close();
-                                        QSqlDatabase::removeDatabase("request_status");
-                                    }
-
-                                    return;
-                                }
-
-                                applyColor(newStatus);
-
-                                // ✅ Save updated status to DB
-                                QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "update_status");
-                                db.setDatabaseName(QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db"));
-
-                                if (!db.open()) {
-                                    qDebug() << "Failed to open DB: " << db.lastError().text();
-                                    return;
-                                }
-
-                                QSqlQuery updateQuery(db);
-                                updateQuery.prepare(QString("UPDATE \"Order-Status\" SET %1 = :status WHERE jobNo = :jobNo").arg(role));
-                                updateQuery.bindValue(":status", newStatus);
-                                updateQuery.bindValue(":jobNo", jobNo);
-
-                                if (!updateQuery.exec()) {
-                                    qDebug() << "Update failed: " << updateQuery.lastError().text();
-                                } else {
-                                    currentStatusCopy = newStatus;
-                                }
-
-                                db.close();
-                                QSqlDatabase::removeDatabase("update_status");
-                            });
-
-                }
-                ui->orderListTableWidget->setCellWidget(row, col + 1, combo);
-            }
-            else {
+                setupStatusCombo(row, col + 1, role, currentStatus, jobNo, order, editableStatusCol);
+            } else {
                 QTableWidgetItem *item = new QTableWidgetItem(currentStatus);
                 item->setFlags(item->flags() & ~Qt::ItemIsEditable);
                 ui->orderListTableWidget->setItem(row, col + 1, item);
             }
         }
     }
+
     ui->orderListTableWidget->resizeColumnsToContents();
 }

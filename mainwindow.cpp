@@ -97,7 +97,7 @@ void MainWindow::on_orderBookButton_clicked()
             newOrderList = new OrderList(nullptr, role);
             newOrderList->setAttribute(Qt::WA_DeleteOnClose);
             newOrderList->show();
-            // newOrderList->setRoleAndUserInfo(role, userId, userName);
+            newOrderList->setRoleAndUserInfo(role, userId, userName);
         } else {
             QMessageBox::warning(this, "Unknown Role", "This role is not supported.");
         }
