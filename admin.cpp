@@ -14,6 +14,7 @@
 #include <QDir>
 #include <QFormLayout>
 #include <QLabel>
+#include <QInputDialog>
 
 #include "readonlydelegate.h"
 #include "databaseutils.h"
@@ -61,6 +62,8 @@ Admin::Admin(QWidget *parent)
 
                     contextMenu.exec(ui->tableWidget_2->viewport()->mapToGlobal(pos));
                 } });
+
+
 }
 
 Admin::~Admin()
@@ -156,7 +159,7 @@ void Admin::on_orderBookUsersPushButton_clicked()
     set_comboBox_role();
 }
 
-void Admin::handleStatusChangeApproval(int requestId, bool approved, int rowInTable) {
+void Admin::handleStatusChangeApproval(int requestId, bool approved, int rowInTable, const QString& note) {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "status_change_update_conn");
     db.setDatabaseName("database/mega_mine_orderbook.db");
 
@@ -221,17 +224,28 @@ void Admin::handleStatusChangeApproval(int requestId, bool approved, int rowInTa
         qDebug() << "✅ Order-Status updated.";
     }
 
-    QString newStatus = approved ? "Approved" : "Declined";
-    QString statusSQL = QString(R"(
-        UPDATE StatusChangeRequests
-        SET status = '%1'
-        WHERE id = %2
-    )").arg(newStatus).arg(requestId);
+    QSqlQuery finalUpdateQuery(db);
 
-    qDebug() << "📝 Updating request status:" << statusSQL;
-    QSqlQuery statusQuery(db);
-    if (!statusQuery.exec(statusSQL)) {
-        qDebug() << "❌ Failed to update StatusChangeRequests:" << statusQuery.lastError().text();
+    if (approved) {
+        finalUpdateQuery.prepare(R"(
+        UPDATE StatusChangeRequests
+        SET status = 'Approved'
+        WHERE id = :id
+    )");
+        finalUpdateQuery.bindValue(":id", requestId);
+    } else {
+        finalUpdateQuery.prepare(R"(
+        UPDATE StatusChangeRequests
+        SET status = 'Declined',
+            note = :note
+        WHERE id = :id
+    )");
+        finalUpdateQuery.bindValue(":note", note);
+        finalUpdateQuery.bindValue(":id", requestId);
+    }
+
+    if (!finalUpdateQuery.exec()) {
+        qDebug() << "❌ Failed to update StatusChangeRequests:" << finalUpdateQuery.lastError().text();
         db.close();
         return;
     }
@@ -243,6 +257,32 @@ void Admin::handleStatusChangeApproval(int requestId, bool approved, int rowInTa
     ui->jobsheet_request_table->removeRow(rowInTable);
 }
 
+void Admin::onRoleStatusChanged(QSqlDatabase db, const QString &jobNo, const QString &fieldName, const QString &newStatus) {
+    if (!db.isOpen()) {
+        if (!db.open()) {
+            qDebug() << "[onRoleStatusChanged] DB open failed:" << db.lastError().text();
+            return;
+        }
+    }
+
+    QString sql = QString(R"(
+        UPDATE "Order-Status"
+        SET %1 = :status
+        WHERE jobNo = :jobNo
+    )").arg(fieldName);
+
+    QSqlQuery query(db);
+    query.prepare(sql);
+    query.bindValue(":status", newStatus);
+    query.bindValue(":jobNo", jobNo);
+
+    if (!query.exec()) {
+        qDebug() << "[-] Update failed:" << query.lastError().text();
+        qDebug() << "[:(]SQL Tried:" << query.lastQuery();
+    } else {
+        qDebug() << "[+] Status updated:" << fieldName << "=" << newStatus << "for JobNo:" << jobNo;
+    }
+}
 
 
 
@@ -250,11 +290,11 @@ void Admin::handleStatusChangeApproval(int requestId, bool approved, int rowInTa
 
 void Admin::on_orderBookRequestPushButton_clicked() {
     ui->Admin_panel->setCurrentIndex(6);
-
     ui->jobsheet_request_table->setRowCount(0);
-    ui->jobsheet_request_table->setColumnCount(7);  // 6 fields + 1 action column
+    ui->jobsheet_request_table->setColumnCount(14);
     ui->jobsheet_request_table->setHorizontalHeaderLabels({
-        "Job No", "User ID", "From", "To", "Requested At", "Role", "Action"
+        "Seller ID", "Party ID", "Job No", "Manager", "Designer", "Manufacturer", "Accountant",
+        "Request ID", "Request Role", "Request Role ID", "From", "To", "Request Time", "Action"
     });
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "status_change_conn");
@@ -263,24 +303,176 @@ void Admin::on_orderBookRequestPushButton_clicked() {
         QMessageBox::critical(this, "DB Error", db.lastError().text());
         return;
     }
+
+    QString queryStr = R"(
+        SELECT
+            D.sellerId,
+            D.partyId,
+            D.jobNo,
+            O.Manager,
+            O.Designer,
+            O.Manufacturer,
+            O.Accountant,
+            S.id AS requestId,
+            S.role,
+            S.userId,
+            S.fromStatus,
+            S.toStatus,
+            S.requestTime
+        FROM "OrderBook-Detail" D
+        JOIN "Order-Status" O ON D.jobNo = O.jobNo
+        LEFT JOIN StatusChangeRequests S ON D.jobNo = S.jobNo AND S.status = 'Pending'
+    )";
+
     QSqlQuery query(db);
-    if (!query.exec("SELECT id, jobNo, userId, fromStatus, toStatus, requestTime, role FROM StatusChangeRequests WHERE status=\"Pending\"")) {
+    if (!query.exec(queryStr)) {
         QMessageBox::critical(this, "Query Error", query.lastError().text());
         db.close();
         return;
     }
+
     int row = 0;
     while (query.next()) {
-        int id = query.value(0).toInt();
+        QString jobNo = query.value(2).toString();
+        int requestId = query.value("requestId").toInt();
+
         ui->jobsheet_request_table->insertRow(row);
 
-        for (int col = 1; col <= 6; ++col) {  // skip id (col 0)
+        // Set static fields (sellerId, partyId, jobNo)
+        for (int col = 0; col <= 2; ++col) {
             QTableWidgetItem *item = new QTableWidgetItem(query.value(col).toString());
             item->setTextAlignment(Qt::AlignCenter);
-            ui->jobsheet_request_table->setItem(row, col - 1, item);
+            ui->jobsheet_request_table->setItem(row, col, item);
         }
 
-        // Add approve/reject buttons in last column
+        // Combo pointers
+        QComboBox *managerCombo = nullptr;
+        QComboBox *designerCombo = nullptr;
+        QComboBox *manufacturerCombo = nullptr;
+        QComboBox *accountantCombo = nullptr;
+
+        for (int col = 3; col <= 6; ++col) {
+            QComboBox* combo = new QComboBox();
+            QString fieldName;
+
+            if (col == 3) {
+                combo->addItems({"Pending", "Approved", "Design Checked", "RPD", "Casting", "Bagging", "QC Done"});
+                managerCombo = combo;
+                fieldName = "Manager";
+            } else {
+                combo->addItems({"Pending", "Working", "Completed"});
+                if (col == 4) { designerCombo = combo; fieldName = "Designer"; }
+                if (col == 5) { manufacturerCombo = combo; fieldName = "Manufacturer"; }
+                if (col == 6) { accountantCombo = combo; fieldName = "Accountant"; }
+            }
+
+            QString currentStatus = query.value(col).toString();
+            combo->setCurrentText(currentStatus);
+
+            // Connect combo change
+            connect(combo, &QComboBox::currentTextChanged, this, [=, this](const QString &newStatus) {
+                int thisRow = ui->jobsheet_request_table->indexAt(combo->pos()).row();
+                QString jobNo = ui->jobsheet_request_table->item(thisRow, 2)->text(); // Column 2 is Job No
+
+                QComboBox* managerCombo = qobject_cast<QComboBox*>(ui->jobsheet_request_table->cellWidget(thisRow, 3));
+                QComboBox* designerCombo = qobject_cast<QComboBox*>(ui->jobsheet_request_table->cellWidget(thisRow, 4));
+                QComboBox* manufacturerCombo = qobject_cast<QComboBox*>(ui->jobsheet_request_table->cellWidget(thisRow, 5));
+                QComboBox* accountantCombo = qobject_cast<QComboBox*>(ui->jobsheet_request_table->cellWidget(thisRow, 6));
+
+                if (!managerCombo || !designerCombo || !manufacturerCombo || !accountantCombo) {
+                    qDebug() << "❌ Combo pointer(s) missing for row:" << thisRow;
+                    return;
+                }
+
+                QString managerStatus = managerCombo->currentText();
+                QString designerStatus = designerCombo->currentText();
+                QString manufacturerStatus = manufacturerCombo->currentText();
+                QString accountantStatus = accountantCombo->currentText();
+
+                qDebug() << "[DEBUG] Row:" << thisRow << "| JobNo:" << jobNo;
+                qDebug() << "Manager:" << managerStatus << "Designer:" << designerStatus
+                         << "Manufacturer:" << manufacturerStatus << "Accountant:" << accountantStatus;
+
+                QSqlDatabase db = QSqlDatabase::database("status_change_conn");
+                if (!db.isOpen()) db.open();
+
+                // Manager Logic
+                if (managerStatus == "Pending") {
+                    onRoleStatusChanged(db, jobNo, "Designer", "Pending");
+                    onRoleStatusChanged(db, jobNo, "Manufacturer", "Pending");
+                    onRoleStatusChanged(db, jobNo, "Accountant", "Pending");
+
+                    designerCombo->setCurrentText("Pending");
+                    manufacturerCombo->setCurrentText("Pending");
+                    accountantCombo->setCurrentText("Pending");
+
+                    designerCombo->setEnabled(false);
+                    manufacturerCombo->setEnabled(false);
+                    accountantCombo->setEnabled(false);
+                }
+                else if (managerStatus == "Approved") {
+                    onRoleStatusChanged(db, jobNo, "Manufacturer", "Pending");
+                    onRoleStatusChanged(db, jobNo, "Accountant", "Pending");
+
+                    manufacturerCombo->setCurrentText("Pending");
+                    accountantCombo->setCurrentText("Pending");
+
+                    designerCombo->setEnabled(true);
+                    manufacturerCombo->setEnabled(false);
+                    accountantCombo->setEnabled(false);
+                }
+                else if (managerStatus == "Bagging") {
+                    onRoleStatusChanged(db, jobNo, "Accountant", "Pending");
+                    accountantCombo->setCurrentText("Pending");
+
+                    designerCombo->setEnabled(true);
+                    manufacturerCombo->setEnabled(true);
+                    accountantCombo->setEnabled(false);
+                }
+                else if (managerStatus == "QC Done") {
+                    designerCombo->setEnabled(true);
+                    manufacturerCombo->setEnabled(true);
+                    accountantCombo->setEnabled(true);
+                }
+
+                // Designer logic
+                if (designerStatus != "Completed") {
+                    onRoleStatusChanged(db, jobNo, "Manufacturer", "Pending");
+                    onRoleStatusChanged(db, jobNo, "Accountant", "Pending");
+
+                    manufacturerCombo->setCurrentText("Pending");
+                    accountantCombo->setCurrentText("Pending");
+
+                    manufacturerCombo->setEnabled(false);
+                    accountantCombo->setEnabled(false);
+                }
+                // Manufacturer logic
+                else if (manufacturerStatus != "Completed") {
+                    onRoleStatusChanged(db, jobNo, "Accountant", "Pending");
+
+                    accountantCombo->setCurrentText("Pending");
+                    accountantCombo->setEnabled(false);
+                }
+
+                // Final sync
+                onRoleStatusChanged(db, jobNo, "Manager", managerStatus);
+                onRoleStatusChanged(db, jobNo, "Designer", designerStatus);
+                onRoleStatusChanged(db, jobNo, "Manufacturer", manufacturerStatus);
+                onRoleStatusChanged(db, jobNo, "Accountant", accountantStatus);
+            });
+
+
+            ui->jobsheet_request_table->setCellWidget(row, col, combo);
+        }
+
+        // Columns 7–12
+        for (int col = 7; col <= 12; ++col) {
+            QTableWidgetItem *item = new QTableWidgetItem(query.value(col).toString());
+            item->setTextAlignment(Qt::AlignCenter);
+            ui->jobsheet_request_table->setItem(row, col, item);
+        }
+
+        // Column 13: Approve / Reject
         QWidget *actionWidget = new QWidget();
         QHBoxLayout *layout = new QHBoxLayout(actionWidget);
         layout->setContentsMargins(0, 0, 0, 0);
@@ -292,30 +484,33 @@ void Admin::on_orderBookRequestPushButton_clicked() {
         approveButton->setToolTip("Approve Request");
         rejectButton->setToolTip("Reject Request");
 
-        layout->addWidget(approveButton);
-        layout->addWidget(rejectButton);
+        if (!query.value("requestId").isNull()) {
+            layout->addWidget(approveButton);
+            layout->addWidget(rejectButton);
+            ui->jobsheet_request_table->setCellWidget(row, 13, actionWidget);
 
-        ui->jobsheet_request_table->setCellWidget(row, 6, actionWidget);
+            connect(approveButton, &QPushButton::clicked, this, [=]() {
+                int actualRow = ui->jobsheet_request_table->indexAt(approveButton->parentWidget()->pos()).row();
+                handleStatusChangeApproval(requestId, true, actualRow);
+            });
 
-        // Store the id in button properties
-        approveButton->setProperty("requestId", id);
-        rejectButton->setProperty("requestId", id);
-
-        connect(approveButton, &QPushButton::clicked, this, [=]() {
-            int actualRow = ui->jobsheet_request_table->indexAt(approveButton->parentWidget()->pos()).row();
-            handleStatusChangeApproval(id, true, actualRow);
-        });
-
-        connect(rejectButton, &QPushButton::clicked, this, [=]() {
-            int actualRow = ui->jobsheet_request_table->indexAt(rejectButton->parentWidget()->pos()).row();
-            handleStatusChangeApproval(id, false, actualRow);
-        });
+            connect(rejectButton, &QPushButton::clicked, this, [=]() {
+                QString reason = QInputDialog::getText(this, "Rejection Note",
+                                                       "Please enter a reason for rejection (optional):");
+                int actualRow = ui->jobsheet_request_table->indexAt(rejectButton->parentWidget()->pos()).row();
+                handleStatusChangeApproval(requestId, false, actualRow, reason);
+            });
+        }
 
         ++row;
     }
 
-    db.close();
+    db.close();  // OK to close here — lambdas will reopen if needed
+    QSqlDatabase::removeDatabase("status_change_conn");
 }
+
+
+
 
 
 
@@ -1134,7 +1329,6 @@ void Admin::on_saveOrderBookPushButton_clicked()
     ui->confirmPasswordLineEdit->clear();
     ui->roleComboBox->setCurrentIndex(0);
 }
-
 void Admin::on_show_passwd_checkBox_toggled(bool checked)
 {
     ui->admin_password_lineEdit->setEchoMode(checked ? QLineEdit::Normal : QLineEdit::Password);

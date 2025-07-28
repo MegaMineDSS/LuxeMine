@@ -66,13 +66,18 @@ private slots:
 
     void on_orderBookRequestPushButton_clicked();
 
-    void handleStatusChangeApproval(int requestId, bool approved, int rowInTable);
+    void handleStatusChangeApproval(int requestId, bool approved, int rowInTable, const QString& note = "");
 
 
     void set_comboBox_role();
 
 
     void on_show_passwd_checkBox_toggled(bool checked);
+
+    // Combobox Admin edit status
+    // void onRoleStatusChanged(const QString &jobNo, const QString &fieldName, const QString &newStatus);
+    void onRoleStatusChanged(QSqlDatabase db, const QString &jobNo, const QString &fieldName, const QString &newStatus);
+
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -104,6 +109,7 @@ private:
 
     AdminMenuButtons *newAdminMenuButtons = nullptr;
     bool menuVisible = false;
+
 
 };
 

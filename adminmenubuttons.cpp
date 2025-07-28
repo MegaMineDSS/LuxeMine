@@ -50,7 +50,6 @@ AdminMenuButtons::AdminMenuButtons(QWidget *parent) :
 
 
 
-
     this->setFixedSize(800, 600);
 }
 
