@@ -14,8 +14,7 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">
-</string>
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -903,11 +902,7 @@ conditions overleaf.</string>
     </widget>
    </item>
    <item row="9" column="8" rowspan="7" colspan="6">
-    <widget class="QLabel" name="tableImageLabel">
-     <property name="text">
-      <string>IMG1</string>
-     </property>
-    </widget>
+    <widget class="QTableWidget" name="diaAndStoneForDesignTableWidget"/>
    </item>
   </layout>
  </widget>

@@ -124,7 +124,6 @@ void JobSheet::resizeEvent(QResizeEvent *event)
                                        marginLeftRight, marginTopBottom);
 }
 
-
 void JobSheet::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
@@ -219,6 +218,78 @@ void JobSheet::set_value(const QString &jobNo)
         qDebug() << "No record found for jobNo:" << jobNo;
     }
 
+    // Extract designNo
+    QString designNo = query.value("designNo1").toString();
+    ui->desigNoLineEdit->setText(designNo);
+
+    // Switch to image DB
+    QSqlDatabase imageDb = QSqlDatabase::addDatabase("QSQLITE", "design_info_conn");
+    imageDb.setDatabaseName("database/mega_mine_image.db");
+
+    if (!imageDb.open()) {
+        qDebug() << "❌ Could not open image database:" << imageDb.lastError().text();
+        return;
+    }
+
+    // Query diamond & stone info
+    QSqlQuery imgQuery(imageDb);
+    imgQuery.prepare("SELECT diamond, stone FROM image_data WHERE design_no = :designNo");
+    imgQuery.bindValue(":designNo", designNo);
+
+    if (!imgQuery.exec()) {
+        qDebug() << "❌ Failed to query diamond & stone:" << imgQuery.lastError().text();
+        imageDb.close();
+        QSqlDatabase::removeDatabase("design_info_conn");
+        return;
+    }
+
+    QTableWidget* table = ui->diaAndStoneForDesignTableWidget;
+    table->setRowCount(0); // Clear existing
+    table->setColumnCount(4);
+    table->setHorizontalHeaderLabels({"Type", "Name", "Quantity", "Size (MM)"});
+
+    auto parseAndAddRows = [&](const QString& jsonStr, const QString& typeLabel) {
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(jsonStr.toUtf8(), &parseError);
+        if (parseError.error != QJsonParseError::NoError || !doc.isArray()) {
+            qDebug() << "⚠️ Failed to parse JSON for" << typeLabel << ":" << parseError.errorString();
+            return;
+        }
+
+        QJsonArray array = doc.array();
+        for (const QJsonValue& value : array) {
+            if (!value.isObject()) continue;
+
+            QJsonObject obj = value.toObject();
+            QString name = obj.value("type").toString();
+            QString qty = obj.value("quantity").toString();
+            QString size = obj.value("sizeMM").toString();
+
+            int row = table->rowCount();
+            table->insertRow(row);
+            table->setItem(row, 0, new QTableWidgetItem(typeLabel));
+            table->setItem(row, 1, new QTableWidgetItem(name));
+            table->setItem(row, 2, new QTableWidgetItem(qty));
+            table->setItem(row, 3, new QTableWidgetItem(size));
+        }
+    };
+
+    if (imgQuery.next()) {
+        QString diamondJson = imgQuery.value("diamond").toString();
+        QString stoneJson = imgQuery.value("stone").toString();
+
+        parseAndAddRows(diamondJson, "Diamond");
+        parseAndAddRows(stoneJson, "Stone");
+
+        table->resizeColumnsToContents();
+    } else {
+        qDebug() << "ℹ️ No diamond/stone data found for design:" << designNo;
+    }
+
+    imageDb.close();
+    QSqlDatabase::removeDatabase("design_info_conn");
+
+
     db.close();  // Always close the DB
     QSqlDatabase::removeDatabase("set_jobsheet");
 }
@@ -271,6 +342,52 @@ void JobSheet::loadImageForDesignNo()
     } else {
         QMessageBox::information(this, "Not Found", "No image found for design number: " + designNo);
     }
+
+    QSqlQuery detailsQuery(db);
+    detailsQuery.prepare("SELECT diamond, stone FROM image_data WHERE design_no = :designNo");
+    detailsQuery.bindValue(":designNo", designNo);
+
+    if (!detailsQuery.exec()) {
+        QMessageBox::critical(this, "Query Error", "Failed to fetch diamond and stone data:\n" + detailsQuery.lastError().text());
+    } else if (detailsQuery.next()) {
+        QString diamondJson = detailsQuery.value("diamond").toString();
+        QString stoneJson = detailsQuery.value("stone").toString();
+
+        QTableWidget* table = ui->diaAndStoneForDesignTableWidget;
+        table->setRowCount(0); // clear previous
+        table->setColumnCount(4);
+        table->setHorizontalHeaderLabels({"Type", "Name", "Quantity", "Size (MM)"});
+
+        auto parseAndAddRows = [&](const QString& jsonStr, const QString& typeLabel) {
+            QJsonParseError parseError;
+            QJsonDocument doc = QJsonDocument::fromJson(jsonStr.toUtf8(), &parseError);
+            if (parseError.error != QJsonParseError::NoError || !doc.isArray())
+                return;
+
+            QJsonArray array = doc.array();
+            for (const QJsonValue& value : array) {
+                if (!value.isObject()) continue;
+
+                QJsonObject obj = value.toObject();
+                QString name = obj.value("type").toString();
+                QString qty = obj.value("quantity").toString();
+                QString size = obj.value("sizeMM").toString();
+
+                int row = table->rowCount();
+                table->insertRow(row);
+                table->setItem(row, 0, new QTableWidgetItem(typeLabel)); // "Diamond" or "Stone"
+                table->setItem(row, 1, new QTableWidgetItem(name));
+                table->setItem(row, 2, new QTableWidgetItem(qty));
+                table->setItem(row, 3, new QTableWidgetItem(size));
+            }
+        };
+
+        parseAndAddRows(diamondJson, "Diamond");
+        parseAndAddRows(stoneJson, "Stone");
+
+        table->resizeColumnsToContents(); // optional
+    }
+
 
     db.close();
     QSqlDatabase::removeDatabase("image_conn");

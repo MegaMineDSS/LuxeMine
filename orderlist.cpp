@@ -45,6 +45,7 @@ OrderList::OrderList(QWidget *parent, const QString &role)
     ui->orderListTableWidget->setColumnCount(headers.size());
     ui->orderListTableWidget->setHorizontalHeaderLabels(headers);
     ui->orderListTableWidget->setSortingEnabled(true);  // ✅ Add this line
+    ui->orderListTableWidget->verticalHeader()->setVisible(false);
     setRoleAndUserRole(role);
     // qDebug()<<"---------"<<role;
     if (role == "designer") {
@@ -192,14 +193,13 @@ void OrderList::openJobSheet(const QString &jobNo){
     sheet->exec();
 }
 
-void OrderList::printJobSheet(const QString &jobNo){
-    // Set working directory
+// Cleaned-up and modularized version of printJobSheet
+void OrderList::printJobSheet(const QString &jobNo) {
     QDir::setCurrent(QCoreApplication::applicationDirPath());
 
-    // Open database connection
+    // --- Open Order DB ---
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "set_jobsheet");
     db.setDatabaseName("database/mega_mine_orderbook.db");
-
     if (!db.open()) {
         qDebug() << "Failed to open database:" << db.lastError().text();
         return;
@@ -207,37 +207,27 @@ void OrderList::printJobSheet(const QString &jobNo){
 
     QSqlQuery query(db);
     query.prepare(R"(
-                SELECT partyId, jobNo, orderNo, clientId, orderDate, deliveryDate,
-                       productPis, designNo1, metalPurity, metalColor, sizeNo, sizeMM,
-                       length, width, height, image1path
-                FROM "OrderBook-Detail"
-                WHERE jobNo = :jobNo
+        SELECT partyId, jobNo, orderNo, clientId, orderDate, deliveryDate,
+               productPis, designNo1, metalPurity, metalColor, sizeNo, sizeMM,
+               length, width, height, image1path
+        FROM "OrderBook-Detail"
+        WHERE jobNo = :jobNo
     )");
-
     query.bindValue(":jobNo", jobNo);
 
-    if (!query.exec()) {
-        qDebug() << "Query failed:" << query.lastError().text();
+    if (!query.exec() || !query.next()) {
+        qDebug() << "Query failed or no record found:" << query.lastError().text();
         return;
     }
 
+    // --- Prepare Excel Template ---
     QString templatePath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/sample_excel.xlsx");
     QString tempPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/temp_jobsheet_" + jobNo + ".xlsx");
-
     if (!QFile::copy(templatePath, tempPath)) {
         QMessageBox::critical(this, "Error", "Failed to create temporary Excel file.");
         return;
     }
 
-    QString filePath = QDir::toNativeSeparators(tempPath);  // Use the copy for editing
-
-
-    if (!QFile::exists(filePath)) {
-        QMessageBox::critical(this, "Error", "Excel template file not found.");
-        return;
-    }
-
-    // ✅ Show modal progress indicator
     QProgressDialog progress("Generating job sheet, please wait...", QString(), 0, 0, this);
     progress.setWindowModality(Qt::ApplicationModal);
     progress.setCancelButton(nullptr);
@@ -245,168 +235,179 @@ void OrderList::printJobSheet(const QString &jobNo){
     progress.setMinimumDuration(0);
     progress.setRange(0, 0);
     progress.show();
-    QApplication::processEvents();  // Makes sure it shows before Excel work starts
+    QApplication::processEvents();
 
-
-
-    // QAxObject *excel = new QAxObject("Excel.Application", this);
+    // --- Launch Excel ---
     QAxObject *excel = new QAxObject("Excel.Application", this);
-    if (excel->isNull()) {
-        QMessageBox::critical(this, "Error", "Excel is not available on this system.");
+    if (!excel || excel->isNull()) {
+        QMessageBox::critical(this, "Error", "Excel is not available.");
         return;
     }
-
-    // 🚀 Optimization: Disable slow Excel features
-    excel->setProperty("DisplayAlerts", false);     // Prevents popups like "Save changes?"
-    excel->setProperty("ScreenUpdating", false);    // Avoids UI redraw in Excel
-    excel->setProperty("EnableEvents", false);      // Disables background event triggers
-
+    excel->setProperty("DisplayAlerts", false);
+    excel->setProperty("ScreenUpdating", false);
+    excel->setProperty("EnableEvents", false);
     excel->setProperty("Visible", false);
 
     QAxObject *workbooks = excel->querySubObject("Workbooks");
-    QAxObject *workbook = workbooks->querySubObject("Open(const QString&)", filePath);
-    QAxObject *sheet = workbook->querySubObject("Worksheets(int)", 1); // Sheet1
+    QAxObject *workbook = workbooks->querySubObject("Open(const QString&)", tempPath);
+    QAxObject *sheet = workbook->querySubObject("Worksheets(int)", 1);
+    //Auto Fit
+    QAxObject *range = sheet->querySubObject("Range(const QString&)", "J11:M26");
+    QAxObject *columns = range->querySubObject("EntireColumn");
+    columns->dynamicCall("AutoFit()");
 
 
-    if(query.next()){
-        sheet->querySubObject("Range(const QString&)", "B3")->setProperty("Value", query.value("partyId").toString());
-        sheet->querySubObject("Range(const QString&)", "H5")->setProperty("Value", query.value("jobNo").toString());
-        sheet->querySubObject("Range(const QString&)", "H4")->setProperty("Value", query.value("orderNo").toString());
-        sheet->querySubObject("Range(const QString&)", "H3")->setProperty("Value", query.value("clientId").toString());
+    // --- Fill Excel Template ---
+    auto setCell = [&](const QString &cell, const QVariant &value, const QString &format = QString()) {
+        QAxObject *r = sheet->querySubObject("Range(const QString&)", cell);
+        r->setProperty("Value", value);
+        if (!format.isEmpty()) r->setProperty("NumberFormat", format);
+    };
 
-        // Read and parse order date
-        QString rawOrderDate = query.value("orderDate").toString();
-        QDate orderDate = QDate::fromString(rawOrderDate, "yyyy-MM-dd");  // Correct format
+    setCell("B3", query.value("partyId"));
+    setCell("H5", query.value("jobNo"));
+    setCell("H4", query.value("orderNo"));
+    setCell("H3", query.value("clientId"));
+    setCell("H2", QDate::fromString(query.value("orderDate").toString(), "yyyy-MM-dd").toString("MM/dd/yyyy"), "mm/dd/yyyy");
+    setCell("A6", QDate::fromString(query.value("deliveryDate").toString(), "yyyy-MM-dd").toString("MM/dd/yyyy"), "mm/dd/yyyy");
 
-        if (orderDate.isValid()) {
-            QAxObject *orderCell = sheet->querySubObject("Range(const QString&)", "H2");
-            orderCell->setProperty("Value", orderDate.toString("MM/dd/yyyy"));  // Excel-compatible
-            orderCell->setProperty("NumberFormat", "mm/dd/yyyy");               // Force Excel to treat it as date
-        } else {
-            qWarning() << "Invalid order date:" << rawOrderDate;
-        }
+    setCell("B4", query.value("productPis"));
+    setCell("F4", query.value("designNo1"));
+    setCell("B6", query.value("metalPurity"));
+    setCell("C6", query.value("metalColor"));
+    setCell("D6", query.value("sizeNo"));
+    setCell("E6", query.value("sizeMM"));
+    setCell("F6", query.value("length"));
+    setCell("G6", query.value("width"));
+    setCell("H6", query.value("height"));
 
-        // Read and parse delivery date
-        QString rawDeliveryDate = query.value("deliveryDate").toString();
-        QDate deliveryDate = QDate::fromString(rawDeliveryDate, "yyyy-MM-dd");  // Correct format
+    // --- Insert Image ---
+    QString imagePath = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/" + query.value("image1path").toString());
+    if (QFile::exists(imagePath)) {
+        QAxObject *shapes = sheet->querySubObject("Shapes");
+        QAxObject *anchorCell = sheet->querySubObject("Range(const QString&)", "J2");
+        double left = anchorCell->property("Left").toDouble();
+        double top = anchorCell->property("Top").toDouble();
+        QAxObject *range = sheet->querySubObject("Range(const QString&)", "J2:N9");
+        double width = range->property("Width").toDouble();
+        double height = range->property("Height").toDouble();
 
-        if (deliveryDate.isValid()) {
-            QAxObject *deliveryCell = sheet->querySubObject("Range(const QString&)", "A6");
-            deliveryCell->setProperty("Value", deliveryDate.toString("MM/dd/yyyy"));
-            deliveryCell->setProperty("NumberFormat", "mm/dd/yyyy");
-        } else {
-            qWarning() << "Invalid delivery date:" << rawDeliveryDate;
-        }
-
-
-
-        sheet->querySubObject("Range(const QString&)", "B4")->setProperty("Value", QString::number(query.value("productPis").toInt()));
-        sheet->querySubObject("Range(const QString&)", "F4")->setProperty("Value", query.value("designNo1").toString());
-        sheet->querySubObject("Range(const QString&)", "B6")->setProperty("Value", query.value("metalPurity").toString());
-        sheet->querySubObject("Range(const QString&)", "C6")->setProperty("Value", query.value("metalColor").toString());
-        sheet->querySubObject("Range(const QString&)", "D6")->setProperty("Value", QString::number(query.value("sizeNo").toDouble()));
-        sheet->querySubObject("Range(const QString&)", "E6")->setProperty("Value", QString::number(query.value("sizeMM").toDouble()));
-        sheet->querySubObject("Range(const QString&)", "F6")->setProperty("Value", QString::number(query.value("length").toDouble()));
-        sheet->querySubObject("Range(const QString&)", "G6")->setProperty("Value", QString::number(query.value("width").toDouble()));
-        sheet->querySubObject("Range(const QString&)", "H6")->setProperty("Value", QString::number(query.value("height").toDouble()));
-
-        // --- IMAGE HANDLING ---
-        QString imageRelPath = query.value("image1path").toString();
-        QString imageFullPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + imageRelPath);
-        QString nativeImagePath = QDir::toNativeSeparators(imageFullPath); // ✅ REQUIRED for Excel/Windows
-
-        QFile imageFile(imageRelPath);
-        if (imageFile.exists()) {
-
-            QAxObject *shapes = sheet->querySubObject("Shapes");
-
-            // Optional: Reset working directory
-            QDir::setCurrent(QCoreApplication::applicationDirPath());
-
-            // qDebug() << "Full image path for Excel:" << nativeImagePath;
-
-            // Get the top-left cell of the target range
-            QAxObject *anchorCell = sheet->querySubObject("Range(const QString&)", "J2");
-            double left = anchorCell->property("Left").toDouble();
-            double top = anchorCell->property("Top").toDouble();
-
-            // Get the total width and height of merged range J2:N9
-            QAxObject *mergeRange = sheet->querySubObject("Range(const QString&)", "J2:N9");
-            double width = mergeRange->property("Width").toDouble();
-            double height = mergeRange->property("Height").toDouble();
-
-            // Insert the image using accurate placement
-            QAxObject *picture = shapes->querySubObject("AddPicture(const QString&, bool, bool, double, double, double, double)",
-                                                        nativeImagePath,
-                                                        false,  // LinkToFile
-                                                        true,   // SaveWithDocument
-                                                        left,
-                                                        top,
-                                                        width,
-                                                        height);
-
-            if (!picture || picture->isNull()) {
-                QMessageBox::warning(this, "Image Insert Error", "Failed to insert image into Excel:\n" + nativeImagePath);
-            }
-        }
-
-        // Save changes
-        workbook->dynamicCall("Save()");
-
-        // ✅ Print the document (silent print to default printer)
-        // workbook->dynamicCall("PrintOut()");
-
-        QString pdfPath = QCoreApplication::applicationDirPath() + "/jobSheet_" + jobNo + ".pdf";
-        QString nativePdfPath = QDir::toNativeSeparators(pdfPath);
-
-        qDebug() << "Attempting to export PDF to:" << nativePdfPath;
-
-        if (!workbook || workbook->isNull()) {
-            QMessageBox::critical(this, "Error", "Workbook is null. Cannot export.");
-            return;
-        }
-
-        workbook->dynamicCall("ExportAsFixedFormat(int, const QString&)", 0, nativePdfPath);
-
-        // Safer check: does the file exist after export?
-        if (QFile::exists(nativePdfPath)) {
-            QMessageBox::information(this, "PDF Exported", "Saved PDF to:\n" + nativePdfPath);
-            QDesktopServices::openUrl(QUrl::fromLocalFile(nativePdfPath));
-            qDebug() << "PDF export successful.";
-        } else {
-            QMessageBox::critical(this, "Error", "Failed to export PDF.\nThe file was not created:\n" + nativePdfPath);
-            qDebug() << "PDF export failed. File does not exist.";
-        }
-
-        // Close Excel
-        workbook->dynamicCall("Close()");
-        excel->dynamicCall("Quit()");
-
-        auto cleanupAxObject = [](QAxObject* obj) {
-            if (obj) {
-                obj->clear(); // Releases the COM object
-                delete obj;
-            }
-        };
-        // cleanupAxObject(picture);
-        // cleanupAxObject(shapes);
-        cleanupAxObject(sheet);
-        cleanupAxObject(workbook);
-        cleanupAxObject(workbooks);
-        cleanupAxObject(excel);
+        shapes->querySubObject("AddPicture(const QString&, bool, bool, double, double, double, double)",
+                               imagePath, false, true, left, top, width, height);
     }
-    // QMessageBox::information(this, "Success", "Excel updated and sent to printer.");
+
+    // --- Load and Insert Stones Table ---
+    QString designNo = query.value("designNo1").toString();
+    QSqlDatabase imageDb = QSqlDatabase::addDatabase("QSQLITE", "image_conn_excel");
+    imageDb.setDatabaseName("database/mega_mine_image.db");
+
+    if (imageDb.open()) {
+        QSqlQuery imageQuery(imageDb);
+        imageQuery.prepare("SELECT diamond, stone FROM image_data WHERE design_no = :designNo");
+        imageQuery.bindValue(":designNo", designNo);
+
+        if (imageQuery.exec() && imageQuery.next()) {
+            auto insertStones = [&](const QString &json, const QString &label, int &row) {
+                QJsonParseError err;
+                QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &err);
+                if (err.error != QJsonParseError::NoError || !doc.isArray()) {
+                    qDebug() << "❌ JSON parse error for" << label << ":" << err.errorString();
+                    return;
+                }
+
+                QJsonArray arr = doc.array();
+                for (const QJsonValue &v : arr) {
+                    if (!v.isObject()) continue;
+
+                    QJsonObject o = v.toObject();
+                    QString type = o.value("type").toString();
+                    QString quantity = o.value("quantity").toString();
+                    QString size = o.value("sizeMM").toString();
+
+                    setCell(QString("J%1").arg(row), label);    // Column J: "Diamond"/"Stone"
+                    setCell(QString("L%1").arg(row), type);     // Column K: Type (e.g. Round)
+                    setCell(QString("N%1").arg(row), quantity); // Column L: Quantity
+                    setCell(QString("P%1").arg(row), size);     // Column M: Size
+
+                    if (++row > 26) break; // Avoid infinite overflow
+                }
+            };
+
+            // 🔰 Set header row (optional)
+            setCell("J11", "Type");
+            setCell("L11", "Name");
+            setCell("N11", "Qty");
+            setCell("P11", "Size");
+
+            // ⬇ Insert data
+            int rowNum = 12;
+            insertStones(imageQuery.value("diamond").toString(), "Diamond", rowNum);
+            insertStones(imageQuery.value("stone").toString(), "Stone", rowNum);
+
+            // // Add border to the table after all stones inserted
+            int firstRow = 11;
+            int lastRow = rowNum - 1;
+
+            if (lastRow >= firstRow) {
+                QString rangeStr = QString("J%1:Q%2").arg(firstRow).arg(lastRow);
+                QAxObject* range = sheet->querySubObject("Range(const QString&)", rangeStr);
+                if (!range) {
+                    qDebug() << "Failed to get Range object";
+                    return;
+                }
+
+                QAxObject* borders = range->querySubObject("Borders");
+                if (!borders) {
+                    qDebug() << "Failed to get Borders object";
+                    return;
+                }
+
+                QList<int> borderIndices = {7, 8, 9, 10, 11, 12}; // xlEdgeLeft..InsideHorizontal
+
+                for (int index : borderIndices) {
+                    QAxObject* border = borders->querySubObject("Item(int)", index);
+                    if (border) {
+                        border->setProperty("LineStyle", 1);  // xlContinuous
+                        border->setProperty("Weight", -4138); // xlThin
+                        border->dynamicCall("Release");
+                    } else {
+                        qDebug() << "❌ Failed to get border for index" << index;
+                    }
+                }
+            }
+
+        }
+
+        imageDb.close();
+        QSqlDatabase::removeDatabase("image_conn_excel");
+    } else {
+        qDebug() << "❌ Could not open image DB for stones.";
+    }
+
+
+    workbook->dynamicCall("Save()");
+    QString pdfPath = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/jobSheet_" + jobNo + ".pdf");
+    workbook->dynamicCall("ExportAsFixedFormat(int, const QString&)", 0, pdfPath);
+
+    if (QFile::exists(pdfPath)) {
+        QMessageBox::information(this, "PDF Exported", "Saved PDF to:\n" + pdfPath);
+        QDesktopServices::openUrl(QUrl::fromLocalFile(pdfPath));
+    } else {
+        QMessageBox::critical(this, "Error", "Failed to export PDF:" + pdfPath);
+    }
+
+    workbook->dynamicCall("Close()");
+    excel->dynamicCall("Quit()");
+
+    delete sheet;
+    delete workbook;
+    delete workbooks;
+    delete excel;
 
     db.close();
     QSqlDatabase::removeDatabase("set_jobsheet");
-
-    if (QFile::exists(tempPath)) {
-        QFile::remove(tempPath);
-    }
-
-
+    if (QFile::exists(tempPath)) QFile::remove(tempPath);
 }
-
 
 
 
@@ -696,8 +697,8 @@ void OrderList::setupStatusCombo(int row, int col, const QString &role, const QS
 bool OrderList::shouldShowRow(const QString &role, const QVariantList &order)
 {
     QString managerStatus      = order[3].toString();
-    QString designerStatus     = order[4].toString();
-    QString manufacturerStatus = order[5].toString();
+    // QString designerStatus     = order[4].toString();
+    // QString manufacturerStatus = order[5].toString();
 
     if (role == "designer" && managerStatus == "Order Checked")
         return true;
@@ -732,7 +733,7 @@ void OrderList::hideIrrelevantColumns(const QString &role)
         { "designer",      {4, 6, 7, 13, 15} },
         { "manufacturer",  { 4, 5, 7, 13, 14} },
         { "accountant",    {4, 5, 6, 12} },
-        { "seller",        {10, 11, 12, 14, 15, 17, 18} },
+        { "seller",        {10, 11, 12, 13, 14, 15, 17, 18} },
         { "manager",       {12} }
     };
 
