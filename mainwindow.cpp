@@ -117,11 +117,12 @@ void MainWindow::setRandomBackground()
         ":/Backgrounds/23.jpg", ":/Backgrounds/24.jpg", ":/Backgrounds/25.jpg",
         ":/Backgrounds/26.jpg", ":/Backgrounds/27.jpg", ":/Backgrounds/28.jpg",
         ":/Backgrounds/29.jpg", ":/Backgrounds/0.jpg",  ":/Backgrounds/5.jpg"
+
     };
 
-    int randomIndex = QRandomGenerator::global()->bounded(1, 30); // avoid 0 and 5
-
+    int randomIndex = QRandomGenerator::global()->bounded(1, 30);
     currentBackground.load(imagePaths[randomIndex]);
+    // currentBackground.load(":/Backgrounds/sle.jpg");
     updateBackground();  // apply scaled background
 }
 
