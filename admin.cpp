@@ -192,7 +192,7 @@ void Admin::handleStatusChangeApproval(int requestId, bool approved, int rowInTa
         toStatus = selectQuery.value("toStatus").toString();
         qDebug() << "➡️  Approving request for job:" << jobNo << " role:" << role << " toStatus:" << toStatus;
 
-        QStringList roleOrder = {"Designer", "Manufacturer", "Accountant"};
+        QStringList roleOrder = {"Manager", "Designer", "Manufacturer", "Accountant"};
         int roleIndex = roleOrder.indexOf(role);
         if (roleIndex == -1) {
             qDebug() << "❌ Invalid role:" << role;
@@ -207,6 +207,7 @@ void Admin::handleStatusChangeApproval(int requestId, bool approved, int rowInTa
             else if (i > roleIndex)
                 setParts << QString("%1 = 'Pending'").arg(roleOrder[i]);
         }
+
 
         QString updateSQL = QString(R"(
             UPDATE "Order-Status"
@@ -228,18 +229,18 @@ void Admin::handleStatusChangeApproval(int requestId, bool approved, int rowInTa
 
     if (approved) {
         finalUpdateQuery.prepare(R"(
-        UPDATE StatusChangeRequests
-        SET status = 'Approved'
-        WHERE id = :id
-    )");
+            UPDATE StatusChangeRequests
+            SET status = 'Approved'
+            WHERE id = :id
+        )");
         finalUpdateQuery.bindValue(":id", requestId);
     } else {
         finalUpdateQuery.prepare(R"(
-        UPDATE StatusChangeRequests
-        SET status = 'Declined',
-            note = :note
-        WHERE id = :id
-    )");
+            UPDATE StatusChangeRequests
+            SET status = 'Declined',
+                note = :note
+            WHERE id = :id
+        )");
         finalUpdateQuery.bindValue(":note", note);
         finalUpdateQuery.bindValue(":id", requestId);
     }
@@ -251,11 +252,124 @@ void Admin::handleStatusChangeApproval(int requestId, bool approved, int rowInTa
     }
 
     db.close();
-    qDebug() << "✅ DB changes successful. Removing row from UI.";
+    QSqlDatabase::removeDatabase("status_change_update_conn");
+    qDebug() << "✅ DB changes successful. Clearing request fields in UI.";
 
-    // Remove the row from the table
-    ui->jobsheet_request_table->removeRow(rowInTable);
+    // Clear columns: 7–13 in the existing row (Request ID to Action)
+    for (int col = 7; col <= 13; ++col) {
+        QWidget* widget = ui->jobsheet_request_table->cellWidget(rowInTable, col);
+        if (widget) {
+            delete widget;
+            ui->jobsheet_request_table->setCellWidget(rowInTable, col, nullptr);
+        } else {
+            QTableWidgetItem* item = ui->jobsheet_request_table->item(rowInTable, col);
+            if (!item)
+                item = new QTableWidgetItem();
+            item->setText("");
+            ui->jobsheet_request_table->setItem(rowInTable, col, item);
+        }
+    }
 }
+
+
+
+// void Admin::handleStatusChangeApproval(int requestId, bool approved, int rowInTable, const QString& note) {
+//     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "status_change_update_conn");
+//     db.setDatabaseName("database/mega_mine_orderbook.db");
+
+//     if (!db.open()) {
+//         qDebug() << "❌ DB Open Failed:" << db.lastError().text();
+//         QMessageBox::critical(this, "DB Error", db.lastError().text());
+//         return;
+//     }
+//     qDebug() << "✅ DB Connected";
+
+//     QString jobNo, role, toStatus;
+
+//     if (approved) {
+//         QSqlQuery selectQuery(db);
+//         selectQuery.prepare(R"(
+//             SELECT jobNo, role, toStatus
+//             FROM StatusChangeRequests
+//             WHERE id = :id
+//         )");
+//         selectQuery.bindValue(":id", requestId);
+
+//         if (!selectQuery.exec() || !selectQuery.next()) {
+//             qDebug() << "❌ SELECT failed:" << selectQuery.lastError().text();
+//             db.close();
+//             return;
+//         }
+
+//         jobNo = selectQuery.value("jobNo").toString();
+//         role = selectQuery.value("role").toString();
+//         toStatus = selectQuery.value("toStatus").toString();
+//         qDebug() << "➡️  Approving request for job:" << jobNo << " role:" << role << " toStatus:" << toStatus;
+
+//         QStringList roleOrder = {"Designer", "Manufacturer", "Accountant"};
+//         int roleIndex = roleOrder.indexOf(role);
+//         if (roleIndex == -1) {
+//             qDebug() << "❌ Invalid role:" << role;
+//             db.close();
+//             return;
+//         }
+
+//         QStringList setParts;
+//         for (int i = 0; i < roleOrder.size(); ++i) {
+//             if (i == roleIndex)
+//                 setParts << QString("%1 = '%2'").arg(roleOrder[i], toStatus);
+//             else if (i > roleIndex)
+//                 setParts << QString("%1 = 'Pending'").arg(roleOrder[i]);
+//         }
+
+//         QString updateSQL = QString(R"(
+//             UPDATE "Order-Status"
+//             SET %1
+//             WHERE jobNo = '%2'
+//         )").arg(setParts.join(", "), jobNo);
+
+//         qDebug() << "📝 SQL:" << updateSQL;
+//         QSqlQuery updateQuery(db);
+//         if (!updateQuery.exec(updateSQL)) {
+//             qDebug() << "❌ Failed to update Order-Status:" << updateQuery.lastError().text();
+//             db.close();
+//             return;
+//         }
+//         qDebug() << "✅ Order-Status updated.";
+//     }
+
+//     QSqlQuery finalUpdateQuery(db);
+
+//     if (approved) {
+//         finalUpdateQuery.prepare(R"(
+//         UPDATE StatusChangeRequests
+//         SET status = 'Approved'
+//         WHERE id = :id
+//     )");
+//         finalUpdateQuery.bindValue(":id", requestId);
+//     } else {
+//         finalUpdateQuery.prepare(R"(
+//         UPDATE StatusChangeRequests
+//         SET status = 'Declined',
+//             note = :note
+//         WHERE id = :id
+//     )");
+//         finalUpdateQuery.bindValue(":note", note);
+//         finalUpdateQuery.bindValue(":id", requestId);
+//     }
+
+//     if (!finalUpdateQuery.exec()) {
+//         qDebug() << "❌ Failed to update StatusChangeRequests:" << finalUpdateQuery.lastError().text();
+//         db.close();
+//         return;
+//     }
+
+//     db.close();
+//     qDebug() << "✅ DB changes successful. Removing row from UI.";
+
+//     // Remove the row from the table
+//     ui->jobsheet_request_table->removeRow(rowInTable);
+// }
 
 void Admin::onRoleStatusChanged(QSqlDatabase db, const QString &jobNo, const QString &fieldName, const QString &newStatus) {
     if (!db.isOpen()) {
@@ -283,8 +397,6 @@ void Admin::onRoleStatusChanged(QSqlDatabase db, const QString &jobNo, const QSt
         qDebug() << "[+] Status updated:" << fieldName << "=" << newStatus << "for JobNo:" << jobNo;
     }
 }
-
-
 
 
 
@@ -321,13 +433,19 @@ void Admin::on_orderBookRequestPushButton_clicked() {
             S.requestTime
         FROM "OrderBook-Detail" D
         JOIN "Order-Status" O ON D.jobNo = O.jobNo
-        LEFT JOIN StatusChangeRequests S ON D.jobNo = S.jobNo AND S.status = 'Pending'
+        LEFT JOIN (
+            SELECT *
+            FROM StatusChangeRequests
+            WHERE status = 'Pending'
+            GROUP BY jobNo
+        ) S ON D.jobNo = S.jobNo;
     )";
 
     QSqlQuery query(db);
     if (!query.exec(queryStr)) {
         QMessageBox::critical(this, "Query Error", query.lastError().text());
         db.close();
+        QSqlDatabase::removeDatabase("status_change_conn");
         return;
     }
 
@@ -372,7 +490,7 @@ void Admin::on_orderBookRequestPushButton_clicked() {
             // Connect combo change
             connect(combo, &QComboBox::currentTextChanged, this, [=, this](const QString &newStatus) {
                 int thisRow = ui->jobsheet_request_table->indexAt(combo->pos()).row();
-                QString jobNo = ui->jobsheet_request_table->item(thisRow, 2)->text(); // Column 2 is Job No
+                QString jobNo = ui->jobsheet_request_table->item(thisRow, 2)->text();
 
                 QComboBox* managerCombo = qobject_cast<QComboBox*>(ui->jobsheet_request_table->cellWidget(thisRow, 3));
                 QComboBox* designerCombo = qobject_cast<QComboBox*>(ui->jobsheet_request_table->cellWidget(thisRow, 4));
@@ -393,8 +511,12 @@ void Admin::on_orderBookRequestPushButton_clicked() {
                 qDebug() << "Manager:" << managerStatus << "Designer:" << designerStatus
                          << "Manufacturer:" << manufacturerStatus << "Accountant:" << accountantStatus;
 
-                QSqlDatabase db = QSqlDatabase::database("status_change_conn");
-                if (!db.isOpen()) db.open();
+                QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "status_change_conn_" + QString::number(thisRow));
+                db.setDatabaseName("database/mega_mine_orderbook.db");
+                if (!db.open()) {
+                    qDebug() << "[onRoleStatusChanged] DB open failed:" << db.lastError().text();
+                    return;
+                }
 
                 // Manager Logic
                 if (managerStatus == "Pending") {
@@ -459,8 +581,10 @@ void Admin::on_orderBookRequestPushButton_clicked() {
                 onRoleStatusChanged(db, jobNo, "Designer", designerStatus);
                 onRoleStatusChanged(db, jobNo, "Manufacturer", manufacturerStatus);
                 onRoleStatusChanged(db, jobNo, "Accountant", accountantStatus);
-            });
 
+                db.close();
+                QSqlDatabase::removeDatabase("status_change_conn_" + QString::number(thisRow));
+            });
 
             ui->jobsheet_request_table->setCellWidget(row, col, combo);
         }
@@ -495,20 +619,150 @@ void Admin::on_orderBookRequestPushButton_clicked() {
             });
 
             connect(rejectButton, &QPushButton::clicked, this, [=]() {
-                QString reason = QInputDialog::getText(this, "Rejection Note",
-                                                       "Please enter a reason for rejection (optional):");
+                QInputDialog dialog(this);
+                dialog.setWindowTitle("Rejection Note");
+                dialog.setLabelText("Please enter a reason for rejection (optional):");
+                dialog.setInputMode(QInputDialog::TextInput);
+
+                bool isDarkMode = true; // Default to Dark Mode
+                dialog.setProperty("theme", isDarkMode ? "dark" : "light");
+
+                // Apply QSS without transition and box-shadow
+                dialog.setStyleSheet(R"(
+                    QInputDialog[theme="light"] {
+                        background-color: #F5F5F5;
+                        color: #333333;
+                        font-family: "Segoe UI", Arial, sans-serif;
+                        font-size: 14px;
+                        min-height: 200px;
+                        min-width: 400px;
+                    }
+                    QInputDialog[theme="light"] QLabel {
+                        color: #333333;
+                        font-size: 14px;
+                        font-weight: normal;
+                        padding: 8px;
+                    }
+                    QInputDialog[theme="light"] QLineEdit {
+                        background-color: #FFFFFF;
+                        border: 1px solid #CCCCCC;
+                        border-radius: 4px;
+                        padding: 10px;
+                        color: #333333;
+                        font-size: 14px;
+                        min-height: 30px;
+                        max-height: 30px;
+                        min-width: 350px;
+                        selection-background-color: #4A90E2;
+                        selection-color: #FFFFFF;
+                    }
+                    QInputDialog[theme="light"] QLineEdit:focus {
+                        border: 1px solid #4A90E2;
+                        background-color: #F0F8FF;
+                    }
+                    QInputDialog[theme="light"] QPushButton {
+                        background-color: #4A90E2;
+                        color: #FFFFFF;
+                        border: 1px solid #357ABD;
+                        border-radius: 4px;
+                        padding: 10px 20px;
+                        font-size: 14px;
+                        font-weight: bold;
+                        min-width: 90px;
+                    }
+                    QInputDialog[theme="light"] QPushButton:hover {
+                        background-color: #357ABD;
+                        border: 1px solid #2A6099;
+                    }
+                    QInputDialog[theme="light"] QPushButton:pressed {
+                        background-color: #2A6099;
+                        border: 1px solid #1E4A7A;
+                    }
+                    QInputDialog[theme="light"] QPushButton#cancelButton {
+                        background-color: #E0E0E0;
+                        border: 1px solid #B0B0B0;
+                        color: #333333;
+                    }
+                    QInputDialog[theme="light"] QPushButton#cancelButton:hover {
+                        background-color: #D0D0D0;
+                    }
+                    QInputDialog[theme="light"] QPushButton#cancelButton:pressed {
+                        background-color: #C0C0C0;
+                    }
+                    QInputDialog[theme="dark"] {
+                        background-color: #2E2E2E;
+                        color: #FFFFFF;
+                        font-family: "Segoe UI", Arial, sans-serif;
+                        font-size: 14px;
+                        min-height: 200px;
+                        min-width: 400px;
+                    }
+                    QInputDialog[theme="dark"] QLabel {
+                        color: #E0E0E0;
+                        font-size: 14px;
+                        font-weight: normal;
+                        padding: 8px;
+                    }
+                    QInputDialog[theme="dark"] QLineEdit {
+                        background-color: #3C3C3C;
+                        border: 1px solid #555555;
+                        border-radius: 4px;
+                        padding: 10px;
+                        color: #FFFFFF;
+                        font-size: 14px;
+                        min-height: 30px;
+                        max-height: 30px;
+                        min-width: 350px;
+                        selection-background-color: #4A90E2;
+                        selection-color: #FFFFFF;
+                    }
+                    QInputDialog[theme="dark"] QLineEdit:focus {
+                        border: 1px solid #4A90E2;
+                        background-color: #454545;
+                    }
+                    QInputDialog[theme="dark"] QPushButton {
+                        background-color: #4A90E2;
+                        color: #FFFFFF;
+                        border: 1px solid #357ABD;
+                        border-radius: 4px;
+                        padding: 10px 20px;
+                        font-size: 14px;
+                        font-weight: bold;
+                        min-width: 90px;
+                    }
+                    QInputDialog[theme="dark"] QPushButton:hover {
+                        background-color: #357ABD;
+                        border: 1px solid #2A6099;
+                    }
+                    QInputDialog[theme="dark"] QPushButton:pressed {
+                        background-color: #2A6099;
+                        border: 1px solid #1E4A7A;
+                    }
+                    QInputDialog[theme="dark"] QPushButton#cancelButton {
+                        background-color: #555555;
+                        border: 1px solid #444444;
+                    }
+                    QInputDialog[theme="dark"] QPushButton#cancelButton:hover {
+                        background-color: #666666;
+                    }
+                    QInputDialog[theme="dark"] QPushButton#cancelButton:pressed {
+                        background-color: #777777;
+                    }
+                )");
+
                 int actualRow = ui->jobsheet_request_table->indexAt(rejectButton->parentWidget()->pos()).row();
-                handleStatusChangeApproval(requestId, false, actualRow, reason);
+                if (dialog.exec() == QDialog::Accepted) {
+                    QString reason = dialog.textValue();
+                    handleStatusChangeApproval(requestId, false, actualRow, reason);
+                }
             });
         }
 
         ++row;
     }
 
-    db.close();  // OK to close here — lambdas will reopen if needed
-    QSqlDatabase::removeDatabase("status_change_conn");
+    // Do not close or remove the database here, as lambdas may still need it
 }
-
 
 
 
