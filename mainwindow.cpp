@@ -107,16 +107,16 @@ void MainWindow::on_orderBookButton_clicked()
 void MainWindow::setRandomBackground()
 {
     QStringList imagePaths = {
-        // ":/Backgrounds/1.jpg", ":/Backgrounds/2.jpg", ":/Backgrounds/3.jpg",
-        // ":/Backgrounds/4.jpg", ":/Backgrounds/6.jpg", ":/Backgrounds/7.jpg",
-        // ":/Backgrounds/8.jpg", ":/Backgrounds/9.jpg", ":/Backgrounds/10.jpg",
-        // ":/Backgrounds/11.jpg", ":/Backgrounds/12.jpg", ":/Backgrounds/13.jpg",
-        // ":/Backgrounds/14.jpg", ":/Backgrounds/15.jpg", ":/Backgrounds/16.jpg",
-        // ":/Backgrounds/17.jpg", ":/Backgrounds/18.jpg", ":/Backgrounds/19.jpg",
-        // ":/Backgrounds/20.jpg", ":/Backgrounds/21.jpg", ":/Backgrounds/22.jpg",
-        // ":/Backgrounds/23.jpg", ":/Backgrounds/24.jpg", ":/Backgrounds/25.jpg",
-        // ":/Backgrounds/26.jpg", ":/Backgrounds/27.jpg", ":/Backgrounds/28.jpg",
-        // ":/Backgrounds/29.jpg", ":/Backgrounds/0.jpg",  ":/Backgrounds/5.jpg"
+        ":/Backgrounds/1.jpg", ":/Backgrounds/2.jpg", ":/Backgrounds/3.jpg",
+        ":/Backgrounds/4.jpg", ":/Backgrounds/6.jpg", ":/Backgrounds/7.jpg",
+        ":/Backgrounds/8.jpg", ":/Backgrounds/9.jpg", ":/Backgrounds/10.jpg",
+        ":/Backgrounds/11.jpg", ":/Backgrounds/12.jpg", ":/Backgrounds/13.jpg",
+        ":/Backgrounds/14.jpg", ":/Backgrounds/15.jpg", ":/Backgrounds/16.jpg",
+        ":/Backgrounds/17.jpg", ":/Backgrounds/18.jpg", ":/Backgrounds/19.jpg",
+        ":/Backgrounds/20.jpg", ":/Backgrounds/21.jpg", ":/Backgrounds/22.jpg",
+        ":/Backgrounds/23.jpg", ":/Backgrounds/24.jpg", ":/Backgrounds/25.jpg",
+        ":/Backgrounds/26.jpg", ":/Backgrounds/27.jpg", ":/Backgrounds/28.jpg",
+        ":/Backgrounds/29.jpg", ":/Backgrounds/0.jpg",  ":/Backgrounds/5.jpg"
 
     };
 
