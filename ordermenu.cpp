@@ -13,6 +13,7 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QDir>
+#include <QPixmap>
 
 
 OrderMenu::OrderMenu(QWidget *parent)
@@ -252,50 +253,84 @@ QString OrderMenu::selectAndSaveImage(const QString &prefix) {
     if (filePath.isEmpty()) return "";
 
     QDir appDir(QCoreApplication::applicationDirPath());
-    QString imageDirPath = appDir.filePath("images");
+    QString imageDirPath = appDir.filePath("OrderBookImages");
 
-    QDir().mkpath(imageDirPath);  // ensure images/ exists
+    QDir().mkpath(imageDirPath);  // ensure OrderBookImages/ exists
 
     QString fileName = prefix + "_" + QFileInfo(filePath).fileName();
     QString destPath = QDir(imageDirPath).filePath(fileName);
 
+    // ✅ If already exists, skip copying
+    if (QFile::exists(destPath)) {
+        qDebug() << "⚠️ Image already exists, using existing file:" << destPath;
+        return destPath;
+    }
+
+    // Try to copy
     if (QFile::copy(filePath, destPath)) {
-        return destPath;  // success
+        qDebug() << "✅ Image copied to:" << destPath;
+        return destPath;
     } else {
-        QMessageBox::warning(this, "Image Copy Failed", "Could not copy image.");
+        QMessageBox::warning(this, "Image Copy Failed", "Could not copy image to:\n" + destPath);
         return "";
     }
 }
 
 void OrderMenu::closeEvent(QCloseEvent *event)
 {
-    if (!isSaved && dummyOrderId != -1) {
-        QDir::setCurrent(QCoreApplication::applicationDirPath());
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "new_conn");
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "new_conn");
 
 
-        db.setDatabaseName("database/mega_mine_orderbook.db");
-        if (!db.open()) {
-            qDebug() << "Error:" << db.lastError().text();
-            return;
-        }
-
-        QSqlQuery cleanup(db);  // Associate with the "new_conn" connection
-        cleanup.prepare("DELETE FROM \"OrderBook-Detail\" WHERE id = :id AND isSaved = 0");
-        cleanup.bindValue(":id", dummyOrderId);
-        // qDebug()<<dummyOrderId;
-        cleanup.exec();
-
-        db.close();
-
-
+    db.setDatabaseName("database/mega_mine_orderbook.db");
+    if (!db.open()) {
+        qDebug() << "Error:" << db.lastError().text();
+        return;
     }
+
+    QSqlQuery cleanup(db);  // Associate with the "new_conn" connection
+    cleanup.prepare("DELETE FROM \"OrderBook-Detail\" WHERE isSaved = 0");
+    // cleanup.bindValue(":id", dummyOrderId);
+    // qDebug()<<dummyOrderId;
+    cleanup.exec();
+
+    db.close();
+
     QSqlDatabase::removeDatabase("new_conn");
     QDialog::closeEvent(event);
 }
 
 void OrderMenu::on_savePushButton_clicked()
 {
+
+    if (imagePath1 == "" && imagePath2 == "") {
+        QMessageBox::warning(this, "Input Error", "Please fill in at least one image.");
+        return;
+    }
+
+    if (ui->metalPurityComboBox->currentText() == "-" || ui->payMethodComboBox->currentText() == "-") {
+        QMessageBox::warning(this, "Input Error", "Please fill in all required fields....");
+        return;
+    }
+
+    QList<QLineEdit*> lineEdits = findChildren<QLineEdit*>();
+
+    for (QLineEdit* edit : lineEdits) {
+        // Skip these specific line edits
+        if (edit == ui->starIdLineEdit || edit == ui->agencyIdLineEdit ||
+            edit == ui->shopIdLineEdit || edit == ui->reteailleIdLineEdit ||
+            edit == ui->clientIdLineEdit || edit == ui->designNoLineEdit1 ||
+            edit == ui->designNoLineEdit2) {
+            continue;
+        }
+
+        // Check if the remaining line edits are empty
+        if (edit->text().trimmed().isEmpty()) {
+            QMessageBox::warning(this, "Input Error", "Please fill in all required fields.");
+            return;
+        }
+    }
+
     OrderData order;
     order.id = dummyOrderId;
     order.jobNo = ui->jobNoLineEdit->text();
@@ -392,6 +427,13 @@ void OrderMenu::on_savePushButton_clicked()
     if (DatabaseUtils::saveOrder(order)) {
         QMessageBox::information(this, "Success", "Order saved successfully.");
         isSaved = true;
+        setupMetalComboBoxes();
+        setupCertificateComboBoxes();
+        setupDateFields();
+        setInitialInfo(ui->sellerNameLineEdit->text(), ui->sellerIdLineEdit->text(), order.partyName, order.partyId,
+                       ui->addressLineEdit->text(), ui->cityLineEdit->text(), ui->stateLineEdit->text(), ui->countryLineEdit->text());
+        insertDummyOrder();
+
     } else {
         QMessageBox::critical(this, "Update Failed", "Order update failed. Check console.");
     }

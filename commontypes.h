@@ -89,6 +89,22 @@ struct LoginResult {
     QString role;
 };
 
+struct JobSheetRequest {
+    QString sellerId;
+    QString partyId;
+    QString jobNo;
+    QString manager;
+    QString designer;
+    QString manufacturer;
+    QString accountant;
+    int requestId;
+    QString requestRole;
+    QString requestRoleId;
+    QString fromStatus;
+    QString toStatus;
+    QString requestTime;
+};
+
 
 
 #endif // COMMONTYPES_H

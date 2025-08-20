@@ -76,8 +76,11 @@ public:
     static PartyInfo fetchPartyDetails(const QString &userId, const QString &partyId);
     static LoginResult authenticateUser(const QString &userId, const QString &password);
 
-
-
+    //Admin logic
+    static QStringList fetchRoles();
+    static bool updateStatusChangeRequest(int requestId, bool approved, const QString &note);
+    static bool updateRoleStatus(const QString &jobNo, const QString &fieldName, const QString &newStatus);
+    static QList<JobSheetRequest> fetchJobSheetRequests();
 
 
 

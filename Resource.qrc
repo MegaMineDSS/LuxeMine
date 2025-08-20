@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>icon/homeIcon.png</file>
+        <file>icon/addcatalog.png</file>
+        <file>icon/user.png</file>
         <file>Backgrounds/0.jpg</file>
         <file>Backgrounds/1.jpg</file>
         <file>Backgrounds/2.jpg</file>
@@ -32,6 +34,5 @@
         <file>Backgrounds/28.jpg</file>
         <file>Backgrounds/29.jpg</file>
         <file>Backgrounds/sle.jpg</file>
-        <file>icon/addcatalog.png</file>
     </qresource>
 </RCC>

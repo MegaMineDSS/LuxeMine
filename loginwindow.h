@@ -44,6 +44,9 @@ private slots:
 
     void on_orderListPushButton_clicked();
 
+signals:
+    void loginAccepted(const QString &action);
+
 private:
     Ui::LoginWindow *ui;
     QString userName;

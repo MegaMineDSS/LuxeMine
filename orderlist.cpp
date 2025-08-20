@@ -54,7 +54,7 @@ OrderList::OrderList(QWidget *parent, const QString &role)
         show_order_list_with_role("manufacturer", 5);
     } else if (role == "accountant") {
         show_order_list_with_role("accountant", 6);
-    } else if (role == "Seller"){
+    } else if (role == "seller"){
         // qDebug()<<"---------"<<role;
         show_order_list_with_role("seller", 1);
     } else if (role == "manager") {
@@ -369,7 +369,6 @@ void OrderList::printJobSheet(const QString &jobNo) {
                     if (border) {
                         border->setProperty("LineStyle", 1);  // xlContinuous
                         border->setProperty("Weight", -4138); // xlThin
-                        border->dynamicCall("Release");
                     } else {
                         qDebug() << "❌ Failed to get border for index" << index;
                     }
@@ -386,7 +385,11 @@ void OrderList::printJobSheet(const QString &jobNo) {
 
 
     workbook->dynamicCall("Save()");
-    QString pdfPath = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/jobSheet_" + jobNo + ".pdf");
+    QString pdfDir = QCoreApplication::applicationDirPath() + "/pdfs";
+    QDir().mkpath(pdfDir);  // ✅ Ensure the "pdfs" folder exists
+
+    QString pdfPath = QDir::toNativeSeparators(pdfDir + "/jobSheet_" + jobNo + ".pdf");
+
     workbook->dynamicCall("ExportAsFixedFormat(int, const QString&)", 0, pdfPath);
 
     if (QFile::exists(pdfPath)) {
@@ -408,8 +411,6 @@ void OrderList::printJobSheet(const QString &jobNo) {
     QSqlDatabase::removeDatabase("set_jobsheet");
     if (QFile::exists(tempPath)) QFile::remove(tempPath);
 }
-
-
 
 void OrderList::setupStatusCombo(int row, int col, const QString &role, const QString &currentStatus,
                                  const QString &jobNo, const QVariantList &order, const int &editableStatusCol)
@@ -730,11 +731,11 @@ QStringList OrderList::getStatusOptions(const QString &role)
 void OrderList::hideIrrelevantColumns(const QString &role)
 {
     QMap<QString, QList<int>> roleColumnMap = {
-        { "designer",      {4, 6, 7, 13, 15} },
-        { "manufacturer",  { 4, 5, 7, 13, 14} },
-        { "accountant",    {4, 5, 6, 12} },
+        { "designer",      {4, 6, 7, 13, 14, 15, 16, 18} },
+        { "manufacturer",  { 4, 5, 7, 12, 13, 14, 15, 16, 17} },
+        { "accountant",    {4, 5, 6, 12, 13, 14, 15, 16, 17, 18} },
         { "seller",        {10, 11, 12, 13, 14, 15, 17, 18} },
-        { "manager",       {12} }
+        { "manager",       {12, 13, 14, 15} }
     };
 
     for (int col = 0; col < ui->orderListTableWidget->columnCount(); ++col) {
@@ -755,7 +756,7 @@ void OrderList::show_order_list_with_role(const QString &role, int editableStatu
         QMessageBox::information(this, "No Orders", "No orders found");
         return;
     }
-    // qDebug()<<"---------"<<role;
+
     ui->orderListTableWidget->setRowCount(orderList.size());
 
     hideIrrelevantColumns(role);

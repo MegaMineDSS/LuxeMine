@@ -76,7 +76,7 @@ private slots:
 
     // Combobox Admin edit status
     // void onRoleStatusChanged(const QString &jobNo, const QString &fieldName, const QString &newStatus);
-    void onRoleStatusChanged(QSqlDatabase db, const QString &jobNo, const QString &fieldName, const QString &newStatus);
+    void onRoleStatusChanged(const QString &jobNo, const QString &fieldName, const QString &newStatus);
 
 
 protected:

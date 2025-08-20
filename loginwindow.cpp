@@ -105,9 +105,10 @@ void LoginWindow::on_goPushButton_clicked()
     this->partyState = info.state;
     this->partyCountry = info.country;
 
+    emit loginAccepted("orderMenu");
+
     this->accept();
 }
-
 
 void LoginWindow::on_backPartyPushButton_clicked()
 {
@@ -140,12 +141,11 @@ void LoginWindow::on_loginPushButton_clicked()
     this->role = result.role;
     this->userName = result.userName;
     this->userId = userId;
-    // qDebug()<<role<<"-----------";
     if (role.compare("Seller", Qt::CaseInsensitive) == 0) {
         ui->stackedWidget->setCurrentIndex(1);
         set_comboBox_selectParty();
     } else if (role == "Designer" || role == "Manufacturer" || role == "Accountant" || role == "Manager") {
-        // qDebug()<<role<<"-----------";
+        emit loginAccepted("orderList");
         this->accept(); // Valid user, return control to main
     } else {
         QMessageBox::information(this, "Info", "Role not supported yet.");
@@ -159,13 +159,9 @@ void LoginWindow::on_orderListPushButton_clicked()
         return;
     }
 
-    OrderList *orderListWindow = new OrderList(parentWidget(), role);
-    orderListWindow->setAttribute(Qt::WA_DeleteOnClose);
-    orderListWindow->show();
-    orderListWindow->raise();           // bring to front
-    orderListWindow->activateWindow();  // focus it
+    emit loginAccepted("orderList");
 
-    this->done(QDialog::Rejected);
+    this->accept();
 }
 
 

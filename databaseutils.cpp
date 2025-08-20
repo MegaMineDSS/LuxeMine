@@ -10,8 +10,10 @@
 #include <QJsonObject>
 #include <QHeaderView>
 #include <QCoreApplication>
+#include <QRandomGenerator>
 
 #include "databaseutils.h"
+#include "commontypes.h"
 
 QStringList DatabaseUtils::fetchShapes(const QString &tableType)
 {
@@ -90,12 +92,6 @@ QString DatabaseUtils::saveImage(const QString &imagePath)
 }
 
 
-
-
-
-
-
-
 bool DatabaseUtils::insertCatalogData(const QString &imagePath, const QString &imageType, const QString &designNo,
                                       const QString &companyName, const QJsonArray &goldArray, const QJsonArray &diamondArray,
                                       const QJsonArray &stoneArray, const QString &note)
@@ -136,7 +132,6 @@ bool DatabaseUtils::insertCatalogData(const QString &imagePath, const QString &i
     return success;
 }
 
-
 QStringList DatabaseUtils::fetchImagePaths()
 {
     const QString connectionName = "images_conn";
@@ -145,24 +140,27 @@ QStringList DatabaseUtils::fetchImagePaths()
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
         db.setDatabaseName("database/mega_mine_image.db");
-        if (!db.open()) return {};
 
-        {
-            QSqlQuery query("SELECT image_path FROM image_data", db);
-            if (!query.exec()) return {};
+        if (!db.open()) {
+            qWarning() << "Failed to open image DB:" << db.lastError();
+            return {};
+        }
 
-            while (query.next()) {
-                paths.append(query.value(0).toString());
-            }
-        } // QSqlQuery is destroyed here
+        QSqlQuery query(db);
+        if (!query.exec("SELECT image_path FROM image_data")) {
+            qWarning() << "Image query failed:" << query.lastError();
+            return {};
+        }
 
-        db.close(); // optional but safe
-    } // QSqlDatabase is destroyed here
+        paths.reserve(100); // just a guess, avoids multiple reallocations
+        while (query.next()) {
+            paths.append(query.value(0).toString());
+        }
+    } // QSqlQuery and QSqlDatabase go out of scope
 
-    QSqlDatabase::removeDatabase(connectionName); // now safe
+    QSqlDatabase::removeDatabase(connectionName);
     return paths;
 }
-
 
 QMap<QString, QString> DatabaseUtils::fetchGoldPrices()
 {
@@ -277,7 +275,6 @@ bool DatabaseUtils::insertFancyDiamond(const QString &shape, const QString &size
     return success;
 }
 
-
 QSqlTableModel* DatabaseUtils::createTableModel(QObject *parent, const QString &table)
 {
     QSqlDatabase db;
@@ -302,7 +299,6 @@ QSqlTableModel* DatabaseUtils::createTableModel(QObject *parent, const QString &
 
     return model; // ❗DO NOT call removeDatabase()
 }
-
 
 bool DatabaseUtils::updateGoldPrices(const QMap<QString, QString> &priceUpdates)
 {
@@ -1790,7 +1786,7 @@ PartyInfo DatabaseUtils::fetchPartyDetails(const QString &userId, const QString 
 LoginResult DatabaseUtils::authenticateUser(const QString &userId, const QString &password)
 {
     LoginResult result;
-    QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_authentication.db");
+    QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/luxeMineAuthentication.db");
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "auth_conn");
     db.setDatabaseName(dbPath);
@@ -1802,7 +1798,7 @@ LoginResult DatabaseUtils::authenticateUser(const QString &userId, const QString
 
     {
         QSqlQuery query(db);
-        query.prepare("SELECT userName, role FROM Login_DB WHERE userId = :id AND password = :pwd");
+        query.prepare("SELECT userName, role FROM OrderBook_Login WHERE userId = :id AND password = :pwd");
         query.bindValue(":id", userId);
         query.bindValue(":pwd", password);
 
@@ -1818,5 +1814,260 @@ LoginResult DatabaseUtils::authenticateUser(const QString &userId, const QString
     db.close();
     QSqlDatabase::removeDatabase("auth_conn");
     return result;
+}
+
+QStringList DatabaseUtils::fetchRoles()
+{
+    QStringList roles;
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+
+    const QString connName = "fetch_roles_conn";
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName("database/luxeMineAuthentication.db");
+
+        if (!db.open()) {
+            qDebug() << "Failed to open database for fetchRoles:" << db.lastError().text();
+            return roles;
+        }
+
+        {
+            QSqlQuery query(db);
+            if (!query.exec("SELECT role FROM OrderBook_Roles")) {
+                qDebug() << "Failed to execute role query:" << query.lastError().text();
+            } else {
+                roles << "-";
+                while (query.next()) {
+                    roles << query.value(0).toString();
+                }
+            }
+        } // QSqlQuery destroyed here
+
+        db.close(); // optional, but keeps things explicit
+    } // db handle destroyed here
+
+    QSqlDatabase::removeDatabase(connName); // connection freed from pool
+    return roles;
+}
+
+bool DatabaseUtils::updateStatusChangeRequest(int requestId, bool approved, const QString &note)
+{
+    const QString connName = "status_change_update_conn";
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName("database/mega_mine_orderbook.db");
+
+        if (!db.open()) {
+            qDebug() << "❌ DB Open Failed:" << db.lastError().text();
+            return false; // db handle destroyed automatically
+        }
+
+        if (approved) {
+            QString jobNo, role, toStatus;
+
+            {
+                QSqlQuery selectQuery(db);
+                selectQuery.prepare(R"(
+                    SELECT jobNo, role, toStatus
+                    FROM StatusChangeRequests
+                    WHERE id = :id
+                )");
+                selectQuery.bindValue(":id", requestId);
+
+                if (!selectQuery.exec() || !selectQuery.next()) {
+                    qDebug() << "❌ SELECT failed:" << selectQuery.lastError().text();
+                    return false;
+                }
+
+                jobNo = selectQuery.value("jobNo").toString();
+                role = selectQuery.value("role").toString();
+                toStatus = selectQuery.value("toStatus").toString();
+            } // selectQuery destroyed here
+
+            QStringList roleOrder = {"Manager", "Designer", "Manufacturer", "Accountant"};
+            int roleIndex = roleOrder.indexOf(role);
+            if (roleIndex == -1) {
+                qDebug() << "❌ Invalid role:" << role;
+                return false;
+            }
+
+            QStringList setParts;
+            for (int i = 0; i < roleOrder.size(); ++i) {
+                if (i == roleIndex)
+                    setParts << QString("%1 = '%2'").arg(roleOrder[i], toStatus);
+                else if (i > roleIndex)
+                    setParts << QString("%1 = 'Pending'").arg(roleOrder[i]);
+            }
+
+            QString updateSQL = QString(R"(
+                UPDATE "Order-Status"
+                SET %1
+                WHERE jobNo = '%2'
+            )").arg(setParts.join(", "), jobNo);
+
+            {
+                QSqlQuery updateQuery(db);
+                if (!updateQuery.exec(updateSQL)) {
+                    qDebug() << "❌ Failed to update Order-Status:" << updateQuery.lastError().text();
+                    return false;
+                }
+            } // updateQuery destroyed here
+        }
+
+        {
+            QSqlQuery finalUpdateQuery(db);
+            if (approved) {
+                finalUpdateQuery.prepare(R"(
+                    UPDATE StatusChangeRequests
+                    SET status = 'Approved'
+                    WHERE id = :id
+                )");
+                finalUpdateQuery.bindValue(":id", requestId);
+            } else {
+                finalUpdateQuery.prepare(R"(
+                    UPDATE StatusChangeRequests
+                    SET status = 'Declined',
+                        note = :note
+                    WHERE id = :id
+                )");
+                finalUpdateQuery.bindValue(":note", note);
+                finalUpdateQuery.bindValue(":id", requestId);
+            }
+
+            if (!finalUpdateQuery.exec()) {
+                qDebug() << "❌ Failed to update StatusChangeRequests:" << finalUpdateQuery.lastError().text();
+                return false;
+            }
+        } // finalUpdateQuery destroyed here
+
+        db.close(); // optional, but makes intent explicit
+    } // db handle destroyed here
+
+    QSqlDatabase::removeDatabase(connName); // now safe — all queries destroyed
+    return true;
+}
+
+bool DatabaseUtils::updateRoleStatus(const QString &jobNo, const QString &fieldName, const QString &newStatus)
+{
+    const QString connName =
+        QStringLiteral("update_role_status_conn_%1")
+            .arg(QRandomGenerator::global()->generate());
+
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+
+    {
+        // Scoped block to ensure 'db' and 'query' are destroyed before removeDatabase()
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName("database/mega_mine_orderbook.db");
+
+        if (!db.open()) {
+            qDebug() << "[updateRoleStatus] DB open failed:" << db.lastError().text();
+            return false; // Will remove later
+        }
+
+        QString sql = QString(R"(
+            UPDATE "Order-Status"
+            SET %1 = :status
+            WHERE jobNo = :jobNo
+        )").arg(fieldName);
+
+        QSqlQuery query(db);
+        query.prepare(sql);
+        query.bindValue(":status", newStatus);
+        query.bindValue(":jobNo", jobNo);
+
+        bool success = query.exec();
+        if (!success) {
+            qDebug() << "[-] Update failed:" << query.lastError().text();
+            qDebug() << "[:(] SQL Tried:" << query.lastQuery();
+        } else {
+            qDebug() << "[+] Status updated:" << fieldName << "=" << newStatus
+                     << "for JobNo:" << jobNo;
+        }
+
+        db.close();
+        if (!success) {
+            // Let scope exit happen before removeDatabase
+            QSqlDatabase::removeDatabase(connName);
+            return false;
+        }
+    }
+
+    // Now safe to remove the database connection
+    QSqlDatabase::removeDatabase(connName);
+    return true;
+}
+
+
+QList<JobSheetRequest> DatabaseUtils::fetchJobSheetRequests()
+{
+    QList<JobSheetRequest> results;
+    const QString connName = "fetch_jobsheet_requests_conn";
+
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+    db.setDatabaseName("database/mega_mine_orderbook.db");
+
+    if (!db.open()) {
+        qDebug() << "[fetchJobSheetRequests] ❌ DB open failed:" << db.lastError().text();
+        QSqlDatabase::removeDatabase(connName);
+        return results;
+    }
+
+    QString queryStr = R"(
+        SELECT
+            D.sellerId,
+            D.partyId,
+            D.jobNo,
+            O.Manager,
+            O.Designer,
+            O.Manufacturer,
+            O.Accountant,
+            S.id AS requestId,
+            S.role,
+            S.userId,
+            S.fromStatus,
+            S.toStatus,
+            S.requestTime
+        FROM "OrderBook-Detail" D
+        JOIN "Order-Status" O ON D.jobNo = O.jobNo
+        LEFT JOIN (
+            SELECT *
+            FROM StatusChangeRequests
+            WHERE status = 'Pending'
+            GROUP BY jobNo
+        ) S ON D.jobNo = S.jobNo;
+    )";
+
+    QSqlQuery query(db);
+    if (!query.exec(queryStr)) {
+        qDebug() << "[fetchJobSheetRequests] ❌ Query failed:" << query.lastError().text();
+        db.close();
+        QSqlDatabase::removeDatabase(connName);
+        return results;
+    }
+
+    while (query.next()) {
+        JobSheetRequest row;
+        row.sellerId        = query.value(0).toString();
+        row.partyId         = query.value(1).toString();
+        row.jobNo           = query.value(2).toString();
+        row.manager         = query.value(3).toString();
+        row.designer        = query.value(4).toString();
+        row.manufacturer    = query.value(5).toString();
+        row.accountant      = query.value(6).toString();
+        row.requestId       = query.value(7).toInt();
+        row.requestRole     = query.value(8).toString();
+        row.requestRoleId   = query.value(9).toString();
+        row.fromStatus      = query.value(10).toString();
+        row.toStatus        = query.value(11).toString();
+        row.requestTime     = query.value(12).toString();
+        results.append(row);
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase(connName);
+    return results;
 }
 

@@ -22,7 +22,7 @@
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="login">
         <layout class="QGridLayout" name="gridLayout_2">
@@ -82,14 +82,15 @@
           <widget class="QFrame" name="frame">
            <property name="styleSheet">
             <string notr="true">QFrame {
-    border: 2px solid white;  /* White border for the frame */
-    background: transparent;  /* No background for the frame */
+    border: 2px solid white;       /* White border for the frame */
+    background-color: transparent; /* No background for the frame */
 }
 
-QFrame &gt; * {
-    background: none;  /* Make sure inner components are transparent */
-    border: none;  /* Remove borders from inner components */
+QFrame * {
+    background-color: transparent; /* Ensure all inner components are transparent */
+    border: none;                   /* Remove borders from inner components */
 }
+
 </string>
            </property>
            <property name="frameShape">
@@ -112,7 +113,11 @@ QFrame &gt; * {
 QCheckBox {
     font-size: 14px;
     color: #333;
-    spacing: 6px; /* spacing between checkbox and label text */
+}
+
+/* Adjust space between checkbox indicator and text */
+QCheckBox::indicator {
+    margin-right: 6px; /* spacing between checkbox and label text */
 }
 
 /* Optional: subtle hover effect */
@@ -126,7 +131,8 @@ QLineEdit {
     border-radius: 4px;
     padding: 4px 6px;
     font-size: 13px;
-}</string>
+}
+</string>
               </property>
               <property name="text">
                <string>Show Password</string>
@@ -176,12 +182,18 @@ QLineEdit {
     color: #2C2C2C;
     font-size: 14px;
 }
-QLineEdit:focus {
-    border: 2px solid #305C91;
-    background-color: #FFFFFF;
-}
+
 QLineEdit:hover {
     border: 1.5px solid #888;
+}
+
+QLineEdit:focus {
+    border: 2px solid #305C91; /* Keep this as the strongest style */
+    background-color: #FFFFFF;
+}
+
+QLineEdit:focus:hover {
+    border: 2px solid #305C91; /* Ensure hover doesn’t override focus */
 }
 </string>
               </property>
@@ -255,27 +267,42 @@ QLineEdit:hover {
               </property>
               <property name="styleSheet">
                <string notr="true">QPushButton {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #e0e0e0, stop:0.5 #c0c0c0, stop:1 #a0a0a0); /* Subtle silver gradient */
-    color: #333333; /* Dark gray text for contrast */
+    background-color: qlineargradient(
+        spread:pad,
+        x1:0, y1:0, x2:1, y2:1,
+        stop:0 #e0e0e0,
+        stop:0.5 #c0c0c0,
+        stop:1 #a0a0a0
+    ); /* Subtle silver gradient */
+    color: #333333; /* Dark gray text */
     font-size: 16px;
     font-weight: bold;
     border: none;
     border-radius: 5px;
-    padding: 12px 25px; /* Slightly larger padding for elegance */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3), inset 0px 1px 2px rgba(255, 255, 255, 0.6); /* Soft shadow with inner glow */
-    text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.3); /* Subtle white text glow */
+    padding: 12px 25px; /* Elegant padding */
 }
 
 QPushButton:hover {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #d0d0d0, stop:0.5 #b0b0b0, stop:1 #909090); /* Darker silver on hover */
-    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4), inset 0px 2px 3px rgba(255, 255, 255, 0.8); /* Enhanced glow on hover */
-    color: #1a1a1a; /* Slightly darker text for depth */
+    background-color: qlineargradient(
+        spread:pad,
+        x1:0, y1:0, x2:1, y2:1,
+        stop:0 #d0d0d0,
+        stop:0.5 #b0b0b0,
+        stop:1 #909090
+    ); /* Darker silver on hover */
+    color: #1a1a1a; /* Slightly darker text */
 }
 
 QPushButton:pressed {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 #b0b0b0, stop:0.5 #a0a0a0, stop:1 #808080); /* Pressed state */
-    box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.5), 0px 2px 4px rgba(0, 0, 0, 0.2); /* Inner shadow on press */
-}</string>
+    background-color: qlineargradient(
+        spread:pad,
+        x1:0, y1:0, x2:1, y2:1,
+        stop:0 #b0b0b0,
+        stop:0.5 #a0a0a0,
+        stop:1 #808080
+    ); /* Pressed state */
+}
+</string>
               </property>
               <property name="text">
                <string>CANCEL</string>
@@ -292,29 +319,40 @@ QPushButton:pressed {
               </property>
               <property name="styleSheet">
                <string notr="true">QPushButton {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
-        stop:0 #D0E9FF, stop:0.5 #85C1F2, stop:1 #5EA6E8); /* Light to medium blue gradient */
+    background-color: qlineargradient(
+        spread:pad,
+        x1:0, y1:0, x2:1, y2:1,
+        stop:0 #D0E9FF,
+        stop:0.5 #85C1F2,
+        stop:1 #5EA6E8
+    ); /* Light to medium blue gradient */
     color: #1F1F1F;
     font-size: 16px;
     font-weight: bold;
     border: none;
     border-radius: 5px;
     padding: 12px 25px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25), inset 0px 1px 2px rgba(255, 255, 255, 0.4);
-    text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 QPushButton:hover {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
-        stop:0 #649FD3, stop:0.5 #4A90E2, stop:1 #3C7DCB); /* Darker bluish gradient on hover */
-    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4), inset 0px 2px 3px rgba(255, 255, 255, 0.6);
+    background-color: qlineargradient(
+        spread:pad,
+        x1:0, y1:0, x2:1, y2:1,
+        stop:0 #649FD3,
+        stop:0.5 #4A90E2,
+        stop:1 #3C7DCB
+    ); /* Darker bluish gradient on hover */
     color: #0D0D0D;
 }
 
 QPushButton:pressed {
-    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
-        stop:0 #3C7DCB, stop:0.5 #2E6AB8, stop:1 #1F5AA2); /* Deep bluish press state */
-    box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.5), 0px 2px 4px rgba(0, 0, 0, 0.2);
+    background-color: qlineargradient(
+        spread:pad,
+        x1:0, y1:0, x2:1, y2:1,
+        stop:0 #3C7DCB,
+        stop:0.5 #2E6AB8,
+        stop:1 #1F5AA2
+    ); /* Deep bluish press state */
     color: #FFFFFF;
 }
 </string>
@@ -354,12 +392,18 @@ QPushButton:pressed {
     color: #2C2C2C;
     font-size: 14px;
 }
-QLineEdit:focus {
-    border: 2px solid #305C91;
-    background-color: #FFFFFF;
-}
+
 QLineEdit:hover {
     border: 1.5px solid #888;
+}
+
+QLineEdit:focus {
+    border: 2px solid #305C91; /* Keep this as the strongest style */
+    background-color: #FFFFFF;
+}
+
+QLineEdit:focus:hover {
+    border: 2px solid #305C91; /* Ensure hover doesn’t override focus */
 }
 </string>
               </property>
@@ -457,7 +501,16 @@ QLineEdit:hover {
               </property>
               <property name="styleSheet">
                <string notr="true">/* General QLabel Styling */
-border-color: qradialgradient(spread:reflect, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));
+QLabel {
+    border: 2px solid; /* You must define a border width &amp; style for border-color to show */
+    border-color: qradialgradient(
+        spread:reflect,
+        cx:0.5, cy:0.5, radius:0.5,
+        fx:0.5, fy:0.5,
+        stop 0 rgba(0, 0, 0, 255),
+        stop 1 rgba(255, 255, 255, 255)
+    );
+}
 </string>
               </property>
               <property name="text">
@@ -571,7 +624,7 @@ QPushButton:disabled {
          <item row="1" column="0" rowspan="6" colspan="3">
           <widget class="QStackedWidget" name="Admin_panel">
            <property name="currentIndex">
-            <number>6</number>
+            <number>3</number>
            </property>
            <widget class="QWidget" name="_1show_images_page">
             <layout class="QGridLayout" name="gridLayout_4">

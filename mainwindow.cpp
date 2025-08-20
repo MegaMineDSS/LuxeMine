@@ -42,6 +42,8 @@ void MainWindow::on_pushButton_clicked()
     }
     else{
         newAdmin = new Admin();
+        newAdmin->setAttribute(Qt::WA_DeleteOnClose);
+        connect(newAdmin, &QObject::destroyed, this, [this]() { newAdmin = nullptr; });
         newAdmin->show();
     }
 }
@@ -72,37 +74,55 @@ void MainWindow::on_pushButton_4_clicked()
 
 void MainWindow::on_orderBookButton_clicked()
 {
-
     loginWindow = new LoginWindow(this);
 
-    if (loginWindow->exec() == QDialog::Accepted) {
-        QString role = loginWindow->getRole().toLower();
-        QString userName = loginWindow->getUserName();
-        QString userId = loginWindow->getUserId();
+    connect(loginWindow, &LoginWindow::loginAccepted, this,
+            [=](const QString &action)
+            {
+                QString role = loginWindow->getRole().toLower();
+                QString userName = loginWindow->getUserName();
+                QString userId = loginWindow->getUserId();
 
-        if (role == "seller" || role == "Seller") {
-            QString partyId = loginWindow->getPartyId();
-            QString partyName = loginWindow->getPartyName();
-            QString partyAddress = loginWindow->getPartyAddress();
-            QString partyCity = loginWindow->getPartyCity();
-            QString partyState = loginWindow->getPartyState();
-            QString partyCountry = loginWindow->getPartyCountry();
+                if (action == "orderMenu" && role == "seller") {
+                    QString partyId = loginWindow->getPartyId();
+                    QString partyName = loginWindow->getPartyName();
+                    QString partyAddress = loginWindow->getPartyAddress();
+                    QString partyCity = loginWindow->getPartyCity();
+                    QString partyState = loginWindow->getPartyState();
+                    QString partyCountry = loginWindow->getPartyCountry();
 
-            newOrderMenu = new OrderMenu(nullptr);
-            newOrderMenu->setInitialInfo(userName, userId,
-                                         partyName, partyId, partyAddress, partyCity, partyState, partyCountry);
-            newOrderMenu->insertDummyOrder();
-            newOrderMenu->show();
-        } else if (role == "seller" || role == "designer" || role == "manufacturer" || role == "accountant" || role == "manager") {
-            newOrderList = new OrderList(nullptr, role);
-            newOrderList->setAttribute(Qt::WA_DeleteOnClose);
-            newOrderList->show();
-            newOrderList->setRoleAndUserInfo(role, userId, userName);
-        } else {
-            QMessageBox::warning(this, "Unknown Role", "This role is not supported.");
-        }
-    }
+                    OrderMenu *newOrderMenu = new OrderMenu(nullptr);
+                    newOrderMenu->setAttribute(Qt::WA_DeleteOnClose);
+                    newOrderMenu->setInitialInfo(userName, userId,
+                                                 partyName, partyId, partyAddress, partyCity, partyState, partyCountry);
+                    newOrderMenu->insertDummyOrder();
+                    newOrderMenu->show();
+                    QTimer::singleShot(0, newOrderMenu, [newOrderMenu]() {
+                        newOrderMenu->raise();
+                        newOrderMenu->activateWindow();
+                    });
+                }else if (action == "orderList" &&
+                           (role == "designer" || role == "manufacturer" || role == "accountant" || role == "manager" || role == "seller"))
+                {
+                    OrderList *newOrderList = new OrderList(nullptr, role);
+                    newOrderList->setAttribute(Qt::WA_DeleteOnClose);
+                    newOrderList->setRoleAndUserInfo(role, userId, userName);
+                    newOrderList->show();
+                    QTimer::singleShot(0, newOrderList, [newOrderList]() {
+                        newOrderList->raise();
+                        newOrderList->activateWindow();
+                    });
+                } else {
+                    QMessageBox::warning(this, "Unknown Role", "This role is not supported.");
+                }
+            });
+
+    loginWindow->exec();
+    delete loginWindow;
+    loginWindow = nullptr;
 }
+
+
 
 void MainWindow::setRandomBackground()
 {
