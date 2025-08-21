@@ -284,89 +284,96 @@ void Admin::on_orderBookRequestPushButton_clicked()
 
 void Admin::on_show_users_clicked()
 {
-    // Enable context menu for tableWidget_2
-    ui->tableWidget_2->setContextMenuPolicy(Qt::CustomContextMenu);
-
-    connect(ui->tableWidget_2, &QTableWidget::customContextMenuRequested, this, [this](const QPoint &pos)
-    {
-        QTableWidgetItem *item = ui->tableWidget_2->itemAt(pos);
-        if (item) {
-            int row = ui->tableWidget_2->rowAt(pos.y());
-            if (row < 0) return;
-            QString userId = ui->tableWidget_2->item(row, 0)->text();
-
-            QMenu contextMenu(tr("Context Menu"), this);
-            QAction *deleteAction = contextMenu.addAction("Delete User");
-            QAction *showPdfsAction = contextMenu.addAction("Show PDFs");
-
-            connect(deleteAction, &QAction::triggered, this, &Admin::on_deleteUser_triggered);
-            connect(showPdfsAction, &QAction::triggered, this, [this, userId]() {
-                QList<PdfRecord> pdfRecords = DatabaseUtils::getUserPdfs(userId);
-                if (pdfRecords.isEmpty()) {
-                    QMessageBox::information(this, "No PDFs", QString("No PDFs found for user: %1").arg(userId));
-                    return;
-                }
-                PdfListDialog *dialog = new PdfListDialog(userId, pdfRecords, this);
-                dialog->exec();
-            });
-
-            contextMenu.exec(ui->tableWidget_2->viewport()->mapToGlobal(pos));
-    } });
-
     ui->Admin_panel->setCurrentIndex(3);
 
-    QVector<int> columnWidths;
-    for (int col = 0; col < ui->tableWidget_2->columnCount(); ++col)
-    {
-        columnWidths.append(ui->tableWidget_2->columnWidth(col));
+    // Ensure context menu connection is only made once
+    static bool contextMenuConnected = false;
+    if (!contextMenuConnected) {
+        ui->tableWidget_2->setContextMenuPolicy(Qt::CustomContextMenu);
+        connect(ui->tableWidget_2, &QTableWidget::customContextMenuRequested, this,
+                [this](const QPoint &pos) {
+                    QTableWidgetItem *item = ui->tableWidget_2->itemAt(pos);
+                    if (!item) return;
+
+                    int row = ui->tableWidget_2->rowAt(pos.y());
+                    if (row < 0) return;
+
+                    QString userId = ui->tableWidget_2->item(row, 0)->text();
+
+                    QMenu contextMenu(tr("Context Menu"), this);
+                    QAction *deleteAction = contextMenu.addAction("Delete User");
+                    QAction *showPdfsAction = contextMenu.addAction("Show PDFs");
+
+                    connect(deleteAction, &QAction::triggered, this, &Admin::on_deleteUser_triggered);
+                    connect(showPdfsAction, &QAction::triggered, this, [this, userId]() {
+                        QList<PdfRecord> pdfRecords = DatabaseUtils::getUserPdfs(userId);
+                        if (pdfRecords.isEmpty()) {
+                            QMessageBox::information(this, "No PDFs",
+                                                     QString("No PDFs found for user: %1").arg(userId));
+                            return;
+                        }
+
+                        // Create on stack -> no leak
+                        PdfListDialog dialog(userId, pdfRecords, this);
+                        dialog.exec();
+                    });
+
+                    contextMenu.exec(ui->tableWidget_2->viewport()->mapToGlobal(pos));
+                });
+        contextMenuConnected = true;
     }
 
+    // Save current column widths
+    QVector<int> columnWidths;
+    for (int col = 0; col < ui->tableWidget_2->columnCount(); ++col)
+        columnWidths.append(ui->tableWidget_2->columnWidth(col));
+
+    // Clear just the cell contents but keep headers intact
+    ui->tableWidget_2->clearContents();
     ui->tableWidget_2->setRowCount(0);
+
+    // If you want to set headers only once, move this to your constructor/setup:
     ui->tableWidget_2->setColumnCount(3);
     ui->tableWidget_2->setHorizontalHeaderLabels({"User ID", "Company Name", "Last PDF Path"});
     ui->tableWidget_2->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget_2->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+
+    // Fetch data
     QList<QVariantList> userDetails = DatabaseUtils::fetchUserDetailsForAdmin();
-    if (userDetails.isEmpty())
-    {
+    if (userDetails.isEmpty()) {
         QMessageBox::warning(this, "No Users", "No user data found in the database.");
         return;
     }
 
-    for (const QVariantList &row : userDetails)
-    {
+    // Populate rows
+    for (const QVariantList &row : userDetails) {
         int rowIndex = ui->tableWidget_2->rowCount();
         ui->tableWidget_2->insertRow(rowIndex);
-        for (int col = 0; col < row.size(); ++col)
-        {
+
+        for (int col = 0; col < row.size(); ++col) {
             QString displayText = row[col].toString();
-            if (col == 2 && displayText.startsWith("pdfs/"))
-            {
-                displayText = displayText.mid(5); // Remove "pdfs/" prefix
+            if (col == 2 && displayText.startsWith("pdfs/")) {
+                displayText = displayText.mid(5); // strip "pdfs/"
             }
             QTableWidgetItem *item = new QTableWidgetItem(displayText);
             item->setTextAlignment(Qt::AlignCenter);
+
             if (col == 2)
-            {
-                item->setData(Qt::UserRole, row[col].toString()); // Store full PDF path
-            }
+                item->setData(Qt::UserRole, row[col].toString()); // store full path
+
             ui->tableWidget_2->setItem(rowIndex, col, item);
         }
     }
 
-    if (columnWidths.size() == ui->tableWidget_2->columnCount())
-    {
+    // Restore column widths
+    if (columnWidths.size() == ui->tableWidget_2->columnCount()) {
         for (int col = 0; col < ui->tableWidget_2->columnCount(); ++col)
-        {
             ui->tableWidget_2->setColumnWidth(col, columnWidths[col]);
-        }
-    }
-    else
-    {
-        ui->tableWidget_2->setColumnWidth(0, 150); // User ID
-        ui->tableWidget_2->setColumnWidth(1, 200); // Company Name
-        ui->tableWidget_2->setColumnWidth(2, 250); // Last PDF Path
+    } else {
+        ui->tableWidget_2->setColumnWidth(0, 150);
+        ui->tableWidget_2->setColumnWidth(1, 200);
+        ui->tableWidget_2->setColumnWidth(2, 250);
     }
 }
 
@@ -412,31 +419,13 @@ void Admin::on_cancel_button_clicked()
 
 bool Admin::checkLoginCredentials(const QString &username, const QString &password)
 {
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "login_conn");
-    db.setDatabaseName("database/mega_mine.db");
-    if (!db.open())
-    {
-        QMessageBox::critical(this, "Database Error", "Failed to connect to database: " + db.lastError().text());
-        return false;
-    }
+    QString role;
+    bool valid = DatabaseUtils::checkAdminCredentials(username, password, role);
 
-    QSqlQuery query(db);
-    query.prepare("SELECT role FROM admin_login WHERE username = :username AND password_hash = :password");
-    query.bindValue(":username", username);
-    query.bindValue(":password", password);
-
-    if (!query.exec())
-    {
-        QMessageBox::critical(this, "Query Error", "Database query failed: " + query.lastError().text());
-        db.close();
-        return false;
-    }
-
-    bool valid = query.next();
-    db.close();
-    if (!valid)
+    if (!valid) {
         QMessageBox::warning(this, "Login Failed", "Invalid username or password.");
+    }
+
     return valid;
 }
 
@@ -473,8 +462,6 @@ void Admin::on_fancy_dia_button_clicked()
 
 void Admin::closeEvent(QCloseEvent *event)
 {
-    // qDebug() << "Close event triggered";
-
     // Closing AdminMenuButtons UI
     if (newAdminMenuButtons && newAdminMenuButtons->isVisible())
     {
@@ -482,7 +469,7 @@ void Admin::closeEvent(QCloseEvent *event)
     }
 
     on_logout_clicked();
-    // qDebug() << "Logout clicked executed";
+
     event->accept();
 }
 
@@ -606,10 +593,10 @@ void Admin::on_updateRoundDiamond_price_clicked()
 void Admin::on_FancyDiamond_Price_clicked()
 {
     ui->DiamondPrice_update_2->setCurrentIndex(1);
+
     delete fancyDiamondModel;
     fancyDiamondModel = DatabaseUtils::createTableModel(this, "Fancy_diamond");
-    if (!fancyDiamondModel)
-    {
+    if (!fancyDiamondModel) {
         QMessageBox::warning(this, "Error", "Failed to load fancy diamond table.");
         return;
     }
@@ -620,11 +607,12 @@ void Admin::on_FancyDiamond_Price_clicked()
     fancyDiamondModel->setHeaderData(2, Qt::Horizontal, "Weight");
     fancyDiamondModel->setHeaderData(3, Qt::Horizontal, "Price");
 
-    for (int col = 0; col < fancyDiamondModel->columnCount(); ++col)
-    {
-        if (col != 3)
-        {
-            ui->tableView_2->setItemDelegateForColumn(col, new ReadOnlyDelegate(this));
+    // 🔧 Clear any existing delegates before reassigning
+    ui->tableView_2->setItemDelegate(nullptr);
+
+    for (int col = 0; col < fancyDiamondModel->columnCount(); ++col) {
+        if (col != 3) {
+            ui->tableView_2->setItemDelegateForColumn(col, new ReadOnlyDelegate(ui->tableView_2));
         }
     }
 }
@@ -747,58 +735,57 @@ void Admin::on_jewelry_menu_button_clicked()
 
 void Admin::setupJewelryMenuPage()
 {
-    // Get the jewelry menu page from Admin_panel (index 4)
     QWidget *jewelryMenuPage = ui->Admin_panel->widget(4);
-    if (!jewelryMenuPage)
-    {
-        qDebug() << "Error: Jewelry menu page (index 4) not found in Admin_panel.";
+    if (!jewelryMenuPage) {
+        qWarning() << "❌ Jewelry menu page (index 4) not found.";
         return;
     }
 
-    // Clear any existing layout or widgets (in case of reinitialization)
-    if (jewelryMenuPage->layout())
-    {
+    // Clear existing layout safely
+    if (auto oldLayout = jewelryMenuPage->layout()) {
         QLayoutItem *item;
-        while ((item = jewelryMenuPage->layout()->takeAt(0)) != nullptr)
-        {
-            if (item->widget())
-            {
-                item->widget()->deleteLater();
-            }
+        while ((item = oldLayout->takeAt(0)) != nullptr) {
+            if (auto w = item->widget())
+                w->deleteLater();
             delete item;
         }
-        delete jewelryMenuPage->layout();
+        delete oldLayout;
     }
 
-    // Create main vertical layout
-    QVBoxLayout *mainLayout = new QVBoxLayout(jewelryMenuPage);
+    auto *mainLayout = new QVBoxLayout(jewelryMenuPage);
 
-    // Category input section
-    QHBoxLayout *categoryLayout = new QHBoxLayout();
-    QLabel *categoryLabel = new QLabel("Category Name:", jewelryMenuPage);
-    categoryNameLineEdit = new QLineEdit(jewelryMenuPage);
-    categoryNameLineEdit->setPlaceholderText("Enter category name");
-    addCategoryButton = new QPushButton("Add Category", jewelryMenuPage);
-    categoryLayout->addWidget(categoryLabel);
-    categoryLayout->addWidget(categoryNameLineEdit);
-    categoryLayout->addWidget(addCategoryButton);
-    mainLayout->addLayout(categoryLayout);
+    // --- Category input ---
+    {
+        auto *categoryLayout = new QHBoxLayout();
+        auto *categoryLabel = new QLabel("Category Name:", jewelryMenuPage);
+        categoryNameLineEdit = new QLineEdit(jewelryMenuPage);
+        categoryNameLineEdit->setPlaceholderText("Enter category name");
+        addCategoryButton = new QPushButton("Add Category", jewelryMenuPage);
 
-    // Item input section
-    QFormLayout *itemFormLayout = new QFormLayout();
-    parentCategoryComboBox = new QComboBox(jewelryMenuPage);
-    itemNameLineEdit = new QLineEdit(jewelryMenuPage);
-    itemNameLineEdit->setPlaceholderText("Enter item name");
-    displayTextLineEdit = new QLineEdit(jewelryMenuPage);
-    displayTextLineEdit->setPlaceholderText("Enter display text");
-    addItemButton = new QPushButton("Add Item", jewelryMenuPage);
-    itemFormLayout->addRow("Parent Category:", parentCategoryComboBox);
-    itemFormLayout->addRow("Item Name:", itemNameLineEdit);
-    itemFormLayout->addRow("Display Text:", displayTextLineEdit);
-    itemFormLayout->addRow(addItemButton);
-    mainLayout->addLayout(itemFormLayout);
+        categoryLayout->addWidget(categoryLabel);
+        categoryLayout->addWidget(categoryNameLineEdit);
+        categoryLayout->addWidget(addCategoryButton);
+        mainLayout->addLayout(categoryLayout);
+    }
 
-    // Table for displaying menu items
+    // --- Item input ---
+    {
+        auto *itemFormLayout = new QFormLayout();
+        parentCategoryComboBox = new QComboBox(jewelryMenuPage);
+        itemNameLineEdit = new QLineEdit(jewelryMenuPage);
+        itemNameLineEdit->setPlaceholderText("Enter item name");
+        displayTextLineEdit = new QLineEdit(jewelryMenuPage);
+        displayTextLineEdit->setPlaceholderText("Enter display text");
+        addItemButton = new QPushButton("Add Item", jewelryMenuPage);
+
+        itemFormLayout->addRow("Parent Category:", parentCategoryComboBox);
+        itemFormLayout->addRow("Item Name:", itemNameLineEdit);
+        itemFormLayout->addRow("Display Text:", displayTextLineEdit);
+        itemFormLayout->addRow(addItemButton);
+        mainLayout->addLayout(itemFormLayout);
+    }
+
+    // --- Table ---
     jewelryMenuTable = new QTableWidget(jewelryMenuPage);
     jewelryMenuTable->setColumnCount(4);
     jewelryMenuTable->setHorizontalHeaderLabels({"ID", "Parent ID", "Name", "Display Text"});
@@ -808,22 +795,27 @@ void Admin::setupJewelryMenuPage()
     jewelryMenuTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     mainLayout->addWidget(jewelryMenuTable);
 
-    // Delete button section
-    QHBoxLayout *deleteLayout = new QHBoxLayout();
-    deleteItemButton = new QPushButton("Delete Item", jewelryMenuPage);
-    deleteLayout->addWidget(deleteItemButton);
-    deleteLayout->addStretch(); // Push button to the left
-    mainLayout->addLayout(deleteLayout);
+    // --- Delete button ---
+    {
+        auto *deleteLayout = new QHBoxLayout();
+        deleteItemButton = new QPushButton("Delete Item", jewelryMenuPage);
+        deleteLayout->addWidget(deleteItemButton);
+        deleteLayout->addStretch();
+        mainLayout->addLayout(deleteLayout);
+    }
 
-    // Connect button signals to slots
+    jewelryMenuPage->setLayout(mainLayout);
+
+    // --- Connections (prevent duplicates) ---
+    disconnect(addCategoryButton, nullptr, this, nullptr);
+    disconnect(addItemButton, nullptr, this, nullptr);
+    disconnect(deleteItemButton, nullptr, this, nullptr);
+
     connect(addCategoryButton, &QPushButton::clicked, this, &Admin::on_add_menu_category_clicked);
     connect(addItemButton, &QPushButton::clicked, this, &Admin::on_add_menu_item_clicked);
     connect(deleteItemButton, &QPushButton::clicked, this, &Admin::on_delete_menu_item_clicked);
 
-    // Set layout to page
-    jewelryMenuPage->setLayout(mainLayout);
-
-    // Initialize table and combo box
+    // --- Initialize ---
     populateJewelryMenuTable();
     populateParentCategoryComboBox();
 }
@@ -832,39 +824,48 @@ void Admin::populateJewelryMenuTable()
 {
     if (!jewelryMenuTable)
         return;
-    jewelryMenuTable->setRowCount(0);
-    jewelryMenuTable->setColumnCount(4);
-    jewelryMenuTable->setHorizontalHeaderLabels({"ID", "Parent ID", "Name", "Display Text"});
-    jewelryMenuTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    jewelryMenuTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    QList<QVariantList> menuItems = DatabaseUtils::fetchJewelryMenuItems();
+    jewelryMenuTable->setRowCount(0);
+
+    const QList<QVariantList> menuItems = DatabaseUtils::fetchJewelryMenuItems();
     for (const QVariantList &item : menuItems)
     {
-        int row = jewelryMenuTable->rowCount();
+        const int row = jewelryMenuTable->rowCount();
         jewelryMenuTable->insertRow(row);
-        jewelryMenuTable->setItem(row, 0, new QTableWidgetItem(item[0].toString()));
-        jewelryMenuTable->setItem(row, 1, new QTableWidgetItem(item[1].toInt() == -1 ? "None" : item[1].toString()));
+
+        auto *idItem = new QTableWidgetItem(QString::number(item[0].toInt()));
+        idItem->setData(Qt::UserRole, item[0].toInt());
+        jewelryMenuTable->setItem(row, 0, idItem);
+
+        auto *parentItem = new QTableWidgetItem(item[1].toInt() == -1 ? "None" : QString::number(item[1].toInt()));
+        parentItem->setData(Qt::UserRole, item[1].toInt());
+        jewelryMenuTable->setItem(row, 1, parentItem);
+
         jewelryMenuTable->setItem(row, 2, new QTableWidgetItem(item[2].toString()));
         jewelryMenuTable->setItem(row, 3, new QTableWidgetItem(item[3].toString()));
     }
-
-    jewelryMenuTable->resizeColumnsToContents();
 }
 
 void Admin::populateParentCategoryComboBox()
 {
     if (!parentCategoryComboBox)
         return;
+
     parentCategoryComboBox->clear();
     parentCategoryComboBox->addItem("Select Category", -1);
 
-    QList<QVariantList> menuItems = DatabaseUtils::fetchJewelryMenuItems();
-    for (const QVariantList &item : menuItems)
+    const QList<QVariantList> menuItems = DatabaseUtils::fetchJewelryMenuItems();
+    for (const auto &item : menuItems)
     {
-        if (item[1].toInt() == -1)
-        { // Top-level categories only
-            parentCategoryComboBox->addItem(item[2].toString(), item[0].toInt());
+        if (item.size() < 3)
+            continue; // safety
+
+        const int parentId = item[1].toInt();
+        if (parentId == -1)  // top-level only
+        {
+            const QString categoryName = item[2].toString();
+            const int categoryId = item[0].toInt();
+            parentCategoryComboBox->addItem(categoryName, categoryId);
         }
     }
 }
@@ -883,7 +884,10 @@ void Admin::on_add_menu_category_clicked()
     {
         QMessageBox::information(this, "Success", "Category added successfully!");
         categoryNameLineEdit->clear();
+
+        // ✅ Refresh both table and combo box
         populateJewelryMenuTable();
+        populateParentCategoryComboBox();
     }
     else
     {
@@ -912,10 +916,15 @@ void Admin::on_add_menu_item_clicked()
     if (DatabaseUtils::insertJewelryMenuItem(parentId, itemName, displayText))
     {
         QMessageBox::information(this, "Success", "Menu item added successfully!");
+
+        // ✅ Clear inputs
         itemNameLineEdit->clear();
         displayTextLineEdit->clear();
         parentCategoryComboBox->setCurrentIndex(0);
+
+        // ✅ Refresh UI
         populateJewelryMenuTable();
+        populateParentCategoryComboBox(); // keep combo in sync too
     }
     else
     {
@@ -946,7 +955,10 @@ void Admin::on_delete_menu_item_clicked()
         if (DatabaseUtils::deleteJewelryMenuItem(id))
         {
             QMessageBox::information(this, "Success", "Menu item deleted successfully!");
+
+            // ✅ Refresh both table and combo box
             populateJewelryMenuTable();
+            populateParentCategoryComboBox();
         }
         else
         {
@@ -960,18 +972,19 @@ void Admin::on_admin_menu_push_button_clicked()
     if (!newAdminMenuButtons)
     {
         newAdminMenuButtons = new AdminMenuButtons(this);
-        qApp->installEventFilter(this); // Monitor all application events
         newAdminMenuButtons->setWindowFlags(Qt::FramelessWindowHint);
         newAdminMenuButtons->setAttribute(Qt::WA_DeleteOnClose, false);
-        newAdminMenuButtons->setFixedSize(250, 600); // Size of the overlay menu
+        newAdminMenuButtons->setFixedSize(200, 400);
 
-        // finding the positioin of admin_menu_push_button in the screen
+        // Position under the button
         QPoint localPos = ui->admin_menu_push_button->mapTo(this, QPoint(0, ui->admin_menu_push_button->height()));
         newAdminMenuButtons->move(localPos);
-        newAdminMenuButtons->raise(); // Bring to top of parent stack
 
         connect(newAdminMenuButtons, &AdminMenuButtons::menuHidden, this, [=]()
-                { menuVisible = false; });
+                {
+                    menuVisible = false;
+                    qApp->removeEventFilter(this); // ✅ Always clean filter
+                });
 
         // Connect signals
         connect(newAdminMenuButtons, &AdminMenuButtons::showImagesClicked, this, &Admin::on_show_images_clicked);
@@ -984,7 +997,7 @@ void Admin::on_admin_menu_push_button_clicked()
         connect(newAdminMenuButtons, &AdminMenuButtons::orderBookRequestPushButtonClicked, this, &Admin::on_orderBookRequestPushButton_clicked);
     }
 
-    if (!menuVisible || !newAdminMenuButtons)
+    if (!menuVisible)
     {
         QPoint localPos = ui->admin_menu_push_button->mapTo(this, QPoint(0, ui->admin_menu_push_button->height()));
         newAdminMenuButtons->move(localPos);
@@ -997,6 +1010,7 @@ void Admin::on_admin_menu_push_button_clicked()
     {
         newAdminMenuButtons->hide();
         qApp->removeEventFilter(this);
+        menuVisible = false;
     }
 }
 
@@ -1054,72 +1068,28 @@ void Admin::on_saveOrderBookPushButton_clicked()
     QString date = QDate::currentDate().toString("yyyy-MM-dd");
 
     // 1. Validation
-    if (userId.isEmpty() || userName.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || role.isEmpty())
-    {
+    if (userId.isEmpty() || userName.isEmpty() || password.isEmpty() ||
+        confirmPassword.isEmpty() || role.isEmpty()) {
         QMessageBox::warning(this, "Input Error", "All fields are required.");
         return;
     }
 
-    if (password != confirmPassword)
-    {
+    if (password != confirmPassword) {
         QMessageBox::warning(this, "Password Error", "Passwords do not match.");
         return;
     }
 
-    // 2. Connect to DB
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-    qDebug() << "Current Path:" << QDir::currentPath();
-
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("database/luxeMineAuthentication.db");
-
-    if (!db.open())
-    {
-        QMessageBox::critical(this, "Database Error", "Failed to connect to database.");
-        return;
-    }
-
-    // 3. Check for duplicate userId
-    QSqlQuery checkQuery;
-    checkQuery.prepare("SELECT userId FROM OrderBook_Login WHERE userId = :userId");
-    checkQuery.bindValue(":userId", userId);
-
-    if (!checkQuery.exec())
-    {
-        QMessageBox::critical(this, "Error", "Failed to check existing user: " + checkQuery.lastError().text());
-        return;
-    }
-
-    if (checkQuery.next())
-    {
-        QMessageBox::warning(this, "Duplicate User", "User ID already exists.");
-        return;
-    }
-
-    // 4. Insert new user
-    QSqlQuery query;
-    query.prepare("INSERT INTO OrderBook_Login (userId, userName, password, date, role) "
-                  "VALUES (:userId, :userName, :password, :date, :role)");
-    query.bindValue(":userId", userId);
-    query.bindValue(":userName", userName);
-    query.bindValue(":password", password);
-    query.bindValue(":date", date);
-    query.bindValue(":role", role);
-
-    if (!query.exec())
-    {
-        QMessageBox::critical(this, "Database Error", "Failed to save user: " + query.lastError().text());
+    // 2. Call DatabaseUtils
+    QString errorMsg;
+    if (!DatabaseUtils::createOrderBookUser(userId, userName, password, role, date, errorMsg)) {
+        QMessageBox::critical(this, "Database Error", errorMsg);
         return;
     }
 
     QMessageBox::information(this, "Success", "User account created successfully!");
-
-    // Go back to login page
     ui->Admin_panel->setCurrentIndex(0);
 
-    db.close();
-
-    // Clear form
+    // 3. Clear form
     ui->userIdLineEdit->clear();
     ui->userNameLineEdit->clear();
     ui->passwordLineEdit->clear();
@@ -1131,105 +1101,3 @@ void Admin::on_show_passwd_checkBox_toggled(bool checked)
 {
     ui->admin_password_lineEdit->setEchoMode(checked ? QLineEdit::Normal : QLineEdit::Password);
 }
-
-
-
-// void Admin::handleStatusChangeApproval(int requestId, bool approved, int rowInTable, const QString& note) {
-//     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "status_change_update_conn");
-//     db.setDatabaseName("database/mega_mine_orderbook.db");
-
-//     if (!db.open()) {
-//         qDebug() << "❌ DB Open Failed:" << db.lastError().text();
-//         QMessageBox::critical(this, "DB Error", db.lastError().text());
-//         return;
-//     }
-//     qDebug() << "✅ DB Connected";
-
-//     QString jobNo, role, toStatus;
-
-//     if (approved) {
-//         QSqlQuery selectQuery(db);
-//         selectQuery.prepare(R"(
-//             SELECT jobNo, role, toStatus
-//             FROM StatusChangeRequests
-//             WHERE id = :id
-//         )");
-//         selectQuery.bindValue(":id", requestId);
-
-//         if (!selectQuery.exec() || !selectQuery.next()) {
-//             qDebug() << "❌ SELECT failed:" << selectQuery.lastError().text();
-//             db.close();
-//             return;
-//         }
-
-//         jobNo = selectQuery.value("jobNo").toString();
-//         role = selectQuery.value("role").toString();
-//         toStatus = selectQuery.value("toStatus").toString();
-//         qDebug() << "➡️  Approving request for job:" << jobNo << " role:" << role << " toStatus:" << toStatus;
-
-//         QStringList roleOrder = {"Designer", "Manufacturer", "Accountant"};
-//         int roleIndex = roleOrder.indexOf(role);
-//         if (roleIndex == -1) {
-//             qDebug() << "❌ Invalid role:" << role;
-//             db.close();
-//             return;
-//         }
-
-//         QStringList setParts;
-//         for (int i = 0; i < roleOrder.size(); ++i) {
-//             if (i == roleIndex)
-//                 setParts << QString("%1 = '%2'").arg(roleOrder[i], toStatus);
-//             else if (i > roleIndex)
-//                 setParts << QString("%1 = 'Pending'").arg(roleOrder[i]);
-//         }
-
-//         QString updateSQL = QString(R"(
-//             UPDATE "Order-Status"
-//             SET %1
-//             WHERE jobNo = '%2'
-//         )").arg(setParts.join(", "), jobNo);
-
-//         qDebug() << "📝 SQL:" << updateSQL;
-//         QSqlQuery updateQuery(db);
-//         if (!updateQuery.exec(updateSQL)) {
-//             qDebug() << "❌ Failed to update Order-Status:" << updateQuery.lastError().text();
-//             db.close();
-//             return;
-//         }
-//         qDebug() << "✅ Order-Status updated.";
-//     }
-
-//     QSqlQuery finalUpdateQuery(db);
-
-//     if (approved) {
-//         finalUpdateQuery.prepare(R"(
-//         UPDATE StatusChangeRequests
-//         SET status = 'Approved'
-//         WHERE id = :id
-//     )");
-//         finalUpdateQuery.bindValue(":id", requestId);
-//     } else {
-//         finalUpdateQuery.prepare(R"(
-//         UPDATE StatusChangeRequests
-//         SET status = 'Declined',
-//             note = :note
-//         WHERE id = :id
-//     )");
-//         finalUpdateQuery.bindValue(":note", note);
-//         finalUpdateQuery.bindValue(":id", requestId);
-//     }
-
-//     if (!finalUpdateQuery.exec()) {
-//         qDebug() << "❌ Failed to update StatusChangeRequests:" << finalUpdateQuery.lastError().text();
-//         db.close();
-//         return;
-//     }
-
-//     db.close();
-//     qDebug() << "✅ DB changes successful. Removing row from UI.";
-
-//     // Remove the row from the table
-//     ui->jobsheet_request_table->removeRow(rowInTable);
-// }
-
-

@@ -16,6 +16,39 @@ class DatabaseUtils
 public:
     DatabaseUtils();
 
+    //Admin Logic
+        //Jewellry Menu
+        static bool deleteJewelryMenuItem(int id);
+        static bool insertJewelryMenuItem(int parentId, const QString &name, const QString &displayText);
+        static QList<QVariantList> fetchJewelryMenuItems();
+
+        //Gold
+        static QMap<QString, QString> fetchGoldPrices();
+        static bool updateGoldPrices(const QMap<QString, QString> &priceUpdates);
+
+        //Diamond
+        static bool sizeMMExists(const QString &table, double sizeMM);
+        static bool insertRoundDiamond(const QString &sieve, double sizeMM, double weight, double price);
+        static bool insertFancyDiamond(const QString &shape, const QString &sizeMM, double weight, double price);
+        static QSqlTableModel* createTableModel(QObject *parent, const QString &table);
+
+        //User Management
+        static QStringList fetchRoles();
+        static QStringList fetchImagePaths();
+        static bool deleteUser(const QString &userId);
+        static QList<QVariantList> fetchUserDetailsForAdmin();
+        static QList<PdfRecord> getUserPdfs(const QString &userId); // Updated to return PdfRecord
+        static bool checkAdminCredentials(const QString &username, const QString &password, QString &role);
+        static bool createOrderBookUser(const QString &userId, const QString &userName,
+                                        const QString &password, const QString &role, const QString &date,
+                                        QString &errorMsg);
+
+        //Job Sheet / Order Book
+        static bool updateStatusChangeRequest(int requestId, bool approved, const QString &note);
+        static bool updateRoleStatus(const QString &jobNo, const QString &fieldName, const QString &newStatus);
+        static QList<JobSheetRequest> fetchJobSheetRequests();
+
+    //not fixed
     static QStringList fetchShapes(const QString &tableType);
     static QStringList fetchSizes(const QString &tableType, const QString &shape);
     static QString saveImage(const QString &imagePath);
@@ -23,13 +56,9 @@ public:
                                   const QString &companyName, const QJsonArray &goldArray, const QJsonArray &diamondArray,
                                   const QJsonArray &stoneArray, const QString &note);
 
-    static QStringList fetchImagePaths();
-    static QMap<QString, QString> fetchGoldPrices();
-    static bool sizeMMExists(const QString &table, double sizeMM);
-    static bool insertRoundDiamond(const QString &sieve, double sizeMM, double weight, double price);
-    static bool insertFancyDiamond(const QString &shape, const QString &sizeMM, double weight, double price);
-    static QSqlTableModel* createTableModel(QObject *parent, const QString &table);
-    static bool updateGoldPrices(const QMap<QString, QString> &priceUpdates);
+
+
+
 
     static QJsonObject parseGoldJson(const QString &goldJson);
     static QJsonArray parseJsonArray(const QString &json);
@@ -46,15 +75,13 @@ public:
     static QList<SelectionData> loadUserCart(const QString &userId);
     static bool saveUserCart(const QString &userId, const QList<SelectionData> &selections);
 
-    static QList<QVariantList> fetchUserDetailsForAdmin();
 
-    static bool deleteUser(const QString &userId);
-    static QList<PdfRecord> getUserPdfs(const QString &userId); // Updated to return PdfRecord
 
-    // New methods for jewelry menu
-    static QList<QVariantList> fetchJewelryMenuItems();
-    static bool insertJewelryMenuItem(int parentId, const QString &name, const QString &displayText);
-    static bool deleteJewelryMenuItem(int id);
+
+
+
+
+
 
     static QList<ImageRecord> getAllItems();
 
@@ -75,12 +102,6 @@ public:
     static bool insertParty(const PartyData &party);
     static PartyInfo fetchPartyDetails(const QString &userId, const QString &partyId);
     static LoginResult authenticateUser(const QString &userId, const QString &password);
-
-    //Admin logic
-    static QStringList fetchRoles();
-    static bool updateStatusChangeRequest(int requestId, bool approved, const QString &note);
-    static bool updateRoleStatus(const QString &jobNo, const QString &fieldName, const QString &newStatus);
-    static QList<JobSheetRequest> fetchJobSheetRequests();
 
 
 
