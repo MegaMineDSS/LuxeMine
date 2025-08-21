@@ -351,24 +351,31 @@ QPushButton:disabled {
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
-    background-color: #EEEEEE;
-    color: #D32F2F;
+    background-color: #D62828;       /* Deep red */
+    color: #FFFFFF;
     font-size: 12px;
     font-weight: bold;
     border-radius: 4px;
-    padding: 8px 20px;
-    min-width: 80px;
+    padding: 8px 22px;
+    min-width: 100px;
     text-align: center;
-    border: 1px solid #D32F2F;
+    border: 1px solid #8B0000;       /* Dark border for definition */
 }
 
 QPushButton:hover {
-    background-color: #FCE4EC;
+    background-color: #B71C1C;       /* Darker red on hover */
+    border: 1px solid #600000;
 }
 
 QPushButton:pressed {
-    background-color: #FFEBEE;
-    border: 1px solid #B71C1C;
+    background-color: #7F1D1D;       /* Very dark red on press */
+    border: 1px solid #4A0E0E;
+}
+
+QPushButton:disabled {
+    background-color: #E0E0E0;
+    color: #9E9E9E;
+    border: 1px solid #BDBDBD;
 }
 </string>
      </property>

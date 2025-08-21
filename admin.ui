@@ -655,7 +655,6 @@ QPushButton:focus {
     font-weight: bold;
     border-radius: 10px;
     padding: 10px 20px;
-    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
 
 QPushButton:hover {
@@ -719,7 +718,6 @@ QPushButton:pressed {
     font-weight: bold;
     border-radius: 10px;
     padding: 10px 20px;
-    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
 
 QPushButton:hover {
@@ -796,7 +794,6 @@ QPushButton:pressed {
     font-weight: bold;
     border-radius: 10px;
     padding: 10px 20px;
-    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
 
 QPushButton:hover {
@@ -1541,7 +1538,6 @@ QLineEdit::placeholder {
     font-size: 14px;
     font-weight: normal;
     font-family: Arial;
-    qproperty-alignment: AlignCenter;
 }
 
 QPushButton:hover {
@@ -1868,7 +1864,6 @@ QLineEdit::placeholder {
     font-size: 14px;
     font-weight: normal;
     font-family: Arial;
-    qproperty-alignment: AlignCenter;
 }
 
 QPushButton:hover {
@@ -2038,7 +2033,6 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
     font-size: 14px;
     font-weight: normal;
     font-family: Arial;
-    qproperty-alignment: AlignCenter;
 }
 
 QPushButton:hover {
@@ -2653,7 +2647,7 @@ QPushButton:pressed {
              <item row="1" column="0" colspan="13">
               <widget class="QStackedWidget" name="add_dia_stackwidget">
                <property name="currentIndex">
-                <number>0</number>
+                <number>1</number>
                </property>
                <widget class="QWidget" name="round_dia">
                 <layout class="QGridLayout" name="gridLayout_10">
@@ -3048,7 +3042,6 @@ QPushButton:pressed {
     font-size: 14px;
     font-weight: normal;
     font-family: Arial;
-    qproperty-alignment: AlignCenter;
 }
 
 QPushButton:hover {
@@ -3414,7 +3407,6 @@ QLineEdit::placeholder {
     font-size: 14px;
     font-weight: normal;
     font-family: Arial;
-    qproperty-alignment: AlignCenter;
 }
 
 QPushButton:hover {
