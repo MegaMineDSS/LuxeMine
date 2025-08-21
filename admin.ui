@@ -621,7 +621,7 @@ QPushButton:focus {
          <item row="1" column="0" rowspan="6" colspan="3">
           <widget class="QStackedWidget" name="Admin_panel">
            <property name="currentIndex">
-            <number>5</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="_1show_images_page">
             <layout class="QGridLayout" name="gridLayout_4">
@@ -1210,7 +1210,7 @@ QPushButton:pressed {
              <item row="1" column="0" colspan="12">
               <widget class="QStackedWidget" name="gold_dia_update_price">
                <property name="currentIndex">
-                <number>1</number>
+                <number>0</number>
                </property>
                <widget class="QWidget" name="GoldPrice_update">
                 <layout class="QGridLayout" name="gridLayout_12">

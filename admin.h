@@ -24,15 +24,25 @@ public:
     explicit Admin(QWidget *parent = nullptr);
     ~Admin();
 
-private slots:
-    // void closeEvent(QCloseEvent *event);
-    void on_login_button_clicked();
-    void on_cancel_button_clicked();
+private:
+    // These are NOT auto-connected, keep them as normal methods
     void on_show_images_clicked();
     void on_update_price_clicked();
     void on_show_users_clicked();
     void on_logout_clicked();
     void on_add_dia_clicked();
+    void on_jewelry_menu_button_clicked();
+    void on_add_menu_category_clicked();
+    void on_add_menu_item_clicked();
+    void on_delete_menu_item_clicked();
+    void on_orderBookUsersPushButton_clicked();
+    void on_orderBookRequestPushButton_clicked();
+    void on_deleteUser_triggered();
+
+private slots:
+    // These correspond to real widgets/signals in Admin.ui
+    void on_login_button_clicked();
+    void on_cancel_button_clicked();
     void on_gold_button_clicked();
     void on_dia_button_clicked();
     void on_round_dia_button_clicked();
@@ -44,40 +54,20 @@ private slots:
     void on_FancyDiamond_Price_clicked();
     void on_updateFancyDiamond_price_clicked();
     void on_upadateGold_Price_clicked();
-    // void on_cbackup_clicked();
-    // void on_rbackup_clicked();
-    void on_deleteUser_triggered();
-    void on_tableWidget_2_cellDoubleClicked(int row, int column); // New slot for PDF clicks
-    void on_jewelry_menu_button_clicked();
-    void on_add_menu_category_clicked(); // Added for adding top-level categories
-    void on_add_menu_item_clicked(); // Added for adding sub-items
-    void on_delete_menu_item_clicked(); // Added for deleting items
-
-    // void on_pushButton_2_clicked();
-
+    void on_tableWidget_2_cellDoubleClicked(int row, int column);
     void on_admin_menu_push_button_clicked();
-
-
     void on_backToPageOnePushButton_clicked();
-
     void on_saveOrderBookPushButton_clicked();
-
-    void on_orderBookUsersPushButton_clicked();
-
-    void on_orderBookRequestPushButton_clicked();
-
-    void handleStatusChangeApproval(int requestId, bool approved, int rowInTable, const QString& note = "");
-
-
-    void set_comboBox_role();
-
-
     void on_show_passwd_checkBox_toggled(bool checked);
 
-    // Combobox Admin edit status
-    // void onRoleStatusChanged(const QString &jobNo, const QString &fieldName, const QString &newStatus);
-    void onRoleStatusChanged(const QString &jobNo, const QString &fieldName, const QString &newStatus);
-
+    // These are legit slots (custom ones you still call yourself)
+    void handleStatusChangeApproval(int requestId, bool approved,
+                                    int rowInTable,
+                                    const QString& note = "");
+    void set_comboBox_role();
+    void onRoleStatusChanged(const QString &jobNo,
+                             const QString &fieldName,
+                             const QString &newStatus);
 
 protected:
     void closeEvent(QCloseEvent *event) override;
