@@ -7,6 +7,9 @@ AdminMenuButtons::AdminMenuButtons(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // Disable auto-connect to prevent "No matching signal" warnings
+    this->setObjectName(QString());
+
     // Connect all buttons to emit and auto-close
     connect(ui->show_images, &QPushButton::clicked, this, [=]() {
         emit showImagesClicked();
