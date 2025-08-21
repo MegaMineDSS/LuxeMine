@@ -34,5 +34,7 @@
         <file>Backgrounds/28.jpg</file>
         <file>Backgrounds/29.jpg</file>
         <file>Backgrounds/sle.jpg</file>
+        <file>icon/expand-arrow.png</file>
+        <file>icon/search-1.png</file>
     </qresource>
 </RCC>

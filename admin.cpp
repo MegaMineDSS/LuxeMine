@@ -974,7 +974,7 @@ void Admin::on_admin_menu_push_button_clicked()
         newAdminMenuButtons = new AdminMenuButtons(this);
         newAdminMenuButtons->setWindowFlags(Qt::FramelessWindowHint);
         newAdminMenuButtons->setAttribute(Qt::WA_DeleteOnClose, false);
-        newAdminMenuButtons->setFixedSize(200, 400);
+        newAdminMenuButtons->setFixedSize(200, 350);
 
         // Position under the button
         QPoint localPos = ui->admin_menu_push_button->mapTo(this, QPoint(0, ui->admin_menu_push_button->height()));
