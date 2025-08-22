@@ -175,6 +175,47 @@ void Admin::on_orderBookRequestPushButton_clicked()
         // Combo setup helper
         auto addCombo = [&](int col, const QStringList &items, const QString &current) -> QComboBox* {
             QComboBox *combo = new QComboBox(ui->jobsheet_request_table); // parent set
+            combo->setStyleSheet(R"(
+            QComboBox {
+                background-color: #F3F3F3;
+                border: 1px solid #B4B4B4;
+                border-radius: 2px;
+                color: #2C2C2C;
+                font-size: 12px;
+
+            }
+
+            QComboBox:focus {
+                border: 1px solid #305C91;
+                background-color: #FFFFFF;
+            }
+
+            QComboBox:hover {
+                border: 1px solid #888;
+            }
+
+            QComboBox::down-arrow {
+                image: url(":/icon/expand-arrow.png");
+                width: 10px;
+                height: 10px;
+                padding-right: 2px;
+            }
+
+            QComboBox::drop-down {
+                border: none;
+                margin-right: 4px;
+            }
+
+            QComboBox QAbstractItemView {
+                background-color: #FFFFFF;
+                border: 1px solid #B4B4B4;
+                selection-background-color: #305C91;
+                selection-color: #FFFFFF;
+                font-size: 12px;
+
+            }
+            )");
+            combo->view()->setMinimumWidth(combo->sizeHint().width() + 50);
             combo->addItems(items);
             combo->setCurrentText(current);
             ui->jobsheet_request_table->setCellWidget(row, col, combo);
@@ -187,7 +228,7 @@ void Admin::on_orderBookRequestPushButton_clicked()
         QComboBox *accountantCombo   = addCombo(6, {"Pending", "Working", "Completed"}, r.accountant);
 
         // Status change lambda
-        auto connectStatusChange = [=]() {
+        auto connectStatusChange = [=, this]() {
             QString managerStatus = managerCombo->currentText();
             QString designerStatus = designerCombo->currentText();
             QString manufacturerStatus = manufacturerCombo->currentText();
@@ -265,10 +306,10 @@ void Admin::on_orderBookRequestPushButton_clicked()
             QPushButton *approveButton = new QPushButton("✔️", actionWidget);
             QPushButton *rejectButton  = new QPushButton("❌", actionWidget);
 
-            connect(approveButton, &QPushButton::clicked, this, [=]() {
+            connect(approveButton, &QPushButton::clicked, this, [=, this]() {
                 handleStatusChangeApproval(r.requestId, true, row);
             });
-            connect(rejectButton, &QPushButton::clicked, this, [=]() {
+            connect(rejectButton, &QPushButton::clicked, this, [=, this]() {
                 QString reason = QInputDialog::getText(this, "Rejection Note", "Please enter a reason (optional):");
                 handleStatusChangeApproval(r.requestId, false, row, reason);
             });
@@ -737,7 +778,7 @@ void Admin::setupJewelryMenuPage()
 {
     QWidget *jewelryMenuPage = ui->Admin_panel->widget(4);
     if (!jewelryMenuPage) {
-        qWarning() << "❌ Jewelry menu page (index 4) not found.";
+        qWarning() << "[ERROR] Jewelry menu page (index 4) not found.";
         return;
     }
 
@@ -917,12 +958,12 @@ void Admin::on_add_menu_item_clicked()
     {
         QMessageBox::information(this, "Success", "Menu item added successfully!");
 
-        // ✅ Clear inputs
+        //  Clear inputs
         itemNameLineEdit->clear();
         displayTextLineEdit->clear();
         parentCategoryComboBox->setCurrentIndex(0);
 
-        // ✅ Refresh UI
+        //Refresh UI
         populateJewelryMenuTable();
         populateParentCategoryComboBox(); // keep combo in sync too
     }
@@ -956,7 +997,7 @@ void Admin::on_delete_menu_item_clicked()
         {
             QMessageBox::information(this, "Success", "Menu item deleted successfully!");
 
-            // ✅ Refresh both table and combo box
+            //Refresh both table and combo box
             populateJewelryMenuTable();
             populateParentCategoryComboBox();
         }
@@ -980,10 +1021,10 @@ void Admin::on_admin_menu_push_button_clicked()
         QPoint localPos = ui->admin_menu_push_button->mapTo(this, QPoint(0, ui->admin_menu_push_button->height()));
         newAdminMenuButtons->move(localPos);
 
-        connect(newAdminMenuButtons, &AdminMenuButtons::menuHidden, this, [=]()
+        connect(newAdminMenuButtons, &AdminMenuButtons::menuHidden, this, [=, this]()
                 {
                     menuVisible = false;
-                    qApp->removeEventFilter(this); // ✅ Always clean filter
+                    qApp->removeEventFilter(this); // Always clean filter
                 });
 
         // Connect signals
