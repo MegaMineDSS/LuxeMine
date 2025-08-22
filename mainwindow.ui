@@ -284,6 +284,46 @@ QPushButton:pressed {
    <zorder>backgroundLabel</zorder>
    <zorder>buttonContainer</zorder>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1154</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuAdmin">
+    <property name="title">
+     <string>Admin</string>
+    </property>
+    <addaction name="actionShow_Image"/>
+   </widget>
+   <widget class="QMenu" name="menuUser">
+    <property name="title">
+     <string>User</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuAdd_Catalog">
+    <property name="title">
+     <string>Add Catalog</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuOrder_Book">
+    <property name="title">
+     <string>Order Book</string>
+    </property>
+   </widget>
+   <addaction name="menuAdmin"/>
+   <addaction name="menuUser"/>
+   <addaction name="menuAdd_Catalog"/>
+   <addaction name="menuOrder_Book"/>
+  </widget>
+  <action name="actionShow_Image">
+   <property name="text">
+    <string>Show Image</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
