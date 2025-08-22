@@ -621,7 +621,7 @@ QPushButton:focus {
          <item row="1" column="0" rowspan="6" colspan="3">
           <widget class="QStackedWidget" name="Admin_panel">
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="_1show_images_page">
             <layout class="QGridLayout" name="gridLayout_4">
@@ -643,35 +643,40 @@ QPushButton:focus {
                <property name="font">
                 <font>
                  <pointsize>-1</pointsize>
-                 <bold>true</bold>
+                 <fontweight>DemiBold</fontweight>
                 </font>
                </property>
                <property name="styleSheet">
                 <string notr="true">QPushButton {
-    background: transparent;
-    border: 2px solid #ffffff;  /* White border */
-    color: #ffffff;  /* White text */
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 10px;
-    padding: 10px 20px;
+    background-color: #F3F3F3;
+    border: 1.5px solid #B4B4B4;
+    border-radius: 2px;
+    color: #2C2C2C;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    min-width: 80px;
 }
 
 QPushButton:hover {
-    background-color: rgba(255, 215, 0, 0.1);  /* Light gold background on hover */
-    border-color: #ffffff;  /* White border on hover */
-    color: #f1c40f;  /* Bright gold text on hover */
+    background-color: #E8E8E8;
+    border: 1.5px solid #ce1111;
+    background-color: #ffa1a1;
 }
 
 QPushButton:pressed {
-    background-color: rgba(255, 215, 0, 0.2);  /* Slightly darker gold on press */
-    border-color: #ffffff;  /* White border on press */
-    color: #f39c12;  /* Darker gold text on press */
+    background-color: #DADADA;
+    border: 1.5px solid #666;
 }
-</string>
+
+QPushButton:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1.5px solid #D0D0D0;
+}</string>
                </property>
                <property name="text">
-                <string>⛔ Delete</string>
+                <string>🗑 Delete</string>
                </property>
               </widget>
              </item>
@@ -706,35 +711,40 @@ QPushButton:pressed {
                <property name="font">
                 <font>
                  <pointsize>-1</pointsize>
-                 <bold>true</bold>
+                 <fontweight>DemiBold</fontweight>
                 </font>
                </property>
                <property name="styleSheet">
-                <string notr="true">QPushButton {
-    background: transparent;
-    border: 2px solid #ffffff;  /* White border */
-    color: #ffffff;  /* White text */
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 10px;
-    padding: 10px 20px;
+                <string notr="true">QPushButton:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1.5px solid #D0D0D0;
 }
 
-QPushButton:hover {
-    background-color: rgba(255, 215, 0, 0.1);  /* Light gold background on hover */
-    border-color: #ffffff;  /* White border on hover */
-    color: #f1c40f;  /* Bright gold text on hover */
+
+QPushButton#next_image {
+    background-color: #305C91;
+    color: white;
+    border: 1.5px solid #2A4E7C;
+    border-radius: 2px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    min-width: 80px;
 }
 
-QPushButton:pressed {
-    background-color: rgba(255, 215, 0, 0.2);  /* Slightly darker gold on press */
-    border-color: #ffffff;  /* White border on press */
-    color: #f39c12;  /* Darker gold text on press */
+QPushButton#next_image:hover {
+    background-color: #6e9cd2;
+    border: 1.5px solid #2A4E7C;
 }
-</string>
+
+QPushButton#next_image:pressed {
+    background-color: #254166;
+    border: 1.5px solid #1E3554;
+}</string>
                </property>
                <property name="text">
-                <string>➡️  Next</string>
+                <string>   Next   🡪</string>
                </property>
               </widget>
              </item>
@@ -782,35 +792,38 @@ QPushButton:pressed {
                <property name="font">
                 <font>
                  <pointsize>-1</pointsize>
-                 <bold>true</bold>
+                 <fontweight>DemiBold</fontweight>
                 </font>
                </property>
                <property name="styleSheet">
                 <string notr="true">QPushButton {
-    background: transparent;
-    border: 2px solid #ffffff;  /* White border */
-    color: #ffffff;  /* White text */
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 10px;
-    padding: 10px 20px;
+    background-color: #F3F3F3;
+    border: 1.5px solid #2A4E7C;
+    border-radius: 2px;
+    color: #2C2C2C;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    min-width: 80px;
 }
 
 QPushButton:hover {
-    background-color: rgba(255, 215, 0, 0.1);  /* Light gold background on hover */
-    border-color: #ffffff;  /* White border on hover */
-    color: #f1c40f;  /* Bright gold text on hover */
+    background-color: #93b7e1;
 }
 
 QPushButton:pressed {
-    background-color: rgba(255, 215, 0, 0.2);  /* Slightly darker gold on press */
-    border-color: #ffffff;  /* White border on press */
-    color: #f39c12;  /* Darker gold text on press */
+    background-color: #DADADA;
+    border: 1.5px solid #666;
 }
-</string>
+
+QPushButton:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1.5px solid #D0D0D0;
+}</string>
                </property>
                <property name="text">
-                <string>◀️  previous</string>
+                <string>🡨 Previous</string>
                </property>
               </widget>
              </item>
@@ -960,35 +973,30 @@ QPushButton:pressed {
              <item row="0" column="13">
               <widget class="QPushButton" name="pushButton">
                <property name="styleSheet">
-                <string notr="true">/* === QPushButton Base Style === */
-QPushButton {
-    background-color: palette(button);
-    color: palette(button-text);
-    font: bold 12pt &quot;Segoe UI&quot;;
-    border: 1px solid #D4AF37;
-    border-radius: 6px;
-    padding: 8px 16px;
-    icon-size: 16px 16px;  /* This is symbolic, not absolute px */
+                <string notr="true">QPushButton {
+    background-color: #305C91;   /* enterprise blue */
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 8px 20px;
+    min-width: 90px;
+    border: 1px solid #264A73;
 }
 
-/* === Hover Effect === */
 QPushButton:hover {
-    background-color: #f5d76e;
-    color: #000000;
-    border: 1px solid #ffcc00;
+    background-color: #3B6AA5;   /* lighter on hover */
 }
 
-/* === Pressed Effect === */
 QPushButton:pressed {
-    background-color: #cfa93d;
-    color: white;
+    background-color: #24476D;   /* darker on press */
+    border: 1px solid #1C3654;
 }
 
-/* === Disabled Button === */
 QPushButton:disabled {
-    background-color: #444444;
-    color: #AAAAAA;
-    border-color: #666666;
+    background-color: #E0E0E0;
+    color: #9E9E9E;
+    border: 1px solid #BDBDBD;
 }
 </string>
                </property>
@@ -4289,8 +4297,7 @@ QPushButton:pressed {
     color: #2c3e50;
     font-size: 14px;
     border: 2px solid #bdc3c7;
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: 2px;
     gridline-color: #bdc3c7;
     selection-background-color: #e67e22;
     selection-color: white;
@@ -4298,28 +4305,27 @@ QPushButton:pressed {
 }
 
 QHeaderView::section {
-    background-color: #495057;
+    background-color: #2C3E50;
     color: white;
     font-weight: bold;
-    padding: 10px;
     border: 1px solid #bdc3c7;
-    border-radius: 5px;
+    padding: 4px;
+    border-radius: 2px;
     text-align: center;
 }
 
 QTableView::item {
     background-color: #ffffff;
     color: #2c3e50;
-    padding: 8px;
 }
 
 QTableView::item:hover {
-    background-color: #f1c40f;
+    background-color: #305C91;
     color: white;
 }
 
 QTableView::item:selected {
-    background-color: #e67e22;
+   background-color: #305C91;
     color: white;
 }
 
@@ -4329,13 +4335,13 @@ QScrollBar:vertical {
     background: #ecf0f1;
     width: 12px;
     margin: 0px 0px 0px 0px;
-    border-radius: 5px;
+    border-radius: 2px;
 }
 
 QScrollBar::handle:vertical {
     background: #95a5a6;
     min-height: 20px;
-    border-radius: 5px;
+    border-radius: 2px;
 }
 
 QScrollBar::handle:vertical:hover {
@@ -4358,13 +4364,13 @@ QScrollBar:horizontal {
     background: #ecf0f1;
     height: 15px;
     margin: 0px 0px 0px 0px;
-    border-radius: 5px;
+    border-radius: 2px;
 }
 
 QScrollBar::handle:horizontal {
     background: #95a5a6;
     min-width: 20px;
-    border-radius: 5px;
+    border-radius: 2px;
 }
 
 QScrollBar::handle:horizontal:hover {
@@ -4418,11 +4424,6 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
                <column>
                 <property name="text">
                  <string>Accountant</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>New Column</string>
                 </property>
                </column>
                <column>
