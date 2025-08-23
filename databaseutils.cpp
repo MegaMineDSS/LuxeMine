@@ -1184,54 +1184,62 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondDetails(int imageId)
 
             if (query.exec() && query.next()) {
                 json = query.value("diamond").toString();
-                QJsonArray array = parseJsonArray(json);
 
-                for (const QJsonValue &value : array) {
-                    QJsonObject obj = value.toObject();
-                    QString type = obj["type"].toString().trimmed().toLower();
-                    QString sizeMM = obj["sizeMM"].toString().trimmed();
-                    int quantity = obj["quantity"].toString().toInt();
+                // ✅ validate JSON before using
+                QJsonParseError parseError;
+                QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &parseError);
+                if (parseError.error != QJsonParseError::NoError || !doc.isArray()) {
+                    json.clear(); // avoid passing invalid JSON
+                } else {
+                    QJsonArray array = doc.array();
 
-                    QString tableName = (type == "round") ? "Round_diamond" : "Fancy_diamond";
+                    for (const QJsonValue &value : array) {
+                        if (!value.isObject()) continue;
 
-                    {
-                        QSqlQuery weightQuery(db);
-                        if (type == "round") {
-                            bool ok;
-                            double sizeMMValue = sizeMM.toDouble(&ok);
-                            if (!ok) continue;
+                        QJsonObject obj = value.toObject();
+                        QString type = obj["type"].toString().trimmed().toLower();
+                        QString sizeMM = obj["sizeMM"].toString().trimmed();
+                        int quantity = obj["quantity"].toInt();
 
-                            weightQuery.prepare(R"(
-                                SELECT weight FROM Round_diamond
-                                WHERE ABS(sizeMM - :sizeMM) =
-                                    (SELECT MIN(ABS(sizeMM - :sizeMM)) FROM Round_diamond)
-                            )");
-                            weightQuery.bindValue(":sizeMM", sizeMMValue);
-                        } else {
-                            weightQuery.prepare("SELECT weight FROM Fancy_diamond WHERE LOWER(shape) = LOWER(:type) AND sizeMM = :sizeMM");
-                            weightQuery.bindValue(":type", type);
-                            weightQuery.bindValue(":sizeMM", sizeMM);
-                        }
+                        {
+                            QSqlQuery weightQuery(db);
+                            if (type == "round") {
+                                bool ok;
+                                double sizeMMValue = sizeMM.toDouble(&ok);
+                                if (!ok) continue;
 
-                        if (weightQuery.exec() && weightQuery.next()) {
-                            double weightPerDiamond = weightQuery.value("weight").toDouble();
-                            double totalWeightForEntry = quantity * weightPerDiamond;
-                            weightByType[type] += totalWeightForEntry;
-                            totalWeight += totalWeightForEntry;
-                        }
-                    } // ✅ weightQuery destroyed here
-                }
+                                weightQuery.prepare(R"(
+                                    SELECT weight FROM Round_diamond
+                                    WHERE ABS(sizeMM - :sizeMM) =
+                                        (SELECT MIN(ABS(sizeMM - :sizeMM)) FROM Round_diamond)
+                                )");
+                                weightQuery.bindValue(":sizeMM", sizeMMValue);
+                            } else {
+                                weightQuery.prepare("SELECT weight FROM Fancy_diamond WHERE LOWER(shape) = LOWER(:type) AND sizeMM = :sizeMM");
+                                weightQuery.bindValue(":type", type);
+                                weightQuery.bindValue(":sizeMM", sizeMM);
+                            }
 
-                for (auto it = weightByType.constBegin(); it != weightByType.constEnd(); ++it) {
-                    detailText += QString("%1\t\t%2ct\n").arg(it.key(), -10).arg(it.value(), 0, 'f', 2);
+                            if (weightQuery.exec() && weightQuery.next()) {
+                                double weightPerDiamond = weightQuery.value("weight").toDouble();
+                                double totalWeightForEntry = quantity * weightPerDiamond;
+                                weightByType[type] += totalWeightForEntry;
+                                totalWeight += totalWeightForEntry;
+                            }
+                        } // ✅ weightQuery destroyed here
+                    }
+
+                    for (auto it = weightByType.constBegin(); it != weightByType.constEnd(); ++it) {
+                        detailText += QString("%1\t\t%2ct\n").arg(it.key(), -10).arg(it.value(), 0, 'f', 2);
+                    }
                 }
             }
         } // ✅ outer query destroyed
 
-        db.close(); // optional, safe
+        db.close();
     } // ✅ QSqlDatabase destroyed
 
-    QSqlDatabase::removeDatabase(connectionName); // ✅ now safe
+    QSqlDatabase::removeDatabase(connectionName);
     return {json, detailText};
 }
 
@@ -1254,76 +1262,87 @@ QPair<QString, QString> DatabaseUtils::fetchStoneDetails(int imageId)
 
             if (query.exec() && query.next()) {
                 json = query.value("stone").toString();
-                QJsonArray array = parseJsonArray(json);
 
-                for (const QJsonValue &value : array) {
-                    QJsonObject obj = value.toObject();
-                    QString type = obj["type"].toString().trimmed().toLower();
-                    QString sizeMM = obj["sizeMM"].toString().trimmed();
-                    int quantity = obj["quantity"].toString().toInt();
+                // ✅ validate JSON before using
+                QJsonParseError parseError;
+                QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &parseError);
+                if (parseError.error == QJsonParseError::NoError && doc.isArray()) {
+                    QJsonArray array = doc.array();
 
-                    {
-                        QSqlQuery weightQuery(db);
-                        weightQuery.prepare("SELECT weight FROM stones WHERE LOWER(shape) = LOWER(:shape) AND sizeMM = :sizeMM");
-                        weightQuery.bindValue(":shape", type);
-                        weightQuery.bindValue(":sizeMM", sizeMM);
+                    for (const QJsonValue &value : array) {
+                        if (!value.isObject()) continue;
 
-                        if (weightQuery.exec() && weightQuery.next()) {
-                            double weightPerStone = weightQuery.value("weight").toDouble();
-                            double totalWeightForEntry = quantity * weightPerStone;
-                            weightByType[type] += totalWeightForEntry;
-                            totalWeight += totalWeightForEntry;
-                        }
-                    } // ✅ weightQuery destroyed here
-                }
+                        QJsonObject obj = value.toObject();
+                        QString type = obj["type"].toString().trimmed().toLower();
+                        QString sizeMM = obj["sizeMM"].toString().trimmed();
+                        int quantity = obj["quantity"].toInt(); // ✅ simpler & safer
 
-                for (auto it = weightByType.constBegin(); it != weightByType.constEnd(); ++it) {
-                    detailText += QString("%1\t\t%2ct\n").arg(it.key(), -10).arg(it.value(), 0, 'f', 2);
+                        {
+                            QSqlQuery weightQuery(db);
+                            weightQuery.prepare("SELECT weight FROM stones WHERE LOWER(shape) = LOWER(:shape) AND sizeMM = :sizeMM");
+                            weightQuery.bindValue(":shape", type);
+                            weightQuery.bindValue(":sizeMM", sizeMM);
+
+                            if (weightQuery.exec() && weightQuery.next()) {
+                                double weightPerStone = weightQuery.value("weight").toDouble();
+                                double totalWeightForEntry = quantity * weightPerStone;
+                                weightByType[type] += totalWeightForEntry;
+                                totalWeight += totalWeightForEntry;
+                            }
+                        } // ✅ weightQuery destroyed here
+                    }
+
+                    for (auto it = weightByType.constBegin(); it != weightByType.constEnd(); ++it) {
+                        detailText += QString("%1\t\t%2ct\n").arg(it.key(), -10).arg(it.value(), 0, 'f', 2);
+                    }
+                } else {
+                    json.clear(); // ✅ don't store bad JSON
                 }
             }
-        } // ✅ query destroyed here
+        } // ✅ query destroyed
 
-        db.close(); // optional
-    } // ✅ db destroyed here
+        db.close();
+    } // ✅ db destroyed
 
-    QSqlDatabase::removeDatabase(connectionName); // ✅ now safe
+    QSqlDatabase::removeDatabase(connectionName);
     return {json, detailText};
 }
 
-QString DatabaseUtils::fetchJsonData(int imageId, const QString &type)
+QString DatabaseUtils::fetchJsonData(int imageId, const QString &column)
 {
+    if (column != "diamond" && column != "stone") {
+        qWarning() << "Invalid column requested in fetchJsonData:" << column;
+        return "[]";
+    }
+
     const QString connectionName = "fetch_json_conn";
-    QString json = "{}";
+    QString json = "[]";
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
         db.setDatabaseName(QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db"));
         if (!db.open()) {
             qDebug() << "Error: Failed to open database for fetchJsonData:" << db.lastError().text();
-            return "{}";
+            return "[]";
         }
 
         {
             QSqlQuery query(db);
-            query.prepare("SELECT json_data FROM some_table WHERE image_id = :imageId AND type = :type");
+            query.prepare(QString("SELECT %1 FROM image_data WHERE image_id = :imageId").arg(column));
             query.bindValue(":imageId", imageId);
-            query.bindValue(":type", type);
 
-            if (!query.exec() || !query.next()) {
-                qDebug() << "Error: No JSON data found for imageId =" << imageId
-                         << ", type =" << type << ":" << query.lastError().text();
-                return "{}";
+            if (query.exec() && query.next()) {
+                json = query.value(0).toString();
+            } else {
+                qDebug() << "No JSON data found for imageId =" << imageId << ", column =" << column;
             }
+        }
 
-            json = query.value(0).toString();
-            qDebug() << "Fetched JSON:" << json;
-        } // ✅ QSqlQuery destroyed here
+        db.close();
+    }
 
-        db.close(); // optional
-    } // ✅ QSqlDatabase destroyed here
-
-    QSqlDatabase::removeDatabase(connectionName); // ✅ now safe
-    return json.isEmpty() ? "{}" : json;
+    QSqlDatabase::removeDatabase(connectionName);
+    return json.isEmpty() ? "[]" : json;
 }
 
 
@@ -1334,8 +1353,12 @@ QPixmap DatabaseUtils::fetchImagePixmap(int imageId)
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
-        if (!db.open()) return QPixmap(":/icon/placeholder.png");
+        db.setDatabaseName(QDir(QCoreApplication::applicationDirPath())
+                               .filePath("database/mega_mine_image.db"));
+        if (!db.open()) {
+            qDebug() << "Failed to open DB for fetchImagePixmap:" << db.lastError().text();
+            return QPixmap(":/icon/placeholder.png");
+        }
 
         {
             QSqlQuery query(db);
@@ -1343,17 +1366,21 @@ QPixmap DatabaseUtils::fetchImagePixmap(int imageId)
             query.bindValue(":imageId", imageId);
 
             if (query.exec() && query.next()) {
-                QString imagePath = query.value("image_path").toString();
+                const QString imagePath = query.value(0).toString();
                 if (!imagePath.isEmpty() && QFile::exists(imagePath)) {
-                    pixmap.load(imagePath);
+                    if (!pixmap.load(imagePath)) {
+                        qWarning() << "Failed to load image from:" << imagePath;
+                    }
                 }
+            } else {
+                qDebug() << "No image path found for id:" << imageId << query.lastError().text();
             }
-        } // ✅ QSqlQuery destroyed here
+        } // ✅ query destroyed
 
-        db.close(); // optional but safe
-    } // ✅ QSqlDatabase destroyed here
+        db.close();
+    } // ✅ db destroyed
 
-    QSqlDatabase::removeDatabase(connectionName); // ✅ safe now
+    QSqlDatabase::removeDatabase(connectionName);
     return pixmap.isNull() ? QPixmap(":/icon/placeholder.png") : pixmap;
 }
 
@@ -1368,37 +1395,36 @@ double DatabaseUtils::calculateTotalGoldWeight(const QList<SelectionData> &selec
         db.setDatabaseName("database/mega_mine_image.db");
         if (!db.open()) return 0.0;
 
-        {
-            QSqlQuery query(db);
-            for (const SelectionData &selection : selections) {
+        QHash<int, QString> goldCache;
+        QSqlQuery query(db);
+
+        for (const SelectionData &selection : selections) {
+            if (!goldCache.contains(selection.imageId)) {
                 query.prepare("SELECT gold_weight FROM image_data WHERE image_id = :imageId");
                 query.bindValue(":imageId", selection.imageId);
                 if (query.exec() && query.next()) {
-                    QString goldWeightJson = query.value("gold_weight").toString();
-                    QJsonDocument doc = QJsonDocument::fromJson(goldWeightJson.toUtf8());
-                    if (doc.isArray()) {
-                        QJsonArray goldWeightArray = doc.array();
-                        double goldWeight = 0.0;
-                        for (const QJsonValue &value : goldWeightArray) {
-                            QJsonObject obj = value.toObject();
-                            if (obj["karat"].toString() == selection.goldType) {
-                                goldWeight = obj["weight(g)"].toString().toDouble();
-                                break;
-                            }
-                        }
-                        totalGoldWeight += goldWeight * selection.itemCount;
+                    goldCache[selection.imageId] = query.value(0).toString();
+                }
+            }
+
+            QString goldWeightJson = goldCache.value(selection.imageId);
+            QJsonDocument doc = QJsonDocument::fromJson(goldWeightJson.toUtf8());
+            if (doc.isArray()) {
+                for (const QJsonValue &value : doc.array()) {
+                    QJsonObject obj = value.toObject();
+                    if (obj["karat"].toString() == selection.goldType) {
+                        totalGoldWeight += obj["weight(g)"].toString().toDouble() * selection.itemCount;
+                        break;
                     }
                 }
             }
-        } // ✅ QSqlQuery destroyed here
+        }
 
-        db.close(); // optional
-    } // ✅ QSqlDatabase destroyed here
-
-    QSqlDatabase::removeDatabase(connectionName); // ✅ now safe
+        db.close();
+    }
+    QSqlDatabase::removeDatabase(connectionName);
     return totalGoldWeight;
 }
-
 
 void DatabaseUtils::updateSummaryTable(QTableWidget *table, const QList<SelectionData> &selections, const QString &type)
 {
@@ -1530,21 +1556,22 @@ QList<SelectionData> DatabaseUtils::loadUserCart(const QString &userId)
                     for (const QJsonValue &value : cartArray) {
                         QJsonObject obj = value.toObject();
                         SelectionData selection;
-                        selection.imageId = obj["imageId"].toInt();
-                        selection.goldType = obj["goldType"].toString();
-                        selection.itemCount = obj["itemCount"].toInt();
+                        selection.imageId    = obj["imageId"].toInt();
+                        selection.goldType   = obj["goldType"].toString();
+                        selection.itemCount  = obj["itemCount"].toInt();
                         selection.diamondJson = obj["diamondJson"].toString();
-                        selection.stoneJson = obj["stoneJson"].toString();
+                        selection.stoneJson   = obj["stoneJson"].toString();
+                        selection.pdf_path    = obj["pdf_path"].toString();   // ✅ restore pdf_path
                         selections.append(selection);
                     }
                 }
             }
         } // ✅ QSqlQuery destroyed here
 
-        db.close(); // optional
-    } // ✅ QSqlDatabase destroyed here
+        db.close();
+    } // ✅ db destroyed
 
-    QSqlDatabase::removeDatabase(connectionName); // ✅ now safe
+    QSqlDatabase::removeDatabase(connectionName);
     return selections;
 }
 
@@ -1589,9 +1616,24 @@ bool DatabaseUtils::saveUserCart(const QString &userId, const QList<SelectionDat
         }
 
         if (selections.isEmpty()) {
-            qDebug() << "Error: No selections provided for user:" << userId;
-            return false;
+            QSqlQuery deleteQuery(db);
+            deleteQuery.prepare("DELETE FROM user_cart WHERE user_id = :userId");
+            deleteQuery.bindValue(":userId", userId);
+
+            if (!deleteQuery.exec()) {
+                qDebug() << "Error: Failed to delete empty cart for user:" << userId
+                         << deleteQuery.lastError().text();
+                db.close();
+                QSqlDatabase::removeDatabase(connName);   // ✅ cleanup even on failure
+                return false;
+            }
+
+            db.close();
+            QSqlDatabase::removeDatabase(connName);   // ✅ cleanup on success
+            qDebug() << "Cart cleared for user:" << userId;
+            return true;
         }
+
 
         db.transaction();
 
@@ -1638,14 +1680,16 @@ bool DatabaseUtils::saveUserCart(const QString &userId, const QList<SelectionDat
         QJsonArray cartArray;
         for (const SelectionData &s : selections) {
             QJsonObject obj;
-            obj["imageId"] = s.imageId;
-            obj["goldType"] = s.goldType;
-            obj["itemCount"] = s.itemCount;
-            obj["diamondJson"] = QJsonDocument::fromJson(s.diamondJson.toUtf8()).object();
-            obj["stoneJson"] = QJsonDocument::fromJson(s.stoneJson.toUtf8()).object();
+            obj["imageId"]     = s.imageId;
+            obj["goldType"]    = s.goldType;
+            obj["itemCount"]   = s.itemCount;
+            obj["diamondJson"] = s.diamondJson;  // ✅ store as string
+            obj["stoneJson"]   = s.stoneJson;    // ✅ store as string
+            obj["pdf_path"]    = s.pdf_path;     // ✅ also keep in cart JSON
             cartArray.append(obj);
         }
         QString cartJson = QString(QJsonDocument(cartArray).toJson(QJsonDocument::Compact));
+
         QString pdfJson = QString(QJsonDocument(pdfArray).toJson(QJsonDocument::Compact));
 
         // --- Delete previous
@@ -1704,31 +1748,32 @@ QList<ImageRecord> DatabaseUtils::getAllItems()
             return items;
         }
 
-        QSqlQuery query(db);
-        query.prepare("SELECT image_id, image_path, image_type, design_no, company_name, gold_weight, diamond, stone, time, note FROM image_data");
+        {
+            QSqlQuery query(db);
+            query.prepare("SELECT image_id, image_path, image_type, design_no, company_name, gold_weight, diamond, stone, time, note FROM image_data");
 
-        if (query.exec()) {
-            while (query.next()) {
-                ImageRecord record;
-                record.imageId = query.value(0).toInt();
-                record.imagePath = query.value(1).toString();
-                record.imageType = query.value(2).toString();
-                record.designNo = query.value(3).toString();
-                record.companyName = query.value(4).toString();
-                record.goldJson = query.value(5).toString();
-                record.diamondJson = query.value(6).toString();
-                record.stoneJson = query.value(7).toString();
-                record.time = query.value(8).toString();
-                record.note = query.value(9).toString();
-                items.append(record);
+            if (query.exec()) {
+                while (query.next()) {
+                    ImageRecord record;
+                    record.imageId = query.value(0).toInt();
+                    record.imagePath = query.value(1).toString();
+                    record.imageType = query.value(2).toString();
+                    record.designNo = query.value(3).toString();
+                    record.companyName = query.value(4).toString();
+                    record.goldJson = query.value(5).toString();
+                    record.diamondJson = query.value(6).toString();
+                    record.stoneJson = query.value(7).toString();
+                    record.time = query.value(8).toString();
+                    record.note = query.value(9).toString();
+                    items.append(record);
+                }
+            } else {
+                qDebug() << "Error: Failed to execute query in getAllItems:" << query.lastError().text();
             }
-        } else {
-            qDebug() << "Error: Failed to execute query in getAllItems:" << query.lastError().text();
-        }
+        } // ✅ query destroyed here before db.close()
 
-        db.close(); // Make sure db is closed before removing connection
+        db.close();
     }
-
     QSqlDatabase::removeDatabase(connName); // Safe to remove after scope ends
     return items;
 }

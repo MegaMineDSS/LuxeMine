@@ -303,3 +303,4 @@ bool PdfUtils::generateCartPdf(const QString &pdfPath, const QString &userId, co
     QDesktopServices::openUrl(QUrl::fromLocalFile(pdfPath));
     return true;
 }
+

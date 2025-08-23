@@ -50,15 +50,20 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    if(newUser && !newUser->isHidden()){
+    if (newUser && !newUser->isHidden()) {
         newUser->raise();
         newUser->activateWindow();
-    }
-    else{
+    } else {
         newUser = new User();
+        newUser->setAttribute(Qt::WA_DeleteOnClose);  // auto-delete when closed
+
+        // Reset pointer when the window is destroyed
+        connect(newUser, &QObject::destroyed, this, [this]() { newUser = nullptr; });
+
         newUser->show();
     }
 }
+
 
 void MainWindow::on_pushButton_4_clicked()
 {

@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QRegularExpression>
 #include <QDir>
+#include <QCompleter>
 
 #include "databaseutils.h"
 #include "PdfUtils.h"
@@ -31,8 +32,8 @@ User::User(QWidget *parent)
 
 User::~User()
 {
-    delete diamondTable;
-    delete stoneTable;
+    // delete diamondTable;
+    // delete stoneTable;
     delete ui;
 }
 
@@ -49,6 +50,7 @@ void User::setupUi()
 
     QDir::setCurrent(QCoreApplication::applicationDirPath());
 
+    // diamondTable
     diamondTable = new QTableWidget(this);
     diamondTable->setWindowFlags(Qt::ToolTip);
     diamondTable->setColumnCount(3);
@@ -56,6 +58,7 @@ void User::setupUi()
     diamondTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     diamondTable->hide();
 
+    // stoneTable
     stoneTable = new QTableWidget(this);
     stoneTable->setWindowFlags(Qt::ToolTip);
     stoneTable->setColumnCount(3);
@@ -66,32 +69,112 @@ void User::setupUi()
     ui->diamond_detail->installEventFilter(this);
     ui->stone_detail->installEventFilter(this);
 
+    // cartItemsContainer
     cartItemsContainer = ui->scrollArea->widget();
     if (!cartItemsContainer) {
-        cartItemsContainer = new QWidget;
+        cartItemsContainer = new QWidget(this);   // ✅ give it a parent
         ui->scrollArea->setWidget(cartItemsContainer);
     }
-    cartItemsContainer->setLayout(new QVBoxLayout);
+    cartItemsContainer->setLayout(new QVBoxLayout(cartItemsContainer));  // ✅ parent layout properly
     ui->scrollArea->setWidgetResizable(true);
 
     ui->goldFinaldetail->setText("Total Gold Weight: 0.00g");
 }
 
 void User::setupMobileComboBox() {
-    // List of country codes
-    QMap<QString, QString> countryCodes;
-    countryCodes["+1"] = "United States";
-    countryCodes["+44"] = "United Kingdom";
-    countryCodes["+91"] = "India";
-    countryCodes["+81"] = "Japan";
-    countryCodes["+86"] = "China";
-    countryCodes["+33"] = "France";
-    countryCodes["+49"] = "Germany";
-    // Add more country codes as needed
+    QFile file(":/json_files/country_codes.json");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Could not open country_codes.json";
+        return;
+    }
 
+    QByteArray jsonData = file.readAll();
+    file.close();
+
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(jsonData, &parseError);
+    if (parseError.error != QJsonParseError::NoError) {
+        qWarning() << "JSON parse error:" << parseError.errorString();
+        return;
+    }
+
+    QJsonObject countryCodes = doc.object();
     ui->mobileall->clear();
-    ui->mobileall->addItems(countryCodes.keys());
-    ui->mobileall->setCurrentIndex(2); // Default to first country code
+
+    for (auto it = countryCodes.begin(); it != countryCodes.end(); ++it) {
+        const QString code = it.key();
+        const QString country = it.value().toString();
+        const QString display = code + " (" + country + ")";
+        ui->mobileall->addItem(display, code);
+        ui->mobileall->setItemData(ui->mobileall->count() - 1, country, Qt::UserRole + 1);
+    }
+
+    ui->mobileall->setEditable(true);
+    ui->mobileall->setInsertPolicy(QComboBox::NoInsert);
+    ui->mobileall->lineEdit()->setPlaceholderText("Search by code or country…");
+    ui->mobileall->lineEdit()->setClearButtonEnabled(true);
+
+    // 🔑 Prevent completer leak
+    if (ui->mobileall->completer())
+        ui->mobileall->completer()->deleteLater();
+
+    QCompleter *completer = new QCompleter(ui->mobileall->model(), ui->mobileall);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setFilterMode(Qt::MatchContains);
+    completer->setCompletionMode(QCompleter::PopupCompletion);
+    ui->mobileall->setCompleter(completer);
+
+    connect(completer, QOverload<const QString &>::of(&QCompleter::activated),
+            this, &User::selectMobileCodeFromText);
+    connect(ui->mobileall->lineEdit(), &QLineEdit::returnPressed, this, [this]() {
+        selectMobileCodeFromText(ui->mobileall->lineEdit()->text());
+    });
+
+    int idx = ui->mobileall->findData("+91");
+    if (idx != -1) {
+        ui->mobileall->setCurrentIndex(idx);
+        ui->mobileall->setEditText(ui->mobileall->itemText(idx));
+    }
+}
+
+void User::selectMobileCodeFromText(const QString &text)
+{
+    QString t = text.trimmed();
+
+    // Try matching by code first (accept "+91" or "91")
+    QString codeCandidate = t;
+    codeCandidate.remove(' ');
+    if (!codeCandidate.isEmpty() && (codeCandidate[0].isDigit() || codeCandidate.startsWith('+'))) {
+        if (!codeCandidate.startsWith('+'))
+            codeCandidate.prepend('+');
+        int idx = ui->mobileall->findData(codeCandidate);
+        if (idx != -1) {
+            ui->mobileall->setCurrentIndex(idx);
+            ui->mobileall->setEditText(ui->mobileall->itemText(idx));
+            return;
+        }
+    }
+
+    // Try exact country match via stored role
+    const int count = ui->mobileall->count();
+    for (int i = 0; i < count; ++i) {
+        const QString country = ui->mobileall->itemData(i, Qt::UserRole + 1).toString();
+        if (country.compare(t, Qt::CaseInsensitive) == 0) {
+            ui->mobileall->setCurrentIndex(i);
+            ui->mobileall->setEditText(ui->mobileall->itemText(i));
+            return;
+        }
+    }
+
+    // Fallback: substring match against display text "+code (Country)"
+    for (int i = 0; i < count; ++i) {
+        const QString display = ui->mobileall->itemText(i);
+        if (display.contains(t, Qt::CaseInsensitive)) {
+            ui->mobileall->setCurrentIndex(i);
+            ui->mobileall->setEditText(display);
+            return;
+        }
+    }
 }
 
 void User::loadData()
@@ -119,8 +202,14 @@ void User::loadImage(int index)
 
     if (QFile::exists(record.imagePath)) {
         QPixmap pixmap(record.imagePath);
-        QTimer::singleShot(100, this, [=]() {
-            ui->image_viewUser->setPixmap(pixmap.scaled(ui->image_viewUser->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+        // ✅ capture a pre-scaled copy so we don't use a dangling local
+        QPixmap scaled = pixmap.scaled(ui->image_viewUser->size(),
+                                       Qt::KeepAspectRatio,
+                                       Qt::SmoothTransformation);
+
+        QTimer::singleShot(100, this, [this, scaled]() {
+            ui->image_viewUser->setPixmap(scaled);
         });
     } else {
         QMessageBox::warning(this, "Image Error", "Image not found: " + record.imagePath);
@@ -171,7 +260,7 @@ void User::on_pushButton_clicked()
 bool User::saveOrLoadUser()
 {
     QString userId = ui->userid->text().trimmed();
-    QString mobilePrefix = ui->mobileall->currentText().trimmed();
+    QString mobilePrefix = ui->mobileall->currentData().toString().trimmed();  // ✅ FIX: fetch actual code, not display text
     QString mobileNo = ui->mobileNouser->text().trimmed();
     QString name = ui->nameuser->text().trimmed();
     QString companyName = ui->companyNameuser->text().trimmed();
@@ -256,6 +345,8 @@ bool User::eventFilter(QObject *obj, QEvent *event)
     if (obj == ui->diamond_detail) {
         if (event->type() == QEvent::Enter && !currentDiamondJson.isEmpty()) {
             QJsonArray array = DatabaseUtils::parseJsonArray(currentDiamondJson);
+
+            diamondTable->clearContents();                  // ✅ clear old items
             diamondTable->setRowCount(array.size());
 
             for (int i = 0; i < array.size(); ++i) {
@@ -275,6 +366,8 @@ bool User::eventFilter(QObject *obj, QEvent *event)
     } else if (obj == ui->stone_detail) {
         if (event->type() == QEvent::Enter && !currentStoneJson.isEmpty()) {
             QJsonArray array = DatabaseUtils::parseJsonArray(currentStoneJson);
+
+            stoneTable->clearContents();                   // ✅ clear old items
             stoneTable->setRowCount(array.size());
 
             for (int i = 0; i < array.size(); ++i) {
@@ -350,34 +443,28 @@ void User::on_selectButton_clicked()
         return;
     }
 
-    // Create new selection
     SelectionData selection;
     selection.imageId = imageId;
     selection.goldType = goldType;
     selection.itemCount = itemCount;
     selection.diamondJson = DatabaseUtils::fetchJsonData(imageId, "diamond");
-    selection.stoneJson = DatabaseUtils::fetchJsonData(imageId, "stone");
-    selection.pdf_path = QString("/path/to/pdf_%1.pdf").arg(imageId); // Replace with actual PDF path logic
+    selection.stoneJson   = DatabaseUtils::fetchJsonData(imageId, "stone");
 
-    // Debug selection data
-    qDebug() << "Selection: imageId =" << imageId
-             << ", goldType =" << goldType
-             << ", itemCount =" << itemCount
-             << ", diamondJson =" << selection.diamondJson
-             << ", stoneJson =" << selection.stoneJson
-             << ", pdf_path =" << selection.pdf_path;
+    // ✅ Generate real PDF path
+    // QString pdfDir = QDir(QCoreApplication::applicationDirPath()).filePath("pdfs");
+    // QDir().mkpath(pdfDir);
+    // selection.pdf_path = QDir(pdfDir).filePath(QString("pdf_%1.pdf").arg(imageId));
+    selection.pdf_path = "";
 
-    // Remove existing selection with same imageId and goldType
+    // Remove duplicate entry
     for (int i = selections.size() - 1; i >= 0; --i) {
         if (selections[i].imageId == imageId && selections[i].goldType == goldType) {
             selections.removeAt(i);
         }
     }
 
-    // Add new selection
     selections.append(selection);
 
-    // Save to database if user is logged in
     if (!currentUserId.isEmpty()) {
         saveCartToDatabase();
     }
@@ -390,21 +477,36 @@ void User::updateCartDisplay()
     QVBoxLayout *layout = qobject_cast<QVBoxLayout*>(cartItemsContainer->layout());
     if (!layout) return;
 
+    // Clear existing widgets
     while (QLayoutItem *item = layout->takeAt(0)) {
-        if (QWidget *widget = item->widget()) widget->deleteLater();
+        if (QWidget *widget = item->widget()) {
+            widget->setParent(nullptr);   // ✅ detach from layout immediately
+            widget->deleteLater();        // ✅ schedule deletion
+        }
         delete item;
     }
 
+    // Add cart items
     for (const SelectionData &selection : selections) {
         QPixmap image = DatabaseUtils::fetchImagePixmap(selection.imageId);
-        CartItemWidget *itemWidget = new CartItemWidget(selection.imageId, selection.goldType, selection.itemCount, image, cartItemsContainer);
+        auto *itemWidget = new CartItemWidget(
+            selection.imageId,
+            selection.goldType,
+            selection.itemCount,
+            image,
+            cartItemsContainer
+            );
         layout->addWidget(itemWidget);
 
-        connect(itemWidget, &CartItemWidget::quantityChanged, this, &User::on_cartItemQuantityChanged);
-        connect(itemWidget, &CartItemWidget::removeRequested, this, &User::on_cartItemRemoveRequested);
+        connect(itemWidget, &CartItemWidget::quantityChanged,
+                this, &User::on_cartItemQuantityChanged);
+        connect(itemWidget, &CartItemWidget::removeRequested,
+                this, &User::on_cartItemRemoveRequested);
     }
 
     layout->addStretch();
+
+    // Update summaries
     updateGoldSummary();
     updateDiamondSummary();
     updateStoneSummary();
@@ -435,21 +537,47 @@ void User::on_cartItemQuantityChanged(int imageId, const QString &goldType, int 
         }
     }
 
+    // Persist + refresh summaries only (no UI rebuild)
     saveCartToDatabase();
-    updateCartDisplay();
+    updateGoldSummary();
+    updateDiamondSummary();
+    updateStoneSummary();
 }
+
 
 void User::on_cartItemRemoveRequested(int imageId, const QString &goldType)
 {
+    // 🔹 Remove from selections
     for (int i = selections.size() - 1; i >= 0; --i) {
         if (selections[i].imageId == imageId && selections[i].goldType == goldType) {
-            selections.remove(i);
+            selections.removeAt(i);
             break;
         }
     }
 
+    // 🔹 Remove widget directly
+    QVBoxLayout *layout = qobject_cast<QVBoxLayout*>(cartItemsContainer->layout());
+    if (layout) {
+        for (int i = 0; i < layout->count(); ++i) {
+            QWidget *widget = layout->itemAt(i)->widget();
+            if (CartItemWidget *itemWidget = qobject_cast<CartItemWidget*>(widget)) {
+                if (itemWidget->getImageId() == imageId &&
+                    itemWidget->getGoldType() == goldType) {
+                    layout->removeWidget(itemWidget);
+                    itemWidget->deleteLater(); // safe cleanup
+                    break;
+                }
+            }
+        }
+    }
+
+    // 🔹 Save updated cart
     saveCartToDatabase();
-    updateCartDisplay();
+
+    // 🔹 Just update summaries, not whole UI
+    updateGoldSummary();
+    updateDiamondSummary();
+    updateStoneSummary();
 }
 
 void User::on_makePdfButton_clicked()
@@ -509,11 +637,6 @@ void User::saveCartToDatabase()
 {
     if (currentUserId.isEmpty()) {
         QMessageBox::warning(this, "Cart Error", "No user logged in. Cannot save cart.");
-        return;
-    }
-
-    if (selections.isEmpty()) {
-        qDebug() << "No selections to save for user:" << currentUserId;
         return;
     }
 
