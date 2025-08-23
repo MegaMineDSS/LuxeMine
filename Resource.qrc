@@ -36,6 +36,7 @@
         <file>Backgrounds/sle.jpg</file>
         <file>icon/expand-arrow.png</file>
         <file>icon/search-1.png</file>
+        <file>Backgrounds/Client-details.png</file>
         <file>json_files/country_codes.json</file>
     </qresource>
 </RCC>
