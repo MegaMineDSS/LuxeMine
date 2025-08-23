@@ -52,6 +52,7 @@ private:
     bool saveOrLoadUser();
     void loadUserCart(const QString &userId);
     void saveCartToDatabase();
+    void selectMobileCodeFromText(const QString &text);
 
     Ui::User *ui;
     QJsonObject goldData;
