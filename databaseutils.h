@@ -60,20 +60,6 @@ public:
 
 
 
-    static QJsonObject parseGoldJson(const QString &goldJson);
-    static QJsonArray parseJsonArray(const QString &json);
-    static bool userExists(const QString &userId);
-    static bool userExistsByMobileAndName(const QString &userId, const QString &name);
-    static bool insertUser(const QString &userId, const QString &companyName, const QString &mobileNo,
-                           const QString &gstNo, const QString &name, const QString &emailId, const QString &address);
-    static QPair<QString, QString> fetchDiamondDetails(int imageId);
-    static QPair<QString, QString> fetchStoneDetails(int imageId);
-    static QString fetchJsonData(int imageId, const QString &column);
-    static QPixmap fetchImagePixmap(int imageId);
-    static double calculateTotalGoldWeight(const QList<SelectionData> &selections);
-    static void updateSummaryTable(QTableWidget *table, const QList<SelectionData> &selections, const QString &type);
-    static QList<SelectionData> loadUserCart(const QString &userId);
-    static bool saveUserCart(const QString &userId, const QList<SelectionData> &selections);
 
 
 
@@ -83,7 +69,14 @@ public:
 
 
 
-    static QList<ImageRecord> getAllItems();
+
+
+
+
+
+
+
+
 
 
     //ordermenu connections
@@ -102,6 +95,31 @@ public:
     static bool insertParty(const PartyData &party);
     static PartyInfo fetchPartyDetails(const QString &userId, const QString &partyId);
     static LoginResult authenticateUser(const QString &userId, const QString &password);
+
+
+
+
+
+
+    //User connection
+    static QList<SelectionData> loadUserCart(const QString &userId);
+    static bool saveUserCart(const QString &userId, const QList<SelectionData> &selections);
+    static double calculateTotalGoldWeight(const QList<SelectionData> &selections);
+    static QPixmap fetchImagePixmap(int imageId);
+    static QString fetchJsonData(int imageId, const QString &column);
+    static QPair<QString, QString> fetchStoneDetails(int imageId);
+    static QPair<QString, QString> fetchDiamondDetails(int imageId);
+    static bool userExistsByMobileAndName(const QString &userId, const QString &name);
+    static QList<ImageRecord> getAllItems();
+    static QJsonObject parseGoldJson(const QString &goldJson);
+    static bool userExists(const QString &userId);
+    static bool insertUser(const QString &userId, const QString &companyName, const QString &mobileNo,
+                           const QString &gstNo, const QString &name, const QString &emailId, const QString &address);
+    static QJsonArray parseJsonArray(const QString &json);
+    static void updateSummaryTable(QTableWidget *table, const QList<SelectionData> &selections, const QString &type);
+
+
+
 
 
 
