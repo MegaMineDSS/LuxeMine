@@ -23,6 +23,7 @@ public:
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 private slots:
     void on_pushButton_clicked();
@@ -34,9 +35,10 @@ private slots:
     void on_cartItemRemoveRequested(int imageId, const QString &goldType);
     void on_makePdfButton_clicked();
 
+
 public slots:
     void loadImage(int index);
-    void updateGoldWeight();
+    void updateGoldWeight(const QString &goldJson);
     void on_selectButton_clicked();
 
 private:
@@ -65,6 +67,7 @@ private:
     QVector<SelectionData> selections;
     QWidget *cartItemsContainer;
     QString currentUserId;
+    QString currentGoldSelection;
 };
 
 #endif // USER_H

@@ -14,6 +14,24 @@
 #include "cartitemwidget.h"
 
 
+
+void User::resizeEvent(QResizeEvent *event)
+{
+    QDialog::resizeEvent(event);
+
+    QPixmap bg(":/Backgrounds/Client-details.png");
+    if (!bg.isNull()) {
+        bg = bg.scaled(ui->page->size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+        QPalette pal;
+        pal.setBrush(ui->page->backgroundRole(), bg);
+        ui->page->setAutoFillBackground(true);
+        ui->page->setPalette(pal);
+
+        ui->page->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    }
+
+}
+
 User::User(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::User)
@@ -26,7 +44,14 @@ User::User(QWidget *parent)
 {
     ui->setupUi(this);
     setupUi();
-    loadData();
+
+    // For backgrund recaclulation so that resizeEvent function's effect can be seen otherwise you have to resize window to see the background effect performed in resiveEvent function.
+    QTimer::singleShot(0, this, [this]() {
+        resizeEvent(nullptr);  // force one background recalculation
+    });
+
+
+    // loadData();
     setupMobileComboBox();
 }
 
@@ -37,14 +62,13 @@ User::~User()
     delete ui;
 }
 
+
 void User::setupUi()
 {
     setWindowSize(this);
     setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
     setWindowTitle("User");
     setWindowIcon(QIcon(":/icon/homeIcon.png"));
-
-    connect(ui->goldCombobox, &QComboBox::currentTextChanged, this, &User::updateGoldWeight);
     connect(ui->cartMainpage, &QPushButton::clicked, this, &User::on_cartMainpage_clicked);
     connect(ui->backMainpage, &QPushButton::clicked, this, &User::on_backMainpage_clicked);
 
@@ -79,6 +103,9 @@ void User::setupUi()
     ui->scrollArea->setWidgetResizable(true);
 
     ui->goldFinaldetail->setText("Total Gold Weight: 0.00g");
+
+    loadData();
+
 }
 
 void User::setupMobileComboBox() {
@@ -215,13 +242,9 @@ void User::loadImage(int index)
         QMessageBox::warning(this, "Image Error", "Image not found: " + record.imagePath);
     }
 
-    goldData = DatabaseUtils::parseGoldJson(record.goldJson);
-    ui->goldCombobox->clear();
-    for (auto it = goldData.constBegin(); it != goldData.constEnd(); ++it) {
-        ui->goldCombobox->addItem(it.key());
-    }
 
-    updateGoldWeight();
+
+    updateGoldWeight(record.goldJson);
     displayDiamondDetails();
     displayStoneDetails();
     ui->itemSelectionSpinBox->setValue(0);
@@ -239,15 +262,63 @@ void User::on_previousImage_clicked() {
     }
 }
 
-void User::updateGoldWeight() {
-    QString selectedKts = ui->goldCombobox->currentText();
-    if (goldData.contains(selectedKts)) {
-        double value = goldData[selectedKts].toDouble();
-        ui->goldWeight->setText("Gold Weight: \n\t" +  QString::number(value, 'f', 3));
-    } else {
-        ui->goldWeight->setText("Gold Weight: N/A");
+// void User::updateGoldWeight(QString goldJson) {
+//     goldData = DatabaseUtils::parseGoldJson(goldJson);
+
+//     QMenu *filterMenu = new QMenu(this);
+//     QMenu *goldMenu = filterMenu->addMenu("Gold");
+
+//     for (auto it = goldData.constBegin(); it != goldData.constEnd(); ++it) {
+//         QString karat = it.key();
+//         double weight = it.value().toDouble();
+
+//         QAction *action = goldMenu->addAction(karat);
+//         connect(action, &QAction::triggered, this, [this, karat, weight]() {
+//             currentGoldSelection = karat;
+//             ui->goldWeight->setText(
+//                 QString("Gold Weight: \n\t%1").arg(QString::number(weight, 'f', 3))
+//                 );
+//         });
+//     }
+
+//     // Attach to button
+//     ui->user_filter_btn->setMenu(filterMenu);
+// }
+
+void User::updateGoldWeight(const QString &goldJson) {
+    goldData = DatabaseUtils::parseGoldJson(goldJson);
+
+    QMenu *filterMenu = new QMenu(this);
+    QMenu *goldMenu = filterMenu->addMenu("Gold");
+
+    bool firstSet = false;
+
+    for (auto it = goldData.constBegin(); it != goldData.constEnd(); ++it) {
+        QString karat = it.key();
+        double weight = it.value().toDouble();
+
+        QAction *action = goldMenu->addAction(karat);
+        connect(action, &QAction::triggered, this, [this, karat, weight]() {
+            currentGoldSelection = karat;
+            ui->goldWeight->setText(
+                QString("Gold Weight: \n\t%1").arg(QString::number(weight, 'f', 3))
+                );
+        });
+
+        // ✅ Set first value by default (so when image changes, something is shown immediately)
+        if (!firstSet) {
+            currentGoldSelection = karat;
+            ui->goldWeight->setText(
+                QString("Gold Weight: \n\t%1").arg(QString::number(weight, 'f', 3))
+                );
+            firstSet = true;
+        }
     }
+
+    // Attach menu to button
+    ui->user_filter_btn->setMenu(filterMenu);
 }
+
 
 void User::on_pushButton_clicked()
 {
@@ -435,7 +506,7 @@ void User::on_selectButton_clicked()
     }
 
     int imageId = imageRecords[currentImageIndex].imageId;
-    QString goldType = ui->goldCombobox->currentText();
+    QString goldType = currentGoldSelection;
     int itemCount = ui->itemSelectionSpinBox->value();
 
     if (itemCount <= 0) {
@@ -646,3 +717,6 @@ void User::saveCartToDatabase()
         qDebug() << "Cart saved successfully for user:" << currentUserId;
     }
 }
+
+
+
