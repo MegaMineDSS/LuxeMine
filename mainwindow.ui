@@ -298,6 +298,12 @@ QPushButton:pressed {
      <string>Admin</string>
     </property>
     <addaction name="actionShow_Image"/>
+    <addaction name="actionUpdate_Price"/>
+    <addaction name="actionAdd_Diamond"/>
+    <addaction name="actionJewellry_Menu"/>
+    <addaction name="actionOrder_Book_Users"/>
+    <addaction name="actionOrder_List"/>
+    <addaction name="actionShow_Users"/>
    </widget>
    <widget class="QMenu" name="menuUser">
     <property name="title">
@@ -322,6 +328,36 @@ QPushButton:pressed {
   <action name="actionShow_Image">
    <property name="text">
     <string>Show Image</string>
+   </property>
+  </action>
+  <action name="actionShow_Users">
+   <property name="text">
+    <string>Show Users</string>
+   </property>
+  </action>
+  <action name="actionUpdate_Price">
+   <property name="text">
+    <string>Update Price</string>
+   </property>
+  </action>
+  <action name="actionAdd_Diamond">
+   <property name="text">
+    <string>Add Diamond</string>
+   </property>
+  </action>
+  <action name="actionJewellry_Menu">
+   <property name="text">
+    <string>Jewellry Menu</string>
+   </property>
+  </action>
+  <action name="actionOrder_Book_Users">
+   <property name="text">
+    <string>Order Book Users</string>
+   </property>
+  </action>
+  <action name="actionOrder_List">
+   <property name="text">
+    <string>Order List</string>
    </property>
   </action>
  </widget>

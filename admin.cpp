@@ -47,6 +47,11 @@ Admin::~Admin()
     delete ui;
 }
 
+void Admin::setRequestedPage(int index)
+{
+    requestedPageIndex = index;
+}
+
 void Admin::on_show_images_clicked()
 {
     ui->Admin_panel->setCurrentIndex(0);
@@ -483,9 +488,25 @@ void Admin::on_login_button_clicked()
 
     if (checkLoginCredentials(username, password))
     {
-        ui->stackedWidget->setCurrentIndex(1);
-        on_show_images_clicked();
+        ui->stackedWidget->setCurrentIndex(1); // show main panel after login
+
+        if (requestedPageIndex == -1) {
+            on_show_images_clicked(); // default
+        } else {
+            switch (requestedPageIndex) {
+            case 0: on_show_images_clicked(); break;
+            case 1: on_update_price_clicked(); break;
+            case 2: on_add_dia_clicked(); break;
+            case 3: on_show_users_clicked(); break;
+            case 4: on_jewelry_menu_button_clicked(); break;
+            case 5: on_orderBookUsersPushButton_clicked(); break;
+            case 6: on_orderBookRequestPushButton_clicked(); break;
+            default: on_show_images_clicked(); break;
+            }
+            requestedPageIndex = -1; // reset after use
+        }
     }
+
 
     ui->name_lineEdit->clear();
     ui->admin_password_lineEdit->clear();

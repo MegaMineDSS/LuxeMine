@@ -48,36 +48,47 @@ public:
         static bool updateRoleStatus(const QString &jobNo, const QString &fieldName, const QString &newStatus);
         static QList<JobSheetRequest> fetchJobSheetRequests();
 
+
+    //User connection
+        // User-related operations
+        static bool userExists(const QString &userId);
+        static bool userExistsByMobileAndName(const QString &userId, const QString &name);
+        static bool insertUser(const QString &userId, const QString &companyName, const QString &mobileNo,
+                               const QString &gstNo, const QString &name, const QString &emailId, const QString &address);
+
+        // Cart operations
+        static QList<SelectionData> loadUserCart(const QString &userId);
+        static bool saveUserCart(const QString &userId, const QList<SelectionData> &selections);
+
+        // Item / Image operations
+        static QList<ImageRecord> getAllItems();
+        static QPixmap fetchImagePixmap(int imageId);
+        static QString fetchJsonData(int imageId, const QString &column);
+
+        // Details (Diamond, Stone, Gold)
+        static QPair<QString, QString> fetchDiamondDetails(int imageId);
+        static QPair<QString, QString> fetchStoneDetails(int imageId);
+        static double calculateTotalGoldWeight(const QList<SelectionData> &selections);
+        static QJsonObject parseGoldJson(const QString &goldJson);
+
+        // JSON utilities
+        static QJsonArray parseJsonArray(const QString &json);
+
+        // UI / Summary Helpers
+        static void updateSummaryTable(QTableWidget *table, const QList<SelectionData> &selections, const QString &type);
+
+
+    //Add Catalog Connection
+        //All operation
+        static QStringList fetchShapes(const QString &tableType);
+        static QStringList fetchSizes(const QString &tableType, const QString &shape);
+        static QString saveImage(const QString &imagePath);
+        static bool insertCatalogData(const QString &imagePath, const QString &imageType, const QString &designNo,
+                                      const QString &companyName, const QJsonArray &goldArray, const QJsonArray &diamondArray,
+                                      const QJsonArray &stoneArray, const QString &note);
+
+
     //not fixed
-    static QStringList fetchShapes(const QString &tableType);
-    static QStringList fetchSizes(const QString &tableType, const QString &shape);
-    static QString saveImage(const QString &imagePath);
-    static bool insertCatalogData(const QString &imagePath, const QString &imageType, const QString &designNo,
-                                  const QString &companyName, const QJsonArray &goldArray, const QJsonArray &diamondArray,
-                                  const QJsonArray &stoneArray, const QString &note);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     //ordermenu connections
     static int insertDummyOrder(const QString &sellerName, const QString &sellerId, const QString &partyName);
@@ -95,31 +106,6 @@ public:
     static bool insertParty(const PartyData &party);
     static PartyInfo fetchPartyDetails(const QString &userId, const QString &partyId);
     static LoginResult authenticateUser(const QString &userId, const QString &password);
-
-
-
-
-
-
-    //User connection
-    static QList<SelectionData> loadUserCart(const QString &userId);
-    static bool saveUserCart(const QString &userId, const QList<SelectionData> &selections);
-    static double calculateTotalGoldWeight(const QList<SelectionData> &selections);
-    static QPixmap fetchImagePixmap(int imageId);
-    static QString fetchJsonData(int imageId, const QString &column);
-    static QPair<QString, QString> fetchStoneDetails(int imageId);
-    static QPair<QString, QString> fetchDiamondDetails(int imageId);
-    static bool userExistsByMobileAndName(const QString &userId, const QString &name);
-    static QList<ImageRecord> getAllItems();
-    static QJsonObject parseGoldJson(const QString &goldJson);
-    static bool userExists(const QString &userId);
-    static bool insertUser(const QString &userId, const QString &companyName, const QString &mobileNo,
-                           const QString &gstNo, const QString &name, const QString &emailId, const QString &address);
-    static QJsonArray parseJsonArray(const QString &json);
-    static void updateSummaryTable(QTableWidget *table, const QList<SelectionData> &selections, const QString &type);
-
-
-
 
 
 

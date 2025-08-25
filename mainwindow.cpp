@@ -27,6 +27,36 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     setRandomBackground();  // Call after setup
+
+    // Example connections for Admin menu
+    connect(ui->actionShow_Image, &QAction::triggered, this, [this]() {
+        openAdminPage(0); // index for show_images
+    });
+
+    connect(ui->actionUpdate_Price, &QAction::triggered, this, [this]() {
+        openAdminPage(1);
+    });
+
+    connect(ui->actionAdd_Diamond, &QAction::triggered, this, [this]() {
+        openAdminPage(2);
+    });
+
+    connect(ui->actionShow_Users, &QAction::triggered, this, [this]() {
+        openAdminPage(3);
+    });
+
+    connect(ui->actionJewellry_Menu, &QAction::triggered, this, [this]() {
+        openAdminPage(4);
+    });
+
+    connect(ui->actionOrder_Book_Users, &QAction::triggered, this, [this]() {
+        openAdminPage(5);
+    });
+
+    connect(ui->actionOrder_List, &QAction::triggered, this, [this]() {
+        openAdminPage(6);
+    });
+
 }
 
 MainWindow::~MainWindow()
@@ -48,6 +78,24 @@ void MainWindow::on_pushButton_clicked()
     }
 }
 
+void MainWindow::openAdminPage(int pageIndex)
+{
+    if (!newAdmin || newAdmin->isHidden()) {
+        newAdmin = new Admin();
+        newAdmin->setAttribute(Qt::WA_DeleteOnClose);
+        connect(newAdmin, &QObject::destroyed, this, [this]() { newAdmin = nullptr; });
+        newAdmin->show();
+    }
+
+    newAdmin->raise();
+    newAdmin->activateWindow();
+
+    // directly set page
+    // newAdmin->setPage(pageIndex);
+    newAdmin->setRequestedPage(pageIndex);
+}
+
+
 void MainWindow::on_pushButton_2_clicked()
 {
     if (newUser && !newUser->isHidden()) {
@@ -67,15 +115,22 @@ void MainWindow::on_pushButton_2_clicked()
 
 void MainWindow::on_pushButton_4_clicked()
 {
-    if(newAddCatalog && !newAddCatalog->isHidden()){
+    if (newAddCatalog && !newAddCatalog->isHidden()) {
         newAddCatalog->raise();
         newAddCatalog->activateWindow();
-    }
-    else{
-        newAddCatalog = new AddCatalog();
+    } else {
+        newAddCatalog = new AddCatalog(this);   // give MainWindow as parent
+        newAddCatalog->setAttribute(Qt::WA_DeleteOnClose);  // auto-delete when closed
+
+        // Reset pointer when destroyed
+        connect(newAddCatalog, &QObject::destroyed, this, [this]() {
+            newAddCatalog = nullptr;
+        });
+
         newAddCatalog->show();
     }
 }
+
 
 void MainWindow::on_orderBookButton_clicked()
 {

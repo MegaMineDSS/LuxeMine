@@ -51,9 +51,6 @@ AdminMenuButtons::AdminMenuButtons(QWidget *parent) :
         this->hide();
     });
 
-
-
-    // this->setFixedSize(600, 600);
 }
 
 void AdminMenuButtons::hideEvent(QHideEvent *event)

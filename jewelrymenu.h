@@ -3,6 +3,7 @@
 
 #include <QMenu>
 #include <QObject>
+#include <QString>
 
 class JewelryMenu : public QObject
 {
@@ -10,14 +11,16 @@ class JewelryMenu : public QObject
 
 public:
     explicit JewelryMenu(QObject *parent = nullptr);
-    QMenu* getMenu() const; // Provide access to the menu for connection
+    ~JewelryMenu() override;  // ensure base QObject dtor is virtual
+
+    QMenu* getMenu() const;   // Access the built menu
 
 signals:
-    void itemSelected(const QString &item); // Signal emitted when an item is selected
+    void itemSelected(const QString &item); // Emitted when user selects an item
 
 private:
-    void populateMenu(); // Load menu structure from database
-    QMenu *menu; // The main jewelry menu
+    void populateMenu();
+    QMenu *menu {nullptr};   // initialize to nullptr for safety
 };
 
 #endif // JEWELRYMENU_H
