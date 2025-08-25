@@ -5,11 +5,15 @@
 
 JewelryMenu::JewelryMenu(QObject *parent) : QObject(parent)
 {
-    menu = new QMenu();
+    // Give QMenu a parent if possible, otherwise delete manually in destructor
+    menu = new QMenu(static_cast<QWidget*>(parent));
+
     populateMenu();
+
     menu->setStyleSheet(R"(
         QMenu {
-            background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,stop:0 #E0E0E0, stop:1 #F2F2F2);
+            background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                              stop:0 #E0E0E0, stop:1 #F2F2F2);
             color: #2C2C2C;
             border: none;
             border-radius: 6px;
@@ -34,6 +38,15 @@ JewelryMenu::JewelryMenu(QObject *parent) : QObject(parent)
             margin: 6px 10px;
         }
     )");
+}
+
+JewelryMenu::~JewelryMenu()
+{
+    // Only needed if no parent given in constructor
+    if (menu && !menu->parent()) {
+        delete menu;
+        menu = nullptr;
+    }
 }
 
 void JewelryMenu::populateMenu()
@@ -81,3 +94,4 @@ QMenu* JewelryMenu::getMenu() const
 {
     return menu;
 }
+

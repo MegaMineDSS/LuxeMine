@@ -76,6 +76,12 @@ protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 
 private:
+    int requestedPageIndex = -1;  // -1 means default
+public:
+    void setRequestedPage(int index);
+
+
+private:
     Ui::Admin *ui;
     QSqlTableModel *roundDiamondModel = nullptr;
     QSqlTableModel *fancyDiamondModel = nullptr;

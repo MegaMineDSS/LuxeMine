@@ -921,164 +921,7 @@ QList<JobSheetRequest> DatabaseUtils::fetchJobSheetRequests()
 }
 
 
-
-
-//not fixed
-
-QStringList DatabaseUtils::fetchShapes(const QString &tableType)
-{
-    const QString connectionName = "shapes_conn";
-    QStringList shapes;
-
-    {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
-        if (!db.open()) return {};
-
-
-        {
-            QSqlQuery query(db);
-            QString queryStr = tableType == "diamond" ?
-                                   "SELECT DISTINCT shape FROM Fancy_diamond UNION SELECT 'Round' FROM Round_diamond" :
-                                   "SELECT DISTINCT shape FROM stones";
-
-            if (!query.exec(queryStr)) return {};
-            while (query.next()) shapes.append(query.value(0).toString());
-        } // QSqlQuery goes out of scope here
-
-        db.close(); // optional but good
-    } // QSqlDatabase db goes out of scope here
-
-    QSqlDatabase::removeDatabase(connectionName);
-    return shapes;
-}
-
-QStringList DatabaseUtils::fetchSizes(const QString &tableType, const QString &shape)
-{
-    const QString connectionName = "sizes_conn";
-    QStringList sizes; // ✅ Declare here
-
-    {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
-        if (!db.open()) return {};
-
-        {
-            QSqlQuery query(db);
-            if (tableType == "diamond") {
-                if (shape == "Round") {
-                    query.prepare("SELECT DISTINCT sizeMM FROM Round_diamond");
-                } else {
-                    query.prepare("SELECT DISTINCT sizeMM FROM Fancy_diamond WHERE shape = :shape");
-                    query.bindValue(":shape", shape);
-                }
-            } else {
-                query.prepare("SELECT DISTINCT sizeMM FROM stones WHERE shape = :shape");
-                query.bindValue(":shape", shape);
-            }
-
-            if (!query.exec()) return {};
-            while (query.next()) sizes.append(query.value(0).toString());
-        } // QSqlQuery destroyed
-
-        db.close(); // good practice
-    } // QSqlDatabase destroyed
-
-    QSqlDatabase::removeDatabase(connectionName);
-    return sizes;
-}
-
-QString DatabaseUtils::saveImage(const QString &imagePath)
-{
-    QFile imageFile(imagePath);
-    if (!imageFile.exists()) return {};
-
-    QString targetDir = QDir(QDir::currentPath()).filePath("images");
-    QDir().mkpath(targetDir);
-    QString newImagePath = "images/" + QFileInfo(imagePath).fileName();
-
-    if (!QFile::copy(imagePath, newImagePath)) return {};
-    return newImagePath;
-}
-
-
-bool DatabaseUtils::insertCatalogData(const QString &imagePath, const QString &imageType, const QString &designNo,
-                                      const QString &companyName, const QJsonArray &goldArray, const QJsonArray &diamondArray,
-                                      const QJsonArray &stoneArray, const QString &note)
-{
-    const QString connectionName = "insert_conn";
-    bool success = false;
-
-    {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
-        if (!db.open()) return false;
-
-        QJsonDocument goldDoc(goldArray);
-        QJsonDocument diamondDoc(diamondArray);
-        QJsonDocument stoneDoc(stoneArray);
-
-        {
-            QSqlQuery query(db);
-            query.prepare("INSERT INTO image_data (image_path, image_type, design_no, company_name, gold_weight, diamond, stone, time, note) "
-                          "VALUES (:image_path, :image_type, :design_no, :company_name, :gold_weight, :diamond, :stone, :time, :note)");
-            query.bindValue(":image_path", imagePath);
-            query.bindValue(":image_type", imageType);
-            query.bindValue(":design_no", designNo);
-            query.bindValue(":company_name", companyName);
-            query.bindValue(":gold_weight", goldDoc.toJson(QJsonDocument::Compact));
-            query.bindValue(":diamond", diamondDoc.toJson(QJsonDocument::Compact));
-            query.bindValue(":stone", stoneDoc.toJson(QJsonDocument::Compact));
-            query.bindValue(":time", QDateTime::currentDateTime().toString(Qt::ISODate));
-            query.bindValue(":note", note);
-
-            success = query.exec();
-        } // QSqlQuery is destroyed here
-
-        db.close(); // not strictly required, but good practice
-    } // QSqlDatabase is destroyed here
-
-    QSqlDatabase::removeDatabase(connectionName); // safe now
-    return success;
-}
-
-QJsonObject DatabaseUtils::parseGoldJson(const QString &goldJson)
-{
-    QJsonObject goldData;
-    QJsonParseError parseError;
-    QJsonDocument doc = QJsonDocument::fromJson(goldJson.toUtf8(), &parseError);
-
-    if (parseError.error != QJsonParseError::NoError || !doc.isArray())
-        return goldData;
-
-    QJsonArray goldArray = doc.array();
-    for (const QJsonValue &value : goldArray) {
-        if (!value.isObject()) continue;
-
-        QJsonObject obj = value.toObject();
-        QString karat = obj["karat"].toString();
-
-        double weight = 0.0;
-        QJsonValue weightValue = obj["weight(g)"];
-        if (weightValue.isDouble()) {
-            weight = weightValue.toDouble();
-        } else if (weightValue.isString()) {
-            weight = weightValue.toString().toDouble();
-        }
-
-        if (!karat.isEmpty())
-            goldData[karat] = weight;
-    }
-
-    return goldData;
-}
-
-QJsonArray DatabaseUtils::parseJsonArray(const QString &json)
-{
-    QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
-    return doc.isArray() ? doc.array() : QJsonArray();
-}
-
+//User Logic
 bool DatabaseUtils::userExists(const QString &userId)
 {
     const QString connectionName = "user_check_conn";
@@ -1102,7 +945,6 @@ bool DatabaseUtils::userExists(const QString &userId)
     QSqlDatabase::removeDatabase(connectionName); // ✅ now safe
     return exists;
 }
-
 
 bool DatabaseUtils::userExistsByMobileAndName(const QString &userId, const QString &name)
 {
@@ -1129,9 +971,7 @@ bool DatabaseUtils::userExistsByMobileAndName(const QString &userId, const QStri
     return exists;
 }
 
-
-bool DatabaseUtils::insertUser(const QString &userId, const QString &companyName, const QString &mobileNo,
-                               const QString &gstNo, const QString &name, const QString &emailId, const QString &address)
+bool DatabaseUtils::insertUser(const QString &userId, const QString &companyName, const QString &mobileNo, const QString &gstNo, const QString &name, const QString &emailId, const QString &address)
 {
     const QString connectionName = "user_insert_conn";
     bool success = false;
@@ -1162,375 +1002,6 @@ bool DatabaseUtils::insertUser(const QString &userId, const QString &companyName
 
     QSqlDatabase::removeDatabase(connectionName); // ✅ now safe
     return success;
-}
-
-
-QPair<QString, QString> DatabaseUtils::fetchDiamondDetails(int imageId)
-{
-    const QString connectionName = "diamond_details_conn";
-    QString json, detailText;
-    double totalWeight = 0.0;
-    QMap<QString, double> weightByType;
-
-    {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
-        if (!db.open()) return {};
-
-        {
-            QSqlQuery query(db);
-            query.prepare("SELECT diamond FROM image_data WHERE image_id = :imageId");
-            query.bindValue(":imageId", imageId);
-
-            if (query.exec() && query.next()) {
-                json = query.value("diamond").toString();
-
-                // ✅ validate JSON before using
-                QJsonParseError parseError;
-                QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &parseError);
-                if (parseError.error != QJsonParseError::NoError || !doc.isArray()) {
-                    json.clear(); // avoid passing invalid JSON
-                } else {
-                    QJsonArray array = doc.array();
-
-                    for (const QJsonValue &value : array) {
-                        if (!value.isObject()) continue;
-
-                        QJsonObject obj = value.toObject();
-                        QString type = obj["type"].toString().trimmed().toLower();
-                        QString sizeMM = obj["sizeMM"].toString().trimmed();
-                        int quantity = obj["quantity"].toInt();
-
-                        {
-                            QSqlQuery weightQuery(db);
-                            if (type == "round") {
-                                bool ok;
-                                double sizeMMValue = sizeMM.toDouble(&ok);
-                                if (!ok) continue;
-
-                                weightQuery.prepare(R"(
-                                    SELECT weight FROM Round_diamond
-                                    WHERE ABS(sizeMM - :sizeMM) =
-                                        (SELECT MIN(ABS(sizeMM - :sizeMM)) FROM Round_diamond)
-                                )");
-                                weightQuery.bindValue(":sizeMM", sizeMMValue);
-                            } else {
-                                weightQuery.prepare("SELECT weight FROM Fancy_diamond WHERE LOWER(shape) = LOWER(:type) AND sizeMM = :sizeMM");
-                                weightQuery.bindValue(":type", type);
-                                weightQuery.bindValue(":sizeMM", sizeMM);
-                            }
-
-                            if (weightQuery.exec() && weightQuery.next()) {
-                                double weightPerDiamond = weightQuery.value("weight").toDouble();
-                                double totalWeightForEntry = quantity * weightPerDiamond;
-                                weightByType[type] += totalWeightForEntry;
-                                totalWeight += totalWeightForEntry;
-                            }
-                        } // ✅ weightQuery destroyed here
-                    }
-
-                    for (auto it = weightByType.constBegin(); it != weightByType.constEnd(); ++it) {
-                        detailText += QString("%1\t\t%2ct\n").arg(it.key(), -10).arg(it.value(), 0, 'f', 2);
-                    }
-                }
-            }
-        } // ✅ outer query destroyed
-
-        db.close();
-    } // ✅ QSqlDatabase destroyed
-
-    QSqlDatabase::removeDatabase(connectionName);
-    return {json, detailText};
-}
-
-QPair<QString, QString> DatabaseUtils::fetchStoneDetails(int imageId)
-{
-    const QString connectionName = "stone_details_conn";
-    QString json, detailText;
-    double totalWeight = 0.0;
-    QMap<QString, double> weightByType;
-
-    {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
-        if (!db.open()) return {};
-
-        {
-            QSqlQuery query(db);
-            query.prepare("SELECT stone FROM image_data WHERE image_id = :imageId");
-            query.bindValue(":imageId", imageId);
-
-            if (query.exec() && query.next()) {
-                json = query.value("stone").toString();
-
-                // ✅ validate JSON before using
-                QJsonParseError parseError;
-                QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &parseError);
-                if (parseError.error == QJsonParseError::NoError && doc.isArray()) {
-                    QJsonArray array = doc.array();
-
-                    for (const QJsonValue &value : array) {
-                        if (!value.isObject()) continue;
-
-                        QJsonObject obj = value.toObject();
-                        QString type = obj["type"].toString().trimmed().toLower();
-                        QString sizeMM = obj["sizeMM"].toString().trimmed();
-                        int quantity = obj["quantity"].toInt(); // ✅ simpler & safer
-
-                        {
-                            QSqlQuery weightQuery(db);
-                            weightQuery.prepare("SELECT weight FROM stones WHERE LOWER(shape) = LOWER(:shape) AND sizeMM = :sizeMM");
-                            weightQuery.bindValue(":shape", type);
-                            weightQuery.bindValue(":sizeMM", sizeMM);
-
-                            if (weightQuery.exec() && weightQuery.next()) {
-                                double weightPerStone = weightQuery.value("weight").toDouble();
-                                double totalWeightForEntry = quantity * weightPerStone;
-                                weightByType[type] += totalWeightForEntry;
-                                totalWeight += totalWeightForEntry;
-                            }
-                        } // ✅ weightQuery destroyed here
-                    }
-
-                    for (auto it = weightByType.constBegin(); it != weightByType.constEnd(); ++it) {
-                        detailText += QString("%1\t\t%2ct\n").arg(it.key(), -10).arg(it.value(), 0, 'f', 2);
-                    }
-                } else {
-                    json.clear(); // ✅ don't store bad JSON
-                }
-            }
-        } // ✅ query destroyed
-
-        db.close();
-    } // ✅ db destroyed
-
-    QSqlDatabase::removeDatabase(connectionName);
-    return {json, detailText};
-}
-
-QString DatabaseUtils::fetchJsonData(int imageId, const QString &column)
-{
-    if (column != "diamond" && column != "stone") {
-        qWarning() << "Invalid column requested in fetchJsonData:" << column;
-        return "[]";
-    }
-
-    const QString connectionName = "fetch_json_conn";
-    QString json = "[]";
-
-    {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName(QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db"));
-        if (!db.open()) {
-            qDebug() << "Error: Failed to open database for fetchJsonData:" << db.lastError().text();
-            return "[]";
-        }
-
-        {
-            QSqlQuery query(db);
-            query.prepare(QString("SELECT %1 FROM image_data WHERE image_id = :imageId").arg(column));
-            query.bindValue(":imageId", imageId);
-
-            if (query.exec() && query.next()) {
-                json = query.value(0).toString();
-            } else {
-                qDebug() << "No JSON data found for imageId =" << imageId << ", column =" << column;
-            }
-        }
-
-        db.close();
-    }
-
-    QSqlDatabase::removeDatabase(connectionName);
-    return json.isEmpty() ? "[]" : json;
-}
-
-
-QPixmap DatabaseUtils::fetchImagePixmap(int imageId)
-{
-    const QString connectionName = "image_pixmap_conn";
-    QPixmap pixmap;
-
-    {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName(QDir(QCoreApplication::applicationDirPath())
-                               .filePath("database/mega_mine_image.db"));
-        if (!db.open()) {
-            qDebug() << "Failed to open DB for fetchImagePixmap:" << db.lastError().text();
-            return QPixmap(":/icon/placeholder.png");
-        }
-
-        {
-            QSqlQuery query(db);
-            query.prepare("SELECT image_path FROM image_data WHERE image_id = :imageId");
-            query.bindValue(":imageId", imageId);
-
-            if (query.exec() && query.next()) {
-                const QString imagePath = query.value(0).toString();
-                if (!imagePath.isEmpty() && QFile::exists(imagePath)) {
-                    if (!pixmap.load(imagePath)) {
-                        qWarning() << "Failed to load image from:" << imagePath;
-                    }
-                }
-            } else {
-                qDebug() << "No image path found for id:" << imageId << query.lastError().text();
-            }
-        } // ✅ query destroyed
-
-        db.close();
-    } // ✅ db destroyed
-
-    QSqlDatabase::removeDatabase(connectionName);
-    return pixmap.isNull() ? QPixmap(":/icon/placeholder.png") : pixmap;
-}
-
-
-double DatabaseUtils::calculateTotalGoldWeight(const QList<SelectionData> &selections)
-{
-    const QString connectionName = "gold_weight_conn";
-    double totalGoldWeight = 0.0;
-
-    {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
-        if (!db.open()) return 0.0;
-
-        QHash<int, QString> goldCache;
-        QSqlQuery query(db);
-
-        for (const SelectionData &selection : selections) {
-            if (!goldCache.contains(selection.imageId)) {
-                query.prepare("SELECT gold_weight FROM image_data WHERE image_id = :imageId");
-                query.bindValue(":imageId", selection.imageId);
-                if (query.exec() && query.next()) {
-                    goldCache[selection.imageId] = query.value(0).toString();
-                }
-            }
-
-            QString goldWeightJson = goldCache.value(selection.imageId);
-            QJsonDocument doc = QJsonDocument::fromJson(goldWeightJson.toUtf8());
-            if (doc.isArray()) {
-                for (const QJsonValue &value : doc.array()) {
-                    QJsonObject obj = value.toObject();
-                    if (obj["karat"].toString() == selection.goldType) {
-                        totalGoldWeight += obj["weight(g)"].toString().toDouble() * selection.itemCount;
-                        break;
-                    }
-                }
-            }
-        }
-
-        db.close();
-    }
-    QSqlDatabase::removeDatabase(connectionName);
-    return totalGoldWeight;
-}
-
-void DatabaseUtils::updateSummaryTable(QTableWidget *table, const QList<SelectionData> &selections, const QString &type)
-{
-    QStringList headers = {"Shape/Type", "SizeMM", "Quantity", "Weight", "Total Weight"};
-    table->setColumnCount(headers.size());
-    table->setHorizontalHeaderLabels(headers);
-    table->horizontalHeader()->setVisible(true);
-    table->horizontalHeader()->setStyleSheet("QHeaderView::section { background-color: black; color: white; font-weight: bold; font-size: 14px; }");
-    table->setRowCount(0);
-
-    QMap<QPair<QString, QString>, QPair<int, double>> aggregates;
-    const QString connectionName = "summary_table_conn";
-
-    {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
-        if (!db.open()) return;
-
-        {
-            for (const SelectionData &selection : selections) {
-                QSqlQuery query(db);
-                query.prepare(QString("SELECT %1 FROM image_data WHERE image_id = :imageId").arg(type));
-                query.bindValue(":imageId", selection.imageId);
-                if (query.exec() && query.next()) {
-                    QString json = query.value(0).toString();
-                    QJsonArray array = parseJsonArray(json);
-                    for (const QJsonValue &value : array) {
-                        QJsonObject obj = value.toObject();
-                        int baseQuantity = obj["quantity"].toString().toInt();
-                        int adjustedQuantity = baseQuantity * selection.itemCount;
-                        QString sizeMMStr = obj["sizeMM"].toString();
-                        QString shape = obj["type"].toString();
-
-                        double singleWeight = 0.0;
-
-                        {
-                            QSqlQuery weightQuery(db);
-                            if (type == "diamond") {
-                                QString tableName = (shape == "Round") ? "Round_diamond" : "Fancy_diamond";
-                                if (shape == "Round") {
-                                    double sizeMM = sizeMMStr.toDouble();
-                                    weightQuery.prepare("SELECT weight FROM Round_diamond WHERE sizeMM = :sizeMM");
-                                    weightQuery.bindValue(":sizeMM", sizeMM);
-                                } else {
-                                    weightQuery.prepare("SELECT weight FROM Fancy_diamond WHERE shape = :shape AND sizeMM = :sizeMM");
-                                    weightQuery.bindValue(":shape", shape);
-                                    weightQuery.bindValue(":sizeMM", sizeMMStr);
-                                }
-                            } else {
-                                weightQuery.prepare("SELECT weight FROM stones WHERE shape = :shape AND sizeMM = :sizeMM");
-                                weightQuery.bindValue(":shape", shape);
-                                weightQuery.bindValue(":sizeMM", sizeMMStr);
-                            }
-
-                            if (weightQuery.exec() && weightQuery.next()) {
-                                singleWeight = weightQuery.value("weight").toDouble();
-                            }
-                        } // ✅ weightQuery destroyed here
-
-                        QPair<QString, QString> key(shape, sizeMMStr);
-                        QPair<int, double> &aggregate = aggregates[key];
-                        aggregate.first += adjustedQuantity;
-                        aggregate.second += singleWeight * adjustedQuantity;
-                    }
-                }
-            }
-        } // ✅ all QSqlQuery destroyed here
-
-        db.close(); // optional
-    } // ✅ db destroyed here
-
-    QSqlDatabase::removeDatabase(connectionName); // ✅ now safe
-
-    // Fill table
-    int totalQuantity = 0;
-    double totalWeight = 0.0;
-
-    for (auto it = aggregates.begin(); it != aggregates.end(); ++it) {
-        QString shape = it.key().first;
-        QString sizeMMStr = it.key().second;
-        int rowQuantity = it.value().first;
-        double rowTotalWeight = it.value().second;
-        double singleWeight = rowQuantity > 0 ? rowTotalWeight / rowQuantity : 0.0;
-
-        int row = table->rowCount();
-        table->insertRow(row);
-        table->setItem(row, 0, new QTableWidgetItem(shape));
-        table->setItem(row, 1, new QTableWidgetItem(sizeMMStr));
-        table->setItem(row, 2, new QTableWidgetItem(QString::number(rowQuantity)));
-        table->setItem(row, 3, new QTableWidgetItem(QString::number(singleWeight, 'f', 3) + "ct"));
-        table->setItem(row, 4, new QTableWidgetItem(QString::number(rowTotalWeight, 'f', 3) + "ct"));
-
-        totalQuantity += rowQuantity;
-        totalWeight += rowTotalWeight;
-    }
-
-    if (table->rowCount() > 0) {
-        int totalRow = table->rowCount();
-        table->insertRow(totalRow);
-        table->setItem(totalRow, 0, new QTableWidgetItem("Total"));
-        table->setItem(totalRow, 2, new QTableWidgetItem(QString::number(totalQuantity)));
-        table->setItem(totalRow, 4, new QTableWidgetItem(QString::number(totalWeight, 'f', 3) + "ct"));
-    }
-
-    table->resizeColumnsToContents();
-    table->resizeRowsToContents();
 }
 
 QList<SelectionData> DatabaseUtils::loadUserCart(const QString &userId)
@@ -1777,6 +1248,571 @@ QList<ImageRecord> DatabaseUtils::getAllItems()
     QSqlDatabase::removeDatabase(connName); // Safe to remove after scope ends
     return items;
 }
+
+QPixmap DatabaseUtils::fetchImagePixmap(int imageId)
+{
+    const QString connectionName = "image_pixmap_conn";
+    QPixmap pixmap;
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(QDir(QCoreApplication::applicationDirPath())
+                               .filePath("database/mega_mine_image.db"));
+        if (!db.open()) {
+            qDebug() << "Failed to open DB for fetchImagePixmap:" << db.lastError().text();
+            return QPixmap(":/icon/placeholder.png");
+        }
+
+        {
+            QSqlQuery query(db);
+            query.prepare("SELECT image_path FROM image_data WHERE image_id = :imageId");
+            query.bindValue(":imageId", imageId);
+
+            if (query.exec() && query.next()) {
+                const QString imagePath = query.value(0).toString();
+                if (!imagePath.isEmpty() && QFile::exists(imagePath)) {
+                    if (!pixmap.load(imagePath)) {
+                        qWarning() << "Failed to load image from:" << imagePath;
+                    }
+                }
+            } else {
+                qDebug() << "No image path found for id:" << imageId << query.lastError().text();
+            }
+        } // ✅ query destroyed
+
+        db.close();
+    } // ✅ db destroyed
+
+    QSqlDatabase::removeDatabase(connectionName);
+    return pixmap.isNull() ? QPixmap(":/icon/placeholder.png") : pixmap;
+}
+
+QString DatabaseUtils::fetchJsonData(int imageId, const QString &column)
+{
+    if (column != "diamond" && column != "stone") {
+        qWarning() << "Invalid column requested in fetchJsonData:" << column;
+        return "[]";
+    }
+
+    const QString connectionName = "fetch_json_conn";
+    QString json = "[]";
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db"));
+        if (!db.open()) {
+            qDebug() << "Error: Failed to open database for fetchJsonData:" << db.lastError().text();
+            return "[]";
+        }
+
+        {
+            QSqlQuery query(db);
+            query.prepare(QString("SELECT %1 FROM image_data WHERE image_id = :imageId").arg(column));
+            query.bindValue(":imageId", imageId);
+
+            if (query.exec() && query.next()) {
+                json = query.value(0).toString();
+            } else {
+                qDebug() << "No JSON data found for imageId =" << imageId << ", column =" << column;
+            }
+        }
+
+        db.close();
+    }
+
+    QSqlDatabase::removeDatabase(connectionName);
+    return json.isEmpty() ? "[]" : json;
+}
+
+QPair<QString, QString> DatabaseUtils::fetchDiamondDetails(int imageId)
+{
+    const QString connectionName = "diamond_details_conn";
+    QString json, detailText;
+    double totalWeight = 0.0;
+    QMap<QString, double> weightByType;
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName("database/mega_mine_image.db");
+        if (!db.open()) return {};
+
+        {
+            QSqlQuery query(db);
+            query.prepare("SELECT diamond FROM image_data WHERE image_id = :imageId");
+            query.bindValue(":imageId", imageId);
+
+            if (query.exec() && query.next()) {
+                json = query.value("diamond").toString();
+
+                // ✅ validate JSON before using
+                QJsonParseError parseError;
+                QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &parseError);
+                if (parseError.error != QJsonParseError::NoError || !doc.isArray()) {
+                    json.clear(); // avoid passing invalid JSON
+                } else {
+                    QJsonArray array = doc.array();
+
+                    for (const QJsonValue &value : array) {
+                        if (!value.isObject()) continue;
+
+                        QJsonObject obj = value.toObject();
+                        QString type = obj["type"].toString().trimmed().toLower();
+                        QString sizeMM = obj["sizeMM"].toString().trimmed();
+                        int quantity = obj["quantity"].toInt();
+
+                        {
+                            QSqlQuery weightQuery(db);
+                            if (type == "round") {
+                                bool ok;
+                                double sizeMMValue = sizeMM.toDouble(&ok);
+                                if (!ok) continue;
+
+                                weightQuery.prepare(R"(
+                                    SELECT weight FROM Round_diamond
+                                    WHERE ABS(sizeMM - :sizeMM) =
+                                        (SELECT MIN(ABS(sizeMM - :sizeMM)) FROM Round_diamond)
+                                )");
+                                weightQuery.bindValue(":sizeMM", sizeMMValue);
+                            } else {
+                                weightQuery.prepare("SELECT weight FROM Fancy_diamond WHERE LOWER(shape) = LOWER(:type) AND sizeMM = :sizeMM");
+                                weightQuery.bindValue(":type", type);
+                                weightQuery.bindValue(":sizeMM", sizeMM);
+                            }
+
+                            if (weightQuery.exec() && weightQuery.next()) {
+                                double weightPerDiamond = weightQuery.value("weight").toDouble();
+                                double totalWeightForEntry = quantity * weightPerDiamond;
+                                weightByType[type] += totalWeightForEntry;
+                                totalWeight += totalWeightForEntry;
+                            }
+                        } // ✅ weightQuery destroyed here
+                    }
+
+                    for (auto it = weightByType.constBegin(); it != weightByType.constEnd(); ++it) {
+                        detailText += QString("%1\t\t%2ct\n").arg(it.key(), -10).arg(it.value(), 0, 'f', 2);
+                    }
+                }
+            }
+        } // ✅ outer query destroyed
+
+        db.close();
+    } // ✅ QSqlDatabase destroyed
+
+    QSqlDatabase::removeDatabase(connectionName);
+    return {json, detailText};
+}
+
+QPair<QString, QString> DatabaseUtils::fetchStoneDetails(int imageId)
+{
+    const QString connectionName = "stone_details_conn";
+    QString json, detailText;
+    double totalWeight = 0.0;
+    QMap<QString, double> weightByType;
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName("database/mega_mine_image.db");
+        if (!db.open()) return {};
+
+        {
+            QSqlQuery query(db);
+            query.prepare("SELECT stone FROM image_data WHERE image_id = :imageId");
+            query.bindValue(":imageId", imageId);
+
+            if (query.exec() && query.next()) {
+                json = query.value("stone").toString();
+
+                // ✅ validate JSON before using
+                QJsonParseError parseError;
+                QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &parseError);
+                if (parseError.error == QJsonParseError::NoError && doc.isArray()) {
+                    QJsonArray array = doc.array();
+
+                    for (const QJsonValue &value : array) {
+                        if (!value.isObject()) continue;
+
+                        QJsonObject obj = value.toObject();
+                        QString type = obj["type"].toString().trimmed().toLower();
+                        QString sizeMM = obj["sizeMM"].toString().trimmed();
+                        int quantity = obj["quantity"].toInt(); // ✅ simpler & safer
+
+                        {
+                            QSqlQuery weightQuery(db);
+                            weightQuery.prepare("SELECT weight FROM stones WHERE LOWER(shape) = LOWER(:shape) AND sizeMM = :sizeMM");
+                            weightQuery.bindValue(":shape", type);
+                            weightQuery.bindValue(":sizeMM", sizeMM);
+
+                            if (weightQuery.exec() && weightQuery.next()) {
+                                double weightPerStone = weightQuery.value("weight").toDouble();
+                                double totalWeightForEntry = quantity * weightPerStone;
+                                weightByType[type] += totalWeightForEntry;
+                                totalWeight += totalWeightForEntry;
+                            }
+                        } // ✅ weightQuery destroyed here
+                    }
+
+                    for (auto it = weightByType.constBegin(); it != weightByType.constEnd(); ++it) {
+                        detailText += QString("%1\t\t%2ct\n").arg(it.key(), -10).arg(it.value(), 0, 'f', 2);
+                    }
+                } else {
+                    json.clear(); // ✅ don't store bad JSON
+                }
+            }
+        } // ✅ query destroyed
+
+        db.close();
+    } // ✅ db destroyed
+
+    QSqlDatabase::removeDatabase(connectionName);
+    return {json, detailText};
+}
+
+double DatabaseUtils::calculateTotalGoldWeight(const QList<SelectionData> &selections)
+{
+    const QString connectionName = "gold_weight_conn";
+    double totalGoldWeight = 0.0;
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName("database/mega_mine_image.db");
+        if (!db.open()) return 0.0;
+
+        QHash<int, QString> goldCache;
+        QSqlQuery query(db);
+
+        for (const SelectionData &selection : selections) {
+            if (!goldCache.contains(selection.imageId)) {
+                query.prepare("SELECT gold_weight FROM image_data WHERE image_id = :imageId");
+                query.bindValue(":imageId", selection.imageId);
+                if (query.exec() && query.next()) {
+                    goldCache[selection.imageId] = query.value(0).toString();
+                }
+            }
+
+            QString goldWeightJson = goldCache.value(selection.imageId);
+            QJsonDocument doc = QJsonDocument::fromJson(goldWeightJson.toUtf8());
+            if (doc.isArray()) {
+                for (const QJsonValue &value : doc.array()) {
+                    QJsonObject obj = value.toObject();
+                    if (obj["karat"].toString() == selection.goldType) {
+                        totalGoldWeight += obj["weight(g)"].toString().toDouble() * selection.itemCount;
+                        break;
+                    }
+                }
+            }
+        }
+
+        db.close();
+    }
+    QSqlDatabase::removeDatabase(connectionName);
+    return totalGoldWeight;
+}
+
+QJsonObject DatabaseUtils::parseGoldJson(const QString &goldJson)
+{
+    QJsonObject goldData;
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(goldJson.toUtf8(), &parseError);
+
+    if (parseError.error != QJsonParseError::NoError || !doc.isArray())
+        return goldData;
+
+    QJsonArray goldArray = doc.array();
+    for (const QJsonValue &value : goldArray) {
+        if (!value.isObject()) continue;
+
+        QJsonObject obj = value.toObject();
+        QString karat = obj["karat"].toString();
+
+        double weight = 0.0;
+        QJsonValue weightValue = obj["weight(g)"];
+        if (weightValue.isDouble()) {
+            weight = weightValue.toDouble();
+        } else if (weightValue.isString()) {
+            weight = weightValue.toString().toDouble();
+        }
+
+        if (!karat.isEmpty())
+            goldData[karat] = weight;
+    }
+
+    return goldData;
+}
+
+QJsonArray DatabaseUtils::parseJsonArray(const QString &json)
+{
+    QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+    return doc.isArray() ? doc.array() : QJsonArray();
+}
+
+void DatabaseUtils::updateSummaryTable(QTableWidget *table, const QList<SelectionData> &selections, const QString &type)
+{
+    QStringList headers = {"Shape/Type", "SizeMM", "Quantity", "Weight", "Total Weight"};
+    table->setColumnCount(headers.size());
+    table->setHorizontalHeaderLabels(headers);
+    table->horizontalHeader()->setVisible(true);
+    table->horizontalHeader()->setStyleSheet("QHeaderView::section { background-color: black; color: white; font-weight: bold; font-size: 14px; }");
+    table->setRowCount(0);
+
+    QMap<QPair<QString, QString>, QPair<int, double>> aggregates;
+    const QString connectionName = "summary_table_conn";
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName("database/mega_mine_image.db");
+        if (!db.open()) return;
+
+        {
+            for (const SelectionData &selection : selections) {
+                QSqlQuery query(db);
+                query.prepare(QString("SELECT %1 FROM image_data WHERE image_id = :imageId").arg(type));
+                query.bindValue(":imageId", selection.imageId);
+                if (query.exec() && query.next()) {
+                    QString json = query.value(0).toString();
+                    QJsonArray array = parseJsonArray(json);
+                    for (const QJsonValue &value : array) {
+                        QJsonObject obj = value.toObject();
+                        int baseQuantity = obj["quantity"].toString().toInt();
+                        int adjustedQuantity = baseQuantity * selection.itemCount;
+                        QString sizeMMStr = obj["sizeMM"].toString();
+                        QString shape = obj["type"].toString();
+
+                        double singleWeight = 0.0;
+
+                        {
+                            QSqlQuery weightQuery(db);
+                            if (type == "diamond") {
+                                QString tableName = (shape == "Round") ? "Round_diamond" : "Fancy_diamond";
+                                if (shape == "Round") {
+                                    double sizeMM = sizeMMStr.toDouble();
+                                    weightQuery.prepare("SELECT weight FROM Round_diamond WHERE sizeMM = :sizeMM");
+                                    weightQuery.bindValue(":sizeMM", sizeMM);
+                                } else {
+                                    weightQuery.prepare("SELECT weight FROM Fancy_diamond WHERE shape = :shape AND sizeMM = :sizeMM");
+                                    weightQuery.bindValue(":shape", shape);
+                                    weightQuery.bindValue(":sizeMM", sizeMMStr);
+                                }
+                            } else {
+                                weightQuery.prepare("SELECT weight FROM stones WHERE shape = :shape AND sizeMM = :sizeMM");
+                                weightQuery.bindValue(":shape", shape);
+                                weightQuery.bindValue(":sizeMM", sizeMMStr);
+                            }
+
+                            if (weightQuery.exec() && weightQuery.next()) {
+                                singleWeight = weightQuery.value("weight").toDouble();
+                            }
+                        } // ✅ weightQuery destroyed here
+
+                        QPair<QString, QString> key(shape, sizeMMStr);
+                        QPair<int, double> &aggregate = aggregates[key];
+                        aggregate.first += adjustedQuantity;
+                        aggregate.second += singleWeight * adjustedQuantity;
+                    }
+                }
+            }
+        } // ✅ all QSqlQuery destroyed here
+
+        db.close(); // optional
+    } // ✅ db destroyed here
+
+    QSqlDatabase::removeDatabase(connectionName); // ✅ now safe
+
+    // Fill table
+    int totalQuantity = 0;
+    double totalWeight = 0.0;
+
+    for (auto it = aggregates.begin(); it != aggregates.end(); ++it) {
+        QString shape = it.key().first;
+        QString sizeMMStr = it.key().second;
+        int rowQuantity = it.value().first;
+        double rowTotalWeight = it.value().second;
+        double singleWeight = rowQuantity > 0 ? rowTotalWeight / rowQuantity : 0.0;
+
+        int row = table->rowCount();
+        table->insertRow(row);
+        table->setItem(row, 0, new QTableWidgetItem(shape));
+        table->setItem(row, 1, new QTableWidgetItem(sizeMMStr));
+        table->setItem(row, 2, new QTableWidgetItem(QString::number(rowQuantity)));
+        table->setItem(row, 3, new QTableWidgetItem(QString::number(singleWeight, 'f', 3) + "ct"));
+        table->setItem(row, 4, new QTableWidgetItem(QString::number(rowTotalWeight, 'f', 3) + "ct"));
+
+        totalQuantity += rowQuantity;
+        totalWeight += rowTotalWeight;
+    }
+
+    if (table->rowCount() > 0) {
+        int totalRow = table->rowCount();
+        table->insertRow(totalRow);
+        table->setItem(totalRow, 0, new QTableWidgetItem("Total"));
+        table->setItem(totalRow, 2, new QTableWidgetItem(QString::number(totalQuantity)));
+        table->setItem(totalRow, 4, new QTableWidgetItem(QString::number(totalWeight, 'f', 3) + "ct"));
+    }
+
+    table->resizeColumnsToContents();
+    table->resizeRowsToContents();
+}
+
+
+//AddCatalog Logic
+QStringList DatabaseUtils::fetchShapes(const QString &tableType)
+{
+    const QString connectionName = "shapes_conn";
+    QStringList shapes;
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+    db.setDatabaseName(QCoreApplication::applicationDirPath() + "/database/mega_mine_image.db");
+
+    if (!db.open()) {
+        QSqlDatabase::removeDatabase(connectionName);
+        return {};
+    }
+
+    {
+        QSqlQuery query(db);
+        QString queryStr = (tableType == "diamond")
+                               ? "SELECT DISTINCT shape FROM Fancy_diamond UNION SELECT 'Round' FROM Round_diamond"
+                               : "SELECT DISTINCT shape FROM stones";
+
+        if (!query.exec(queryStr)) {
+            db.close();
+            QSqlDatabase::removeDatabase(connectionName);
+            return {};
+        }
+
+        while (query.next()) {
+            shapes.append(query.value(0).toString());
+        }
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase(connectionName);
+    return shapes;
+}
+
+QStringList DatabaseUtils::fetchSizes(const QString &tableType, const QString &shape)
+{
+    const QString connectionName = "sizes_conn";
+    QStringList sizes;
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+    db.setDatabaseName(QCoreApplication::applicationDirPath() + "/database/mega_mine_image.db");
+
+    if (!db.open()) {
+        QSqlDatabase::removeDatabase(connectionName);
+        return {};
+    }
+
+    {
+        QSqlQuery query(db);
+
+        if (tableType == "diamond") {
+            if (shape == "Round") {
+                query.prepare("SELECT DISTINCT sizeMM FROM Round_diamond ORDER BY sizeMM");
+            } else {
+                query.prepare("SELECT DISTINCT sizeMM FROM Fancy_diamond WHERE shape = :shape ORDER BY sizeMM");
+                query.bindValue(":shape", shape);
+            }
+        } else {
+            query.prepare("SELECT DISTINCT sizeMM FROM stones WHERE shape = :shape ORDER BY sizeMM");
+            query.bindValue(":shape", shape);
+        }
+
+        if (!query.exec()) {
+            db.close();
+            QSqlDatabase::removeDatabase(connectionName);
+            return {};
+        }
+
+        while (query.next()) {
+            sizes.append(query.value(0).toString());
+        }
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase(connectionName);
+    return sizes;
+}
+
+QString DatabaseUtils::saveImage(const QString &imagePath)
+{
+    if (!QFile::exists(imagePath))
+        return {};
+
+    QString targetDir = QDir(QCoreApplication::applicationDirPath()).filePath("images");
+    QDir().mkpath(targetDir);
+
+    QString newImagePath = QDir(targetDir).filePath(QFileInfo(imagePath).fileName());
+
+    // Handle existing file (overwrite safely)
+    if (QFile::exists(newImagePath)) {
+        QFile::remove(newImagePath);
+    }
+
+    if (!QFile::copy(imagePath, newImagePath))
+        return {};
+
+    return newImagePath;
+}
+
+
+bool DatabaseUtils::insertCatalogData(const QString &imagePath, const QString &imageType, const QString &designNo,
+                                      const QString &companyName, const QJsonArray &goldArray,
+                                      const QJsonArray &diamondArray, const QJsonArray &stoneArray,
+                                      const QString &note)
+{
+    const QString connectionName = "insert_conn";
+    bool success = false;
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+    db.setDatabaseName(QCoreApplication::applicationDirPath() + "/database/mega_mine_image.db");
+
+    if (!db.open()) {
+        QSqlDatabase::removeDatabase(connectionName);
+        return false;
+    }
+
+    QJsonDocument goldDoc(goldArray);
+    QJsonDocument diamondDoc(diamondArray);
+    QJsonDocument stoneDoc(stoneArray);
+
+    {
+        QSqlQuery query(db);
+        query.prepare(R"(
+            INSERT INTO image_data
+            (image_path, image_type, design_no, company_name, gold_weight, diamond, stone, time, note)
+            VALUES (:image_path, :image_type, :design_no, :company_name, :gold_weight, :diamond, :stone, :time, :note)
+        )");
+
+        query.bindValue(":image_path", imagePath);
+        query.bindValue(":image_type", imageType);
+        query.bindValue(":design_no", designNo);
+        query.bindValue(":company_name", companyName);
+        query.bindValue(":gold_weight", goldDoc.toJson(QJsonDocument::Compact));
+        query.bindValue(":diamond", diamondDoc.toJson(QJsonDocument::Compact));
+        query.bindValue(":stone", stoneDoc.toJson(QJsonDocument::Compact));
+        query.bindValue(":time", QDateTime::currentDateTime().toString(Qt::ISODate));
+        query.bindValue(":note", note);
+
+        if (!query.exec()) {
+            qDebug() << "Insert failed:" << query.lastError().text();
+        } else {
+            success = true;
+        }
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase(connectionName);
+    return success;
+}
+
+
+
+
+
+
+
+
+//not fixed
 
 int DatabaseUtils::insertDummyOrder(const QString &sellerName, const QString &sellerId, const QString &partyName) {
     QDir::setCurrent(QCoreApplication::applicationDirPath());

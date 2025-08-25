@@ -3,7 +3,6 @@
 
 #include <QDialog>
 #include <QTableWidget>
-
 #include "jewelrymenu.h"
 
 class QKeyEvent;
@@ -18,15 +17,13 @@ class AddCatalog : public QDialog
 
 public:
     explicit AddCatalog(QWidget *parent = nullptr);
-    ~AddCatalog();
+    ~AddCatalog() override;
 
 private slots:
     void on_save_insert_clicked();
     void on_brows_clicked();
     void on_goldTable_cellChanged(int row, int column);
-    void onJewelryItemSelected(const QString &item); // Handle selection from JewelryMenu
-
-
+    void onJewelryItemSelected(const QString &item);
     void on_addCatalog_cancel_button_clicked();
 
 protected:
@@ -36,11 +33,10 @@ private:
     void setupGoldTable();
     void calculateGoldWeights(QTableWidgetItem *item);
     void addTableRow(QTableWidget *table, const QString &tableType);
-    JewelryMenu *jewelryMenu; // Instance of the new class
-    QString selectedImageType; // Store the selected item
 
-private:
-    Ui::AddCatalog *ui;
+    Ui::AddCatalog *ui {nullptr};   // UI owned by this dialog
+    JewelryMenu *jewelryMenu {nullptr}; // Owned by Qt parent (AddCatalog)
+    QString selectedImageType;
 };
 
 #endif // ADDCATALOG_H
