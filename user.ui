@@ -1193,16 +1193,6 @@ QLabel[dim=&quot;true&quot;] {
            </property>
           </spacer>
          </item>
-         <item row="0" column="2" colspan="2">
-          <widget class="QToolButton" name="user_filter_btn">
-           <property name="text">
-            <string>Filter</string>
-           </property>
-           <property name="popupMode">
-            <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="7" colspan="2">
           <widget class="QLabel" name="label_slneNo">
            <property name="text">
@@ -1302,6 +1292,16 @@ QLabel[dim=&quot;true&quot;] {
              <horstretch>5</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" colspan="2">
+          <widget class="QToolButton" name="user_filter_btn">
+           <property name="text">
+            <string>Filter</string>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
            </property>
           </widget>
          </item>
