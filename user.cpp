@@ -262,29 +262,6 @@ void User::on_previousImage_clicked() {
     }
 }
 
-// void User::updateGoldWeight(QString goldJson) {
-//     goldData = DatabaseUtils::parseGoldJson(goldJson);
-
-//     QMenu *filterMenu = new QMenu(this);
-//     QMenu *goldMenu = filterMenu->addMenu("Gold");
-
-//     for (auto it = goldData.constBegin(); it != goldData.constEnd(); ++it) {
-//         QString karat = it.key();
-//         double weight = it.value().toDouble();
-
-//         QAction *action = goldMenu->addAction(karat);
-//         connect(action, &QAction::triggered, this, [this, karat, weight]() {
-//             currentGoldSelection = karat;
-//             ui->goldWeight->setText(
-//                 QString("Gold Weight: \n\t%1").arg(QString::number(weight, 'f', 3))
-//                 );
-//         });
-//     }
-
-//     // Attach to button
-//     ui->user_filter_btn->setMenu(filterMenu);
-// }
-
 void User::updateGoldWeight(const QString &goldJson) {
     goldData = DatabaseUtils::parseGoldJson(goldJson);
 
@@ -318,7 +295,6 @@ void User::updateGoldWeight(const QString &goldJson) {
     // Attach menu to button
     ui->user_filter_btn->setMenu(filterMenu);
 }
-
 
 void User::on_pushButton_clicked()
 {
@@ -475,7 +451,8 @@ void User::displayDiamondDetails()
         ui->diamond_detail->setText("Diamond Wt.\nNo diamond data");
         return;
     }
-
+    // qDebug()<<currentDiamondJson;
+    // qDebug()<<result.second.trimmed();
     ui->diamond_detail->setText("Diamond Wt.\n" + result.second.trimmed());
 }
 
@@ -614,7 +591,6 @@ void User::on_cartItemQuantityChanged(int imageId, const QString &goldType, int 
     updateDiamondSummary();
     updateStoneSummary();
 }
-
 
 void User::on_cartItemRemoveRequested(int imageId, const QString &goldType)
 {

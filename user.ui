@@ -48,7 +48,7 @@
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="page">
         <property name="styleSheet">
@@ -1346,8 +1346,8 @@ QLabel[dim=&quot;true&quot;] {
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>646</width>
-              <height>686</height>
+              <width>16</width>
+              <height>16</height>
              </rect>
             </property>
            </widget>

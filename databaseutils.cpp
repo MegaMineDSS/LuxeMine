@@ -1358,8 +1358,7 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondDetails(int imageId)
                         QJsonObject obj = value.toObject();
                         QString type = obj["type"].toString().trimmed().toLower();
                         QString sizeMM = obj["sizeMM"].toString().trimmed();
-                        int quantity = obj["quantity"].toInt();
-
+                        int quantity = obj["quantity"].toString().toInt();
                         {
                             QSqlQuery weightQuery(db);
                             if (type == "round") {
@@ -1382,13 +1381,17 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondDetails(int imageId)
                             if (weightQuery.exec() && weightQuery.next()) {
                                 double weightPerDiamond = weightQuery.value("weight").toDouble();
                                 double totalWeightForEntry = quantity * weightPerDiamond;
+                                // qDebug()<<quantity<<weightPerDiamond;///////
                                 weightByType[type] += totalWeightForEntry;
                                 totalWeight += totalWeightForEntry;
+                                // qDebug()<<totalWeight;
                             }
                         } // ✅ weightQuery destroyed here
                     }
-
+                    // qDebug()<<json<<"-----"<<detailText;
                     for (auto it = weightByType.constBegin(); it != weightByType.constEnd(); ++it) {
+                        // qDebug()<<it;
+                        // qDebug()<<it.key()<<it.value();
                         detailText += QString("%1\t\t%2ct\n").arg(it.key(), -10).arg(it.value(), 0, 'f', 2);
                     }
                 }
@@ -1399,6 +1402,7 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondDetails(int imageId)
     } // ✅ QSqlDatabase destroyed
 
     QSqlDatabase::removeDatabase(connectionName);
+
     return {json, detailText};
 }
 
@@ -1434,7 +1438,7 @@ QPair<QString, QString> DatabaseUtils::fetchStoneDetails(int imageId)
                         QJsonObject obj = value.toObject();
                         QString type = obj["type"].toString().trimmed().toLower();
                         QString sizeMM = obj["sizeMM"].toString().trimmed();
-                        int quantity = obj["quantity"].toInt(); // ✅ simpler & safer
+                        int quantity = obj["quantity"].toString().toInt(); // ✅ simpler & safer
 
                         {
                             QSqlQuery weightQuery(db);
