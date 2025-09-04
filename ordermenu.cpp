@@ -278,25 +278,9 @@ QString OrderMenu::selectAndSaveImage(const QString &prefix) {
 
 void OrderMenu::closeEvent(QCloseEvent *event)
 {
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "new_conn");
-
-
-    db.setDatabaseName("database/mega_mine_orderbook.db");
-    if (!db.open()) {
-        qDebug() << "Error:" << db.lastError().text();
-        return;
+    if (!DatabaseUtils::cleanupUnsavedOrders()) {
+        qDebug() << "Warning: Failed to cleanup unsaved orders.";
     }
-
-    QSqlQuery cleanup(db);  // Associate with the "new_conn" connection
-    cleanup.prepare("DELETE FROM \"OrderBook-Detail\" WHERE isSaved = 0");
-    // cleanup.bindValue(":id", dummyOrderId);
-    // qDebug()<<dummyOrderId;
-    cleanup.exec();
-
-    db.close();
-
-    QSqlDatabase::removeDatabase("new_conn");
     QDialog::closeEvent(event);
 }
 

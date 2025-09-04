@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QRandomGenerator>
+#include <QScopedPointer>
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -95,7 +96,6 @@ void MainWindow::openAdminPage(int pageIndex)
     newAdmin->setRequestedPage(pageIndex);
 }
 
-
 void MainWindow::on_pushButton_2_clicked()
 {
     if (newUser && !newUser->isHidden()) {
@@ -111,7 +111,6 @@ void MainWindow::on_pushButton_2_clicked()
         newUser->show();
     }
 }
-
 
 void MainWindow::on_pushButton_4_clicked()
 {
@@ -131,40 +130,45 @@ void MainWindow::on_pushButton_4_clicked()
     }
 }
 
-
 void MainWindow::on_orderBookButton_clicked()
 {
-    loginWindow = new LoginWindow(this);
+    // Stack-based dialog, safe because exec() blocks until closed
+    LoginWindow loginWindow(this);
 
-    connect(loginWindow, &LoginWindow::loginAccepted, this,
-            [=](const QString &action)
+    connect(&loginWindow, &LoginWindow::loginAccepted, this,
+            [this, &loginWindow](const QString &action)
             {
-                QString role = loginWindow->getRole().toLower();
-                QString userName = loginWindow->getUserName();
-                QString userId = loginWindow->getUserId();
+                QString role = loginWindow.getRole().toLower();
+                QString userName = loginWindow.getUserName();
+                QString userId = loginWindow.getUserId();
 
                 if (action == "orderMenu" && role == "seller") {
-                    QString partyId = loginWindow->getPartyId();
-                    QString partyName = loginWindow->getPartyName();
-                    QString partyAddress = loginWindow->getPartyAddress();
-                    QString partyCity = loginWindow->getPartyCity();
-                    QString partyState = loginWindow->getPartyState();
-                    QString partyCountry = loginWindow->getPartyCountry();
+                    QString partyId = loginWindow.getPartyId();
+                    QString partyName = loginWindow.getPartyName();
+                    QString partyAddress = loginWindow.getPartyAddress();
+                    QString partyCity = loginWindow.getPartyCity();
+                    QString partyState = loginWindow.getPartyState();
+                    QString partyCountry = loginWindow.getPartyCountry();
 
-                    OrderMenu *newOrderMenu = new OrderMenu(nullptr);
+                    auto *newOrderMenu = new OrderMenu(nullptr);
                     newOrderMenu->setAttribute(Qt::WA_DeleteOnClose);
                     newOrderMenu->setInitialInfo(userName, userId,
-                                                 partyName, partyId, partyAddress, partyCity, partyState, partyCountry);
+                                                 partyName, partyId,
+                                                 partyAddress, partyCity,
+                                                 partyState, partyCountry);
                     newOrderMenu->insertDummyOrder();
                     newOrderMenu->show();
                     QTimer::singleShot(0, newOrderMenu, [newOrderMenu]() {
                         newOrderMenu->raise();
                         newOrderMenu->activateWindow();
                     });
-                }else if (action == "orderList" &&
-                           (role == "designer" || role == "manufacturer" || role == "accountant" || role == "manager" || role == "seller"))
+
+                } else if (action == "orderList" &&
+                           (role == "designer" || role == "manufacturer" ||
+                            role == "accountant" || role == "manager" ||
+                            role == "seller"))
                 {
-                    OrderList *newOrderList = new OrderList(nullptr, role);
+                    auto *newOrderList = new OrderList(nullptr, role);
                     newOrderList->setAttribute(Qt::WA_DeleteOnClose);
                     newOrderList->setRoleAndUserInfo(role, userId, userName);
                     newOrderList->show();
@@ -172,17 +176,14 @@ void MainWindow::on_orderBookButton_clicked()
                         newOrderList->raise();
                         newOrderList->activateWindow();
                     });
+
                 } else {
                     QMessageBox::warning(this, "Unknown Role", "This role is not supported.");
                 }
             });
 
-    loginWindow->exec();
-    delete loginWindow;
-    loginWindow = nullptr;
+    loginWindow.exec();
 }
-
-
 
 void MainWindow::setRandomBackground()
 {

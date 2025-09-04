@@ -50,6 +50,20 @@ Admin::~Admin()
 void Admin::setRequestedPage(int index)
 {
     requestedPageIndex = index;
+
+    if (ui->stackedWidget->currentIndex() == 1) {
+        switch (requestedPageIndex) {
+        case 0: on_show_images_clicked(); break;
+        case 1: on_update_price_clicked(); break;
+        case 2: on_add_dia_clicked(); break;
+        case 3: on_show_users_clicked(); break;
+        case 4: on_jewelry_menu_button_clicked(); break;
+        case 5: on_orderBookUsersPushButton_clicked(); break;
+        case 6: on_orderBookRequestPushButton_clicked(); break;
+        default: on_show_images_clicked(); break;
+        }
+        requestedPageIndex = -1; // reset
+    }
 }
 
 void Admin::on_show_images_clicked()
