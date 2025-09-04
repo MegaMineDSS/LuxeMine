@@ -45,7 +45,8 @@ public:
 
         //Job Sheet / Order Book
         static bool updateStatusChangeRequest(int requestId, bool approved, const QString &note);
-        static bool updateRoleStatus(const QString &jobNo, const QString &fieldName, const QString &newStatus);
+        // static bool updateRoleStatus(const QString &jobNo, const QString &fieldName, const QString &newStatus);
+        static bool updateRoleStatus(const QString &jobNo, const QString &role, const QString &newStatus);
         static QList<JobSheetRequest> fetchJobSheetRequests();
 
 
@@ -88,25 +89,54 @@ public:
                                       const QJsonArray &stoneArray, const QString &note);
 
 
-    //not fixed
+    // Login Window
+        // Authentication
+        static LoginResult authenticateUser(const QString &userId, const QString &password);
 
-    //ordermenu connections
-    static int insertDummyOrder(const QString &sellerName, const QString &sellerId, const QString &partyName);
-    static bool updateDummyOrder(int orderId, const QString &jobNo, const QString &orderNo);
-
-    static int getNextJobNumber();
-    static int getNextOrderNumberForSeller(const QString &sellerId);
-
-    static bool saveOrder(const OrderData &order);
-    static QList<QVariantList> fetchOrderListDetails();
+        // Party Management
+        static QStringList fetchPartyNamesForUser(const QString &userId);
+        static bool insertParty(const PartyData &party);
+        static PartyInfo fetchPartyDetails(const QString &userId, const QString &partyId);
 
 
-    //Login window connections
-    static QStringList fetchPartyNamesForUser(const QString &userId);
-    static bool insertParty(const PartyData &party);
-    static PartyInfo fetchPartyDetails(const QString &userId, const QString &partyId);
-    static LoginResult authenticateUser(const QString &userId, const QString &password);
+    // OrderMenu Connections
+        // Order Initialization
+        static int insertDummyOrder(const QString &sellerName, const QString &sellerId, const QString &partyName);
+        static int getNextJobNumber();
+        static int getNextOrderNumberForSeller(const QString &sellerId);
 
+        // Order Updates
+        static bool updateDummyOrder(int orderId, const QString &jobNo, const QString &orderNo);
+        static bool cleanupUnsavedOrders();
+
+        // Save Order
+        static bool saveOrder(const OrderData &order);
+
+
+    // OrderList Connections
+        // Job Sheet Data
+        static std::optional<JobSheetData> fetchJobSheetData(const QString &jobNo);
+        static QPair<QString, QString> fetchDiamondAndStoneJson(const QString &designNo);
+
+        // Status Change Requests
+        static bool insertStatusChangeRequest(const QString &jobNo, const QString &userId,
+                                              const QString &fromStatus, const QString &toStatus,
+                                              const QString &role, const QString &note);
+        static bool approveStatusChange(const QString &jobNo, const QString &role,
+                                        const QString &statusField, bool approved,
+                                        const QString &note);
+
+        // Order List
+        static QList<QVariantList> fetchOrderListDetails();
+
+
+    // JobSheet Connections
+        // Image / Design
+        static QString fetchImagePathForDesign(const QString &designNo);
+        static bool updateDesignNoAndImagePath(const QString &jobNo, const QString &designNo, const QString &imagePath);
+
+        // Stone Details
+        static void fillStoneTable(QTableWidget *table, const QString &designNo);
 
 
 };

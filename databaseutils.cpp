@@ -1,6 +1,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QSqlRecord>
 #include <QDir>
 #include <QFile>
 #include <QSet>
@@ -786,59 +787,56 @@ bool DatabaseUtils::updateStatusChangeRequest(int requestId, bool approved, cons
         db.close(); // optional, but makes intent explicit
     } // db handle destroyed here
 
-    QSqlDatabase::removeDatabase(connName); // now safe — all queries destroyed
+    QSqlDatabase::removeDatabase(connName); // now safe — all queries destroyedŚ
     return true;
 }
 
-bool DatabaseUtils::updateRoleStatus(const QString &jobNo, const QString &fieldName, const QString &newStatus)
+bool DatabaseUtils::updateRoleStatus(const QString &jobNo, const QString &role, const QString &newStatus)
 {
-    const QString connName =
-        QStringLiteral("update_role_status_conn_%1")
-            .arg(QRandomGenerator::global()->generate());
+    const QString connName = "update_role_status_conn";
+    bool success = false;
 
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
+    // 🔒 Explicit whitelist mapping of roles -> columns
+    static const QMap<QString, QString> roleToColumn = {
+        {"manager",      "Manager"},
+        {"designer",     "Designer"},
+        {"manufacturer", "Manufacturer"},
+        {"accountant",   "Accountant"}
+    };
+
+    if (!roleToColumn.contains(role)) {
+        qWarning() << "❌ Invalid role passed to updateRoleStatus:" << role;
+        return false;
+    }
 
     {
-        // Scoped block to ensure 'db' and 'query' are destroyed before removeDatabase()
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
         db.setDatabaseName("database/mega_mine_orderbook.db");
 
-        if (!db.open()) {
-            qDebug() << "[updateRoleStatus] DB open failed:" << db.lastError().text();
-            return false; // Will remove later
-        }
+        if (db.open()) {
+            QSqlQuery query(db);
+            QString column = roleToColumn[role];
+            QString sql = QString(R"(UPDATE "Order-Status" SET "%1" = :status WHERE jobNo = :jobNo)").arg(column);
 
-        QString sql = QString(R"(
-            UPDATE "Order-Status"
-            SET %1 = :status
-            WHERE jobNo = :jobNo
-        )").arg(fieldName);
+            query.prepare(sql);
+            query.bindValue(":status", newStatus);
+            query.bindValue(":jobNo", jobNo);
 
-        QSqlQuery query(db);
-        query.prepare(sql);
-        query.bindValue(":status", newStatus);
-        query.bindValue(":jobNo", jobNo);
-
-        bool success = query.exec();
-        if (!success) {
-            qDebug() << "[-] Update failed:" << query.lastError().text();
-            qDebug() << "[:(] SQL Tried:" << query.lastQuery();
+            success = query.exec();
+            if (!success) {
+                qWarning() << "❌ Failed to update role status:" << query.lastError().text()
+                    << "| SQL:" << sql
+                    << "| jobNo:" << jobNo
+                    << "| newStatus:" << newStatus;
+            }
         } else {
-            qDebug() << "[+] Status updated:" << fieldName << "=" << newStatus
-                     << "for JobNo:" << jobNo;
+            qWarning() << "❌ DB open failed in updateRoleStatus:" << db.lastError().text();
         }
 
         db.close();
-        if (!success) {
-            // Let scope exit happen before removeDatabase
-            QSqlDatabase::removeDatabase(connName);
-            return false;
-        }
     }
-
-    // Now safe to remove the database connection
     QSqlDatabase::removeDatabase(connName);
-    return true;
+    return success;
 }
 
 QList<JobSheetRequest> DatabaseUtils::fetchJobSheetRequests()
@@ -1358,8 +1356,7 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondDetails(int imageId)
                         QJsonObject obj = value.toObject();
                         QString type = obj["type"].toString().trimmed().toLower();
                         QString sizeMM = obj["sizeMM"].toString().trimmed();
-                        int quantity = obj["quantity"].toInt();
-
+                        int quantity = obj["quantity"].toString().toInt();
                         {
                             QSqlQuery weightQuery(db);
                             if (type == "round") {
@@ -1382,13 +1379,17 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondDetails(int imageId)
                             if (weightQuery.exec() && weightQuery.next()) {
                                 double weightPerDiamond = weightQuery.value("weight").toDouble();
                                 double totalWeightForEntry = quantity * weightPerDiamond;
+                                // qDebug()<<quantity<<weightPerDiamond;///////
                                 weightByType[type] += totalWeightForEntry;
                                 totalWeight += totalWeightForEntry;
+                                // qDebug()<<totalWeight;
                             }
                         } // ✅ weightQuery destroyed here
                     }
-
+                    // qDebug()<<json<<"-----"<<detailText;
                     for (auto it = weightByType.constBegin(); it != weightByType.constEnd(); ++it) {
+                        // qDebug()<<it;
+                        // qDebug()<<it.key()<<it.value();
                         detailText += QString("%1\t\t%2ct\n").arg(it.key(), -10).arg(it.value(), 0, 'f', 2);
                     }
                 }
@@ -1399,6 +1400,7 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondDetails(int imageId)
     } // ✅ QSqlDatabase destroyed
 
     QSqlDatabase::removeDatabase(connectionName);
+
     return {json, detailText};
 }
 
@@ -1434,7 +1436,7 @@ QPair<QString, QString> DatabaseUtils::fetchStoneDetails(int imageId)
                         QJsonObject obj = value.toObject();
                         QString type = obj["type"].toString().trimmed().toLower();
                         QString sizeMM = obj["sizeMM"].toString().trimmed();
-                        int quantity = obj["quantity"].toInt(); // ✅ simpler & safer
+                        int quantity = obj["quantity"].toString().toInt(); // ✅ simpler & safer
 
                         {
                             QSqlQuery weightQuery(db);
@@ -1806,85 +1808,227 @@ bool DatabaseUtils::insertCatalogData(const QString &imagePath, const QString &i
 }
 
 
+//Login Window Logic
+LoginResult DatabaseUtils::authenticateUser(const QString &userId, const QString &password)
+{
+    LoginResult result;
+    QString dbPath = QDir(QCoreApplication::applicationDirPath())
+                         .filePath("database/luxeMineAuthentication.db");
 
+    // Unique connection name
+    QString connName = QString("auth_conn_%1").arg(QDateTime::currentMSecsSinceEpoch());
 
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName(dbPath);
 
+        if (!db.open()) {
+            qDebug() << "❌ Failed to open authentication DB:" << db.lastError().text();
+            return result;
+        }
 
+        {
+            QSqlQuery query(db);
+            query.prepare(R"(
+                SELECT userName, role
+                FROM OrderBook_Login
+                WHERE userId = :id AND password = :pwd
+            )");
 
+            query.bindValue(":id", userId);
+            query.bindValue(":pwd", password);
 
-//not fixed
+            if (query.exec() && query.next()) {
+                result.success = true;
+                result.userName = query.value("userName").toString();
+                result.role = query.value("role").toString();
+            } else if (query.lastError().isValid()) {
+                qDebug() << "❌ Login query error:" << query.lastError().text();
+            }
+        } // query destroyed
 
-int DatabaseUtils::insertDummyOrder(const QString &sellerName, const QString &sellerId, const QString &partyName) {
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "insert_order_conn");
-    db.setDatabaseName("database/mega_mine_orderbook.db");
-
-    if (!db.open()) {
-        qDebug() << "❌ Failed to open DB:" << db.lastError().text();
-        return -1;
-    }
-
-    QSqlQuery query(db);
-    query.prepare(R"(
-        INSERT INTO "OrderBook-Detail"
-        (sellerName, sellerId, partyId, partyName, jobNo, orderNo, orderDate, deliveryDate)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    )");
-
-    query.addBindValue(sellerName);                                       // sellerName
-    query.addBindValue(sellerId);                                         // sellerId
-    query.addBindValue("TEMP_ID");                                        // partyId (dummy)
-    query.addBindValue(partyName);                                        // partyName
-    query.addBindValue("TEMP_JOB");                                       // jobNo
-    query.addBindValue("TEMP_ORDER");                                     // orderNo
-    query.addBindValue(QDate::currentDate().toString("yyyy-MM-dd"));      // orderDate
-    query.addBindValue(QDate::currentDate().addDays(1).toString("yyyy-MM-dd")); // deliveryDate
-
-    if (!query.exec()) {
-        qDebug() << "❌ Insert failed:" << query.lastError().text();
         db.close();
-        QSqlDatabase::removeDatabase("insert_order_conn");
-        return -1;
-    }
+    } // db destroyed
 
-    int newId = query.lastInsertId().toInt();
-    db.close();
-    QSqlDatabase::removeDatabase("insert_order_conn");
-    return newId;
+    QSqlDatabase::removeDatabase(connName); // safe cleanup
+    return result;
 }
 
-bool DatabaseUtils::updateDummyOrder(int orderId, const QString &jobNo, const QString &orderNo) {
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "update_order_conn");
-    db.setDatabaseName("database/mega_mine_orderbook.db");
+QStringList DatabaseUtils::fetchPartyNamesForUser(const QString &userId)
+{
+    QStringList partyList;
+    QString dbPath = QDir(QCoreApplication::applicationDirPath())
+                         .filePath("database/luxeMineAuthentication.db");
 
-    if (!db.open()) {
-        qDebug() << "Failed to open DB for update:" << db.lastError().text();
-        return false;
-    }
+    // Use a unique connection name to avoid conflicts
+    QString connName = QString("fetch_party_conn_%1").arg(QDateTime::currentMSecsSinceEpoch());
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName(dbPath);
 
-    QSqlQuery query(db);
-    query.prepare(R"(
-        UPDATE "OrderBook-Detail"
-        SET jobNo = :jobNo, orderNo = :orderNo
-        WHERE id = :orderId
-    )");
+        if (!db.open()) {
+            qDebug() << "Database connection failed for user:" << userId
+                     << "Error:" << db.lastError().text();
+            return partyList;
+        }
 
-    query.bindValue(":jobNo", jobNo);
-    query.bindValue(":orderNo", orderNo);
-    query.bindValue(":orderId", orderId);
+        QSqlQuery query(db);
+        query.prepare("SELECT name, id FROM Partys WHERE userId = :uid");
+        query.bindValue(":uid", userId);
 
-    bool success = query.exec();
-    if (!success) {
-        qDebug() << "❌ Update failed:" << query.lastError().text();
-    } else if (query.numRowsAffected() == 0) {
-        qDebug() << "⚠️ No row updated: Check orderId:" << orderId;
-        success = false;
-    }
+        if (!query.exec()) {
+            qDebug() << "Query failed for user:" << userId
+                     << "Error:" << query.lastError().text();
+        } else {
+            partyList.append("-");
+            while (query.next()) {
+                QString name = query.value(0).toString();
+                QString id = query.value(1).toString();
+                partyList.append(QString("%1 (%2)").arg(name, id));
+            }
+        }
+    } // db + query go out of scope here
 
-    db.close();
-    QSqlDatabase::removeDatabase("update_order_conn");
+    QSqlDatabase::removeDatabase(connName); // safe: query already destroyed
+    return partyList;
+}
+
+bool DatabaseUtils::insertParty(const PartyData &party)
+{
+    QString dbPath = QDir(QCoreApplication::applicationDirPath())
+    .filePath("database/luxeMineAuthentication.db");
+
+    // Unique connection name
+    QString connName = QString("insert_party_conn_%1").arg(QDateTime::currentMSecsSinceEpoch());
+
+    bool success = false;
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName(dbPath);
+
+        if (!db.open()) {
+            qDebug() << "❌ Failed to open DB for party insert:" << db.lastError().text();
+            return false;
+        }
+
+        {
+            QSqlQuery query(db);
+            query.prepare(R"(
+                INSERT INTO Partys (id, name, email, mobileNo, address, city, state, country, areaCode, userId, date)
+                VALUES (:id, :name, :email, :mobileNo, :address, :city, :state, :country, :areaCode, :userId, :date)
+            )");
+
+            query.bindValue(":id", party.id);
+            query.bindValue(":name", party.name);
+            query.bindValue(":email", party.email);
+            query.bindValue(":mobileNo", party.mobileNo);
+            query.bindValue(":address", party.address);
+            query.bindValue(":city", party.city);
+            query.bindValue(":state", party.state);
+            query.bindValue(":country", party.country);
+            query.bindValue(":areaCode", party.areaCode);
+            query.bindValue(":userId", party.userId);
+            query.bindValue(":date", party.date);
+
+            success = query.exec();
+            if (!success) {
+                qDebug() << "❌ Failed to insert party:" << query.lastError().text();
+            }
+        } // query destroyed here
+
+        db.close();
+    } // db destroyed here
+
+    QSqlDatabase::removeDatabase(connName); // safe cleanup
     return success;
+}
+
+PartyInfo DatabaseUtils::fetchPartyDetails(const QString &userId, const QString &partyId)
+{
+    PartyInfo info;
+    QString dbPath = QDir(QCoreApplication::applicationDirPath())
+                         .filePath("database/luxeMineAuthentication.db");
+
+    // Unique connection name (timestamp-based)
+    QString connName = QString("fetch_party_detail_conn_%1").arg(QDateTime::currentMSecsSinceEpoch());
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName(dbPath);
+
+        if (!db.open()) {
+            qDebug() << "❌ Failed to open DB in fetchPartyDetails:" << db.lastError().text();
+            return info;
+        }
+
+        {
+            QSqlQuery query(db);
+            query.prepare(R"(
+                SELECT id, name, address, city, state, country
+                FROM Partys
+                WHERE userId = :uid AND id = :pid
+                LIMIT 1
+            )");
+            query.bindValue(":uid", userId);
+            query.bindValue(":pid", partyId);
+
+            if (query.exec() && query.next()) {
+                info.id      = query.value("id").toString();
+                info.name    = query.value("name").toString();
+                info.address = query.value("address").toString();
+                info.city    = query.value("city").toString();
+                info.state   = query.value("state").toString();
+                info.country = query.value("country").toString();
+            } else {
+                qDebug() << "❌ Query failed or no result in fetchPartyDetails:"
+                         << query.lastError().text();
+            }
+        } // query destroyed here
+
+        db.close();
+    } // db destroyed here
+
+    QSqlDatabase::removeDatabase(connName); // safe: query + db out of scope
+    return info;
+}
+
+
+//OrderMenu Logic
+int DatabaseUtils::insertDummyOrder(const QString &sellerName, const QString &sellerId, const QString &partyName) {
+    const QString connName = "insert_order_conn";
+    int newId = -1;
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName("database/mega_mine_orderbook.db");
+        if (!db.open()) {
+            qDebug() << "❌ Failed to open DB:" << db.lastError().text();
+            return -1;
+        }
+
+        QSqlQuery query(db);
+        query.prepare(R"(INSERT INTO "OrderBook-Detail"
+                         (sellerName, sellerId, partyId, partyName, jobNo, orderNo, orderDate, deliveryDate)
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?))");
+
+        query.addBindValue(sellerName);
+        query.addBindValue(sellerId);
+        query.addBindValue("TEMP_ID");
+        query.addBindValue(partyName);
+        query.addBindValue("TEMP_JOB");
+        query.addBindValue("TEMP_ORDER");
+        query.addBindValue(QDate::currentDate().toString("yyyy-MM-dd"));
+        query.addBindValue(QDate::currentDate().addDays(1).toString("yyyy-MM-dd"));
+
+        if (!query.exec()) {
+            qDebug() << "❌ Insert failed:" << query.lastError().text();
+        } else {
+            newId = query.lastInsertId().toInt();
+        }
+    } // query + db go out of scope here
+
+    QSqlDatabase::removeDatabase(connName);
+    return newId;
 }
 
 int DatabaseUtils::getNextJobNumber() {
@@ -1919,7 +2063,6 @@ int DatabaseUtils::getNextJobNumber() {
     QSqlDatabase::removeDatabase("next_job_conn");
     return nextJobNumber;
 }
-
 
 int DatabaseUtils::getNextOrderNumberForSeller(const QString &sellerId) {
     QDir::setCurrent(QCoreApplication::applicationDirPath());
@@ -1960,155 +2103,428 @@ int DatabaseUtils::getNextOrderNumberForSeller(const QString &sellerId) {
     return nextOrder;
 }
 
-
-bool DatabaseUtils::saveOrder(const OrderData &order) {
+bool DatabaseUtils::updateDummyOrder(int orderId, const QString &jobNo, const QString &orderNo) {
     QDir::setCurrent(QCoreApplication::applicationDirPath());
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "save_order_conn");
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "update_order_conn");
     db.setDatabaseName("database/mega_mine_orderbook.db");
 
     if (!db.open()) {
-        qDebug() << "❌ Failed to open DB in saveOrder:" << db.lastError().text();
-        return false;
-    }
-
-    if (!db.transaction()) {
-        qDebug() << "❌ Failed to start transaction:" << db.lastError().text();
-        db.close();
-        QSqlDatabase::removeDatabase("save_order_conn");
+        qDebug() << "Failed to open DB for update:" << db.lastError().text();
         return false;
     }
 
     QSqlQuery query(db);
     query.prepare(R"(
-        UPDATE "OrderBook-Detail" SET
-            sellerName = :sellerName, sellerId = :sellerId, partyId = :partyId, partyName = :partyName,
-            jobNo = :jobNo, orderNo = :orderNo,
-            clientId = :clientId, agencyId = :agencyId, shopId = :shopId, reteailleId = :retailleId, starId = :starId,
-            address = :address, city = :city, state = :state, country = :country,
-            orderDate = :orderDate, deliveryDate = :deliveryDate,
-            productName = :productName, productPis = :productPis, approxProductWt = :approxProductWt, metalPrice = :metalPrice,
-            metalName = :metalName, metalPurity = :metalPurity, metalColor = :metalColor,
-            sizeNo = :sizeNo, sizeMM = :sizeMM, length = :length, width = :width, height = :height,
-            diaPacific = :diaPacific, diaPurity = :diaPurity, diaColor = :diaColor, diaPrice = :diaPrice,
-            stPacific = :stPacific, stPurity = :stPurity, stColor = :stColor, stPrice = :stPrice,
-            designNo1 = :designNo1, designNo2 = :designNo2,
-            image1Path = :image1Path, image2Path = :image2Path,
-            metalCertiName = :metalCertiName, metalCertiType = :metalCertiType,
-            diaCertiName = :diaCertiName, diaCertiType = :diaCertiType,
-            pesSaki = :pesSaki, chainLock = :chainLock, polish = :polish,
-            settingLebour = :settingLabour, metalStemp = :metalStemp, paymentMethod = :paymentMethod,
-            totalAmount = :totalAmount, advance = :advance, remaining = :remaining,
-            note = :note, extraDetail = :extraDetail,
-            isSaved = 1
-        WHERE id = :id
+        UPDATE "OrderBook-Detail"
+        SET jobNo = :jobNo, orderNo = :orderNo
+        WHERE id = :orderId
     )");
 
-    // Bind all values
-    query.bindValue(":sellerName", order.sellerName);
-    query.bindValue(":sellerId", order.sellerId);
-    query.bindValue(":partyId", order.partyId);
-    query.bindValue(":partyName", order.partyName);
-    query.bindValue(":jobNo", order.jobNo);
-    query.bindValue(":orderNo", order.orderNo);
-    query.bindValue(":clientId", order.clientId);
-    query.bindValue(":agencyId", order.agencyId);
-    query.bindValue(":shopId", order.shopId);
-    query.bindValue(":retailleId", order.retailleId);
-    query.bindValue(":starId", order.starId);
-    query.bindValue(":address", order.address);
-    query.bindValue(":city", order.city);
-    query.bindValue(":state", order.state);
-    query.bindValue(":country", order.country);
-    query.bindValue(":orderDate", order.orderDate);
-    query.bindValue(":deliveryDate", order.deliveryDate);
-    query.bindValue(":productName", order.productName);
-    query.bindValue(":productPis", order.productPis);
-    query.bindValue(":approxProductWt", order.approxProductWt);
-    query.bindValue(":metalPrice", order.metalPrice);
-    query.bindValue(":metalName", order.metalName);
-    query.bindValue(":metalPurity", order.metalPurity);
-    query.bindValue(":metalColor", order.metalColor);
-    query.bindValue(":sizeNo", order.sizeNo);
-    query.bindValue(":sizeMM", order.sizeMM);
-    query.bindValue(":length", order.length);
-    query.bindValue(":width", order.width);
-    query.bindValue(":height", order.height);
-    query.bindValue(":diaPacific", order.diaPacific);
-    query.bindValue(":diaPurity", order.diaPurity);
-    query.bindValue(":diaColor", order.diaColor);
-    query.bindValue(":diaPrice", order.diaPrice);
-    query.bindValue(":stPacific", order.stPacific);
-    query.bindValue(":stPurity", order.stPurity);
-    query.bindValue(":stColor", order.stColor);
-    query.bindValue(":stPrice", order.stPrice);
-    query.bindValue(":designNo1", order.designNo1);
-    query.bindValue(":designNo2", order.designNo2);
-    query.bindValue(":image1Path", order.image1Path);
-    query.bindValue(":image2Path", order.image2Path);
-    query.bindValue(":metalCertiName", order.metalCertiName);
-    query.bindValue(":metalCertiType", order.metalCertiType); // ✅ fixed typo
-    query.bindValue(":diaCertiName", order.diaCertiName);
-    query.bindValue(":diaCertiType", order.diaCertiType);     // ✅ fixed typo
-    query.bindValue(":pesSaki", order.pesSaki);
-    query.bindValue(":chainLock", order.chainLock);
-    query.bindValue(":polish", order.polish);
-    query.bindValue(":settingLabour", order.settingLabour);
-    query.bindValue(":metalStemp", order.metalStemp);
-    query.bindValue(":paymentMethod", order.paymentMethod);
-    query.bindValue(":totalAmount", order.totalAmount);
-    query.bindValue(":advance", order.advance);
-    query.bindValue(":remaining", order.remaining);
-    query.bindValue(":note", order.note);
-    query.bindValue(":extraDetail", order.extraDetail);
-    query.bindValue(":id", order.id);
+    query.bindValue(":jobNo", jobNo);
+    query.bindValue(":orderNo", orderNo);
+    query.bindValue(":orderId", orderId);
 
     bool success = query.exec();
     if (!success) {
         qDebug() << "❌ Update failed:" << query.lastError().text();
-        db.rollback();
-        db.close();
-        QSqlDatabase::removeDatabase("save_order_conn");
-        return false;
-    }
-
-    // Only insert into Order-Status if update succeeded
-    QSqlQuery addStatus(db);
-    addStatus.prepare(R"(INSERT INTO "Order-Status" (jobNo) VALUES (:jobNo))");
-    addStatus.bindValue(":jobNo", order.jobNo);
-    if (!addStatus.exec()) {
-        qDebug() << "❌ Failed to insert into Order-Status:" << addStatus.lastError().text();
-        db.rollback();
-        db.close();
-        QSqlDatabase::removeDatabase("save_order_conn");
-        return false;
-    }
-
-    if (!db.commit()) {
-        qDebug() << "❌ Commit failed:" << db.lastError().text();
-        db.rollback();
-        db.close();
-        QSqlDatabase::removeDatabase("save_order_conn");
-        return false;
+    } else if (query.numRowsAffected() == 0) {
+        qDebug() << "⚠️ No row updated: Check orderId:" << orderId;
+        success = false;
     }
 
     db.close();
-    QSqlDatabase::removeDatabase("save_order_conn");
-    return true;
+    QSqlDatabase::removeDatabase("update_order_conn");
+    return success;
 }
 
-QList<QVariantList> DatabaseUtils:: fetchOrderListDetails() {
-    QList<QVariantList> orderList;
-
-    QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "order_list");
-    db.setDatabaseName(dbPath);
-
-    if (!db.open()) {
-        qDebug() << "❌ Database not open: " << db.lastError().text();
-        return orderList;
-    }
+bool DatabaseUtils::cleanupUnsavedOrders()
+{
+    const QString connName = "cleanup_unsaved_orders_conn";
+    bool success = false;
 
     {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName("database/mega_mine_orderbook.db");
+
+        if (db.open()) {
+            QSqlQuery query(db);
+            query.prepare(R"(DELETE FROM "OrderBook-Detail" WHERE isSaved = 0)");
+            success = query.exec();
+            if (!success) {
+                qWarning() << "❌ Failed to cleanup unsaved orders:" << query.lastError().text();
+            }
+        } else {
+            qWarning() << "❌ DB open failed in cleanupUnsavedOrders:" << db.lastError().text();
+        }
+
+        db.close();
+    }
+    QSqlDatabase::removeDatabase(connName);
+    return success;
+}
+
+bool DatabaseUtils::saveOrder(const OrderData &order) {
+    bool success = false;  // final result
+    const QString connName = "save_order_conn";
+    // QDir::setCurrent(QCoreApplication::applicationDirPath());
+    const QString dbPath = QCoreApplication::applicationDirPath() + "/database/mega_mine_orderbook.db";
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        // db.setDatabaseName("database/mega_mine_orderbook.db");
+        db.setDatabaseName(dbPath);
+
+        if (!db.open()) {
+            qDebug() << "❌ Failed to open DB in saveOrder:" << db.lastError().text();
+            return false;
+        }
+
+        if (!db.transaction()) {
+            qDebug() << "❌ Failed to start transaction:" << db.lastError().text();
+            db.close();
+            QSqlDatabase::removeDatabase(connName);
+            return false;
+        }
+
+        {
+            QSqlQuery query(db);
+            query.prepare(R"(
+            UPDATE "OrderBook-Detail" SET
+                sellerName = :sellerName, sellerId = :sellerId, partyId = :partyId, partyName = :partyName,
+                jobNo = :jobNo, orderNo = :orderNo,
+                clientId = :clientId, agencyId = :agencyId, shopId = :shopId, reteailleId = :retailleId, starId = :starId,
+                address = :address, city = :city, state = :state, country = :country,
+                orderDate = :orderDate, deliveryDate = :deliveryDate,
+                productName = :productName, productPis = :productPis, approxProductWt = :approxProductWt, metalPrice = :metalPrice,
+                metalName = :metalName, metalPurity = :metalPurity, metalColor = :metalColor,
+                sizeNo = :sizeNo, sizeMM = :sizeMM, length = :length, width = :width, height = :height,
+                diaPacific = :diaPacific, diaPurity = :diaPurity, diaColor = :diaColor, diaPrice = :diaPrice,
+                stPacific = :stPacific, stPurity = :stPurity, stColor = :stColor, stPrice = :stPrice,
+                designNo1 = :designNo1, designNo2 = :designNo2,
+                image1Path = :image1Path, image2Path = :image2Path,
+                metalCertiName = :metalCertiName, metalCertiType = :metalCertiType,
+                diaCertiName = :diaCertiName, diaCertiType = :diaCertiType,
+                pesSaki = :pesSaki, chainLock = :chainLock, polish = :polish,
+                settingLabour = :settingLabour, metalStemp = :metalStemp, paymentMethod = :paymentMethod,
+                totalAmount = :totalAmount, advance = :advance, remaining = :remaining,
+                note = :note, extraDetail = :extraDetail,
+                isSaved = 1
+            WHERE id = :id
+        )");
+
+            // bind values
+            query.bindValue(":sellerName", order.sellerName);
+            query.bindValue(":sellerId", order.sellerId);
+            query.bindValue(":partyId", order.partyId);
+            query.bindValue(":partyName", order.partyName);
+            query.bindValue(":jobNo", order.jobNo);
+            query.bindValue(":orderNo", order.orderNo);
+            query.bindValue(":clientId", order.clientId);
+            query.bindValue(":agencyId", order.agencyId);
+            query.bindValue(":shopId", order.shopId);
+            query.bindValue(":retailleId", order.retailleId);
+            query.bindValue(":starId", order.starId);
+            query.bindValue(":address", order.address);
+            query.bindValue(":city", order.city);
+            query.bindValue(":state", order.state);
+            query.bindValue(":country", order.country);
+            query.bindValue(":orderDate", order.orderDate);
+            query.bindValue(":deliveryDate", order.deliveryDate);
+            query.bindValue(":productName", order.productName);
+            query.bindValue(":productPis", order.productPis);
+            query.bindValue(":approxProductWt", order.approxProductWt);
+            query.bindValue(":metalPrice", order.metalPrice);
+            query.bindValue(":metalName", order.metalName);
+            query.bindValue(":metalPurity", order.metalPurity);
+            query.bindValue(":metalColor", order.metalColor);
+            query.bindValue(":sizeNo", order.sizeNo);
+            query.bindValue(":sizeMM", order.sizeMM);
+            query.bindValue(":length", order.length);
+            query.bindValue(":width", order.width);
+            query.bindValue(":height", order.height);
+            query.bindValue(":diaPacific", order.diaPacific);
+            query.bindValue(":diaPurity", order.diaPurity);
+            query.bindValue(":diaColor", order.diaColor);
+            query.bindValue(":diaPrice", order.diaPrice);
+            query.bindValue(":stPacific", order.stPacific);
+            query.bindValue(":stPurity", order.stPurity);
+            query.bindValue(":stColor", order.stColor);
+            query.bindValue(":stPrice", order.stPrice);
+            query.bindValue(":designNo1", order.designNo1);
+            query.bindValue(":designNo2", order.designNo2);
+            query.bindValue(":image1Path", order.image1Path);
+            query.bindValue(":image2Path", order.image2Path);
+            query.bindValue(":metalCertiName", order.metalCertiName);
+            query.bindValue(":metalCertiType", order.metalCertiType);
+            query.bindValue(":diaCertiName", order.diaCertiName);
+            query.bindValue(":diaCertiType", order.diaCertiType);
+            query.bindValue(":pesSaki", order.pesSaki);
+            query.bindValue(":chainLock", order.chainLock);
+            query.bindValue(":polish", order.polish);
+            query.bindValue(":settingLabour", order.settingLabour);
+            query.bindValue(":metalStemp", order.metalStemp);
+            query.bindValue(":paymentMethod", order.paymentMethod);
+            query.bindValue(":totalAmount", order.totalAmount);
+            query.bindValue(":advance", order.advance);
+            query.bindValue(":remaining", order.remaining);
+            query.bindValue(":note", order.note);
+            query.bindValue(":extraDetail", order.extraDetail);
+            query.bindValue(":id", order.id);
+
+            if (!query.exec()) {
+                qDebug() << "❌ Update failed:" << query.lastError().text();
+                db.rollback();
+            } else {
+                QSqlQuery addStatus(db);
+                addStatus.prepare(R"(INSERT INTO "Order-Status" (jobNo) VALUES (:jobNo))");
+                addStatus.bindValue(":jobNo", order.jobNo);
+
+                if (!addStatus.exec()) {
+                    qDebug() << "❌ Failed to insert into Order-Status:" << addStatus.lastError().text();
+                    db.rollback();
+                } else if (!db.commit()) {
+                    qDebug() << "❌ Commit failed:" << db.lastError().text();
+                    db.rollback();
+                } else {
+                    success = true;
+                }
+            }
+        } // ✅ queries go out of scope here
+
+        if (success) {
+            if (!db.commit()) {
+                qDebug() << "❌ Commit failed:" << db.lastError().text();
+                db.rollback(); // Attempt to roll back on failed commit
+                success = false;
+            }
+        } else {
+            qDebug() << "❌ One of the queries failed. Rolling back transaction.";
+            db.rollback();
+        }
+
+
+        db.close();
+
+    }
+    QSqlDatabase::removeDatabase(connName);
+    return success;
+}
+
+
+//OrderList Logic
+std::optional<JobSheetData> DatabaseUtils::fetchJobSheetData(const QString &jobNo)
+{
+    const QString connName = "fetch_jobsheet_conn";
+    std::optional<JobSheetData> result;
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName(QCoreApplication::applicationDirPath() + "/database/mega_mine_orderbook.db");
+
+        if (!db.open()) {
+            qWarning() << "❌ Failed to open DB in fetchJobSheetData:" << db.lastError().text();
+            return std::nullopt;
+        }
+
+        QSqlQuery query(db);
+        query.prepare(R"(
+            SELECT sellerId, partyId, jobNo, orderNo, clientId,
+                   orderDate, deliveryDate, productPis, designNo1,
+                   metalPurity, metalColor, sizeNo, sizeMM,
+                   length, width, height, image1path
+            FROM "OrderBook-Detail"
+            WHERE jobNo = :jobNo
+        )");
+        query.bindValue(":jobNo", jobNo);
+
+        if (query.exec() && query.next()) {
+            JobSheetData data;
+            data.sellerId    = query.value("sellerId").toString();
+            data.partyId     = query.value("partyId").toString();
+            data.jobNo       = query.value("jobNo").toString();
+            data.orderNo     = query.value("orderNo").toString();
+            data.clientId    = query.value("clientId").toString();
+            data.orderDate   = query.value("orderDate").toString();
+            data.deliveryDate= query.value("deliveryDate").toString();
+            data.productPis  = query.value("productPis").toInt();
+            data.designNo    = query.value("designNo1").toString();
+            data.metalPurity = query.value("metalPurity").toString();
+            data.metalColor  = query.value("metalColor").toString();
+            data.sizeNo      = query.value("sizeNo").toDouble();
+            data.sizeMM      = query.value("sizeMM").toDouble();
+            data.length      = query.value("length").toDouble();
+            data.width       = query.value("width").toDouble();
+            data.height      = query.value("height").toDouble();
+            data.imagePath   = query.value("image1path").toString();
+
+            result = data;
+        } else {
+            qWarning() << "⚠️ No data found for jobNo:" << jobNo
+                       << " Error:" << query.lastError().text();
+        }
+
+        db.close();
+    }
+
+    QSqlDatabase::removeDatabase(connName);
+    return result;
+}
+
+QPair<QString, QString> DatabaseUtils::fetchDiamondAndStoneJson(const QString &designNo)
+{
+    const QString connName = "fetch_diamond_stone_conn";
+    QString diamondJson, stoneJson;
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName("database/mega_mine_image.db");
+
+        if (!db.open()) {
+            qWarning() << "❌ Failed to open DB in fetchDiamondAndStoneJson:" << db.lastError().text();
+            QSqlDatabase::removeDatabase(connName);
+            return {};
+        }
+
+        QSqlQuery query(db);
+        query.prepare("SELECT diamond, stone FROM image_data WHERE design_no = :designNo");
+        query.bindValue(":designNo", designNo);
+
+        if (!query.exec()) {
+            qWarning() << "❌ Query exec failed in fetchDiamondAndStoneJson:" << query.lastError().text();
+        } else if (!query.next()) {
+            qWarning() << "⚠️ No diamond/stone JSON found for designNo:" << designNo;
+        } else {
+            int colDiamond = query.record().indexOf("diamond");
+            int colStone   = query.record().indexOf("stone");
+
+            diamondJson = query.value(colDiamond).toString();
+            stoneJson   = query.value(colStone).toString();
+        }
+
+        db.close();
+    }
+    QSqlDatabase::removeDatabase(connName);
+
+    return {diamondJson, stoneJson};
+}
+
+bool DatabaseUtils::insertStatusChangeRequest(const QString &jobNo, const QString &userId, const QString &fromStatus, const QString &toStatus, const QString &role, const QString &note)
+{
+    const QString connName = "insert_status_req_conn";
+    bool success = false;
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName("database/mega_mine_orderbook.db");
+
+        if (db.open()) {
+            QSqlQuery query(db);
+            query.prepare(R"(
+                INSERT INTO StatusChangeRequests
+                (jobNo, userId, fromStatus, toStatus, requestTime, role, note)
+                VALUES
+                (:jobNo, :userId, :fromStatus, :toStatus, :requestTime, :role, :note)
+            )");
+
+            query.bindValue(":jobNo", jobNo);
+            query.bindValue(":userId", userId);
+            query.bindValue(":fromStatus", fromStatus);
+            query.bindValue(":toStatus", toStatus);
+            query.bindValue(":requestTime", QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
+            query.bindValue(":role", role);
+            query.bindValue(":note", note);
+
+            success = query.exec();
+            if (!success)
+                qWarning() << "❌ Failed to insert status change request:" << query.lastError().text();
+        } else {
+            qWarning() << "❌ DB open failed in insertStatusChangeRequest:" << db.lastError().text();
+        }
+        db.close();
+    }
+    QSqlDatabase::removeDatabase(connName);
+    return success;
+}
+
+bool DatabaseUtils::approveStatusChange(const QString &jobNo, const QString &role, const QString &statusField, bool approved, const QString &note)
+{
+    const QString connName = "approve_status_conn";
+    bool success = false;
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName("database/mega_mine_orderbook.db");
+
+        if (db.open()) {
+            QSqlQuery query(db);
+
+            if (role == "manager" && statusField == "Order Checked") {
+                query.prepare(R"(UPDATE "Order-Status"
+                                 SET Order_Approve = :approved,
+                                     Order_Note = CASE WHEN :approved = 1 THEN '' ELSE :note END
+                                 WHERE jobNo = :jobNo)");
+                query.bindValue(":approved", approved ? 1 : 0);
+                query.bindValue(":note", note);
+
+            } else if (role == "manager" && statusField == "Design Checked") {
+                query.prepare(R"(UPDATE "Order-Status"
+                                 SET Design_Approve = :approved,
+                                     Design_Note = CASE WHEN :approved = 1 THEN '' ELSE :note END,
+                                     Designer = CASE WHEN :approved = 0 THEN 'Working' ELSE Designer END
+                                 WHERE jobNo = :jobNo)");
+                query.bindValue(":approved", approved ? 1 : 0);
+                query.bindValue(":note", note);
+
+            } else if (role == "manager" && statusField == "QC Done") {
+                query.prepare(R"(UPDATE "Order-Status"
+                                 SET Quality_Approve = :approved,
+                                     Quality_Note = CASE WHEN :approved = 1 THEN '' ELSE :note END,
+                                     Manufacturer = CASE WHEN :approved = 0 THEN 'Working' ELSE Manufacturer END
+                                 WHERE jobNo = :jobNo)");
+                query.bindValue(":approved", approved ? 1 : 0);
+                query.bindValue(":note", note);
+
+            } else {
+                // ✅ Fallback: update generic role column to new status
+                query.prepare(QString(R"(UPDATE "Order-Status" SET "%1" = :status WHERE jobNo = :jobNo)")
+                                  .arg(role));
+                query.bindValue(":status", statusField);
+            }
+
+            query.bindValue(":jobNo", jobNo);
+
+            success = query.exec();
+            if (!success) {
+                qWarning() << "❌ Failed to approve status change:"
+                           << query.lastError().text()
+                           << "| SQL:" << query.lastQuery();
+            }
+        } else {
+            qWarning() << "❌ DB open failed in approveStatusChange:" << db.lastError().text();
+        }
+
+        db.close();
+    }
+    QSqlDatabase::removeDatabase(connName);
+    return success;
+}
+
+QList<QVariantList> DatabaseUtils::fetchOrderListDetails() {
+    QList<QVariantList> orderList;
+
+    QString dbPath = QDir(QCoreApplication::applicationDirPath())
+                         .filePath("database/mega_mine_orderbook.db");
+
+    const QString connName = "order_list_conn";
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName(dbPath);
+
+        if (!db.open()) {
+            qDebug() << "❌ Database not open:" << db.lastError().text();
+            return orderList;
+        }
+
         QSqlQuery query(db);
         query.prepare(R"(
             SELECT
@@ -2124,173 +2540,126 @@ QList<QVariantList> DatabaseUtils:: fetchOrderListDetails() {
         if (!query.exec()) {
             qDebug() << "❌ Error executing query:" << query.lastError().text();
             db.close();
-            QSqlDatabase::removeDatabase("order_list");
+            QSqlDatabase::removeDatabase(connName);
             return orderList;
         }
 
+        int colCount = query.record().count();
         while (query.next()) {
             QVariantList row;
-            for (int i = 0; i < 16; ++i) {
+            for (int i = 0; i < colCount; ++i) {
                 row.append(query.value(i));
             }
             orderList.append(row);
         }
+
+        db.close(); // ✅ close before remove
     }
 
-    db.close();
-    QSqlDatabase::removeDatabase("order_list");
+    QSqlDatabase::removeDatabase(connName);
     return orderList;
 }
 
-QStringList DatabaseUtils::fetchPartyNamesForUser(const QString &userId)
+
+//JobSheet Logic
+QString DatabaseUtils::fetchImagePathForDesign(const QString &designNo)
 {
-    QStringList partyList;
-    QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/luxeMineAuthentication.db");
-
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "fetch_party_conn");
-    db.setDatabaseName(dbPath);
-
-    if (!db.open()) {
-        qDebug() << "❌ Database connection failed for user:" << userId << "Error:" << db.lastError().text();
-        return partyList;
-    }
+    const QString connName = "fetch_img_path_conn";
+    QString imagePath;
 
     {
-        QSqlQuery query(db);
-        query.prepare("SELECT name, id FROM Partys WHERE userId = :uid");
-        query.bindValue(":uid", userId);
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName("database/mega_mine_image.db");
 
-        if (!query.exec()) {
-            qDebug() << "❌ Query failed for user:" << userId << "Error:" << query.lastError().text();
-        } else {
-            partyList.append("-");
-            while (query.next()) {
-                QString name = query.value(0).toString();
-                QString id = query.value(1).toString();
-                QString displayText = QString("%1 (%2)").arg(name, id);
-                partyList.append(displayText);
+        if (db.open()) {
+            QSqlQuery query(db);
+            query.prepare("SELECT image_path FROM image_data WHERE design_no = :designNo");
+            query.bindValue(":designNo", designNo);
+
+            if (query.exec() && query.next()) {
+                imagePath = query.value("image_path").toString();
+            } else {
+                qWarning() << "❌ No image found for designNo:" << designNo;
             }
+
+            db.close();
+        } else {
+            qWarning() << "❌ Failed to open DB in fetchImagePathForDesign:" << db.lastError().text();
+        }
+    }
+    QSqlDatabase::removeDatabase(connName);
+    return imagePath;
+}
+
+void DatabaseUtils::fillStoneTable(QTableWidget *table, const QString &designNo)
+{
+    auto [diamondJson, stoneJson] = DatabaseUtils::fetchDiamondAndStoneJson(designNo);
+
+    table->setRowCount(0);
+    table->setColumnCount(4);
+    table->setHorizontalHeaderLabels({"Type", "Name", "Quantity", "Size (MM)"});
+
+    auto parseAndAddRows = [&](const QString &jsonStr, const QString &typeLabel) {
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(jsonStr.toUtf8(), &parseError);
+        if (parseError.error != QJsonParseError::NoError || !doc.isArray()) {
+            qWarning() << "⚠️ JSON parse error for" << typeLabel << ":" << parseError.errorString();
+            return;
+        }
+
+        for (const QJsonValue &value : doc.array()) {
+            if (!value.isObject()) continue;
+            QJsonObject obj = value.toObject();
+
+            int row = table->rowCount();
+            table->insertRow(row);
+            table->setItem(row, 0, new QTableWidgetItem(typeLabel));
+            table->setItem(row, 1, new QTableWidgetItem(obj.value("type").toString()));
+            table->setItem(row, 2, new QTableWidgetItem(obj.value("quantity").toString()));
+            table->setItem(row, 3, new QTableWidgetItem(obj.value("sizeMM").toString()));
+        }
+    };
+
+    parseAndAddRows(diamondJson, "Diamond");
+    parseAndAddRows(stoneJson, "Stone");
+
+    table->resizeColumnsToContents();
+}
+
+bool DatabaseUtils::updateDesignNoAndImagePath(const QString &jobNo, const QString &designNo, const QString &imagePath)
+{
+    const QString connName = "update_design_img_conn";
+    bool success = false;
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName("database/mega_mine_orderbook.db");
+
+        if (db.open()) {
+            QSqlQuery query(db);
+            query.prepare(R"(
+                UPDATE "OrderBook-Detail"
+                SET designNo1 = :designNo, image1path = :imagePath
+                WHERE jobNo = :jobNo
+            )");
+            query.bindValue(":designNo", designNo);
+            query.bindValue(":imagePath", imagePath);
+            query.bindValue(":jobNo", jobNo);
+
+            if (query.exec()) {
+                qDebug() << "✅ Design number and image path updated for jobNo:" << jobNo;
+                success = true;
+            } else {
+                qWarning() << "❌ Failed to update OrderBook-Detail:" << query.lastError().text();
+            }
+
+            db.close();
+        } else {
+            qWarning() << "❌ Failed to open DB in updateDesignNoAndImagePath:" << db.lastError().text();
         }
     }
 
-    db.close();
-    QSqlDatabase::removeDatabase("fetch_party_conn");
-    return partyList;
-}
-
-bool DatabaseUtils::insertParty(const PartyData &party)
-{
-    QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/luxeMineAuthentication.db");
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "insert_party_conn");
-    db.setDatabaseName(dbPath);
-
-    if (!db.open()) {
-        qDebug() << "❌ Failed to open DB for party insert:" << db.lastError().text();
-        return false;
-    }
-
-    bool success = false;
-    {
-        QSqlQuery query(db);
-        query.prepare(R"(
-            INSERT INTO Partys (id, name, email, mobileNo, address, city, state, country, areaCode, userId, date)
-            VALUES (:id, :name, :email, :mobileNo, :address, :city, :state, :country, :areaCode, :userId, :date)
-        )");
-
-        query.bindValue(":id", party.id);
-        query.bindValue(":name", party.name);
-        query.bindValue(":email", party.email);
-        query.bindValue(":mobileNo", party.mobileNo);
-        query.bindValue(":address", party.address);
-        query.bindValue(":city", party.city);
-        query.bindValue(":state", party.state);
-        query.bindValue(":country", party.country);
-        query.bindValue(":areaCode", party.areaCode);
-        query.bindValue(":userId", party.userId);
-        query.bindValue(":date", party.date);
-
-        success = query.exec();
-        if (!success)
-            qDebug() << "❌ Failed to insert party:" << query.lastError().text();
-    }
-
-    db.close();
-    QSqlDatabase::removeDatabase("insert_party_conn");
+    QSqlDatabase::removeDatabase(connName);
     return success;
 }
-
-PartyInfo DatabaseUtils::fetchPartyDetails(const QString &userId, const QString &partyId)
-{
-    PartyInfo info;
-    QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/luxeMineAuthentication.db");
-
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "fetch_party_detail_conn");
-    db.setDatabaseName(dbPath);
-
-    if (!db.open()) {
-        qDebug() << "❌ Failed to open DB in fetchPartyDetails:" << db.lastError().text();
-        return info;
-    }
-
-    {
-        QSqlQuery query(db);
-        query.prepare(R"(
-            SELECT id, name, address, city, state, country
-            FROM Partys
-            WHERE userId = :uid AND id = :pid
-            LIMIT 1
-        )");
-        query.bindValue(":uid", userId);
-        query.bindValue(":pid", partyId);
-
-        if (query.exec() && query.next()) {
-            info.id      = query.value("id").toString();
-            info.name    = query.value("name").toString();
-            info.address = query.value("address").toString();
-            info.city    = query.value("city").toString();
-            info.state   = query.value("state").toString();
-            info.country = query.value("country").toString();
-        } else {
-            qDebug() << "❌ Query failed or no result in fetchPartyDetails:" << query.lastError().text();
-        }
-    }
-
-    db.close();
-    QSqlDatabase::removeDatabase("fetch_party_detail_conn");
-    return info;
-}
-
-LoginResult DatabaseUtils::authenticateUser(const QString &userId, const QString &password)
-{
-    LoginResult result;
-    QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/luxeMineAuthentication.db");
-
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "auth_conn");
-    db.setDatabaseName(dbPath);
-
-    if (!db.open()) {
-        qDebug() << "❌ Failed to open authentication DB:" << db.lastError().text();
-        return result;
-    }
-
-    {
-        QSqlQuery query(db);
-        query.prepare("SELECT userName, role FROM OrderBook_Login WHERE userId = :id AND password = :pwd");
-        query.bindValue(":id", userId);
-        query.bindValue(":pwd", password);
-
-        if (query.exec() && query.next()) {
-            result.success = true;
-            result.userName = query.value("userName").toString();
-            result.role = query.value("role").toString();
-        } else if (query.lastError().isValid()) {
-            qDebug() << "❌ Login query error:" << query.lastError().text();
-        }
-    }
-
-    db.close();
-    QSqlDatabase::removeDatabase("auth_conn");
-    return result;
-}
-
 

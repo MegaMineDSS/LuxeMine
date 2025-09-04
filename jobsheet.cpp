@@ -1,12 +1,10 @@
 #include "jobsheet.h"
 #include "ui_jobsheet.h"
 
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
 #include <QDir>
-
 #include <QDebug>
+
+#include "databaseutils.h"
 
 JobSheet::JobSheet(QWidget *parent, const QString &jobNo, const QString &role)
     : QDialog(parent),
@@ -145,153 +143,70 @@ void JobSheet::addTableRow(QTableWidget *table)
 
 void JobSheet::set_value(const QString &jobNo)
 {
-    // Set working directory
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-
-    // Open database connection
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "set_jobsheet");
-    db.setDatabaseName("database/mega_mine_orderbook.db");
-
-    if (!db.open()) {
-        qDebug() << "Failed to open database:" << db.lastError().text();
-        return;
-    }
-
-    QSqlQuery query(db);
-    query.prepare(R"(
-        SELECT sellerId, partyId, jobNo, orderNo, clientId, orderDate, deliveryDate,
-               productPis, designNo1, metalPurity, metalColor, sizeNo, sizeMM,
-               length, width, height, image1path
-        FROM "OrderBook-Detail"
-        WHERE jobNo = :jobNo
-    )");
-    query.bindValue(":jobNo", jobNo);
-
-    if (!query.exec()) {
-        qDebug() << "Query failed:" << query.lastError().text();
-        return;
-    }
-
-    if (query.next()) {
-        ui->jobIssuLineEdit->setText(query.value("sellerId").toString());
-        ui->orderPartyLineEdit->setText(query.value("partyId").toString());
-        ui->jobNoLineEdit->setText(query.value("jobNo").toString());
-        ui->orderNoLineEdit->setText(query.value("orderNo").toString());
-        ui->clientIdLineEdit->setText(query.value("clientId").toString());
-
-        // Dates
-        QDate orderDate = QDate::fromString(query.value("orderDate").toString(), "yyyy-MM-dd");
-        ui->dateOrderDateEdit->setDate(orderDate);
-
-        QDate deliveryDate = QDate::fromString(query.value("deliveryDate").toString(), "yyyy-MM-dd");
-        ui->deliDateDateEdit->setDate(deliveryDate);
-
-        // Product details
-        ui->itemDesignLineEdit->setText(QString::number(query.value("productPis").toInt()));
-        ui->desigNoLineEdit->setText(query.value("designNo1").toString());
-        ui->purityLineEdit->setText(query.value("metalPurity").toString());
-        ui->metColLineEdit->setText(query.value("metalColor").toString());
-
-
-        // Size-related
-        ui->sizeNoLineEdit->setText(QString::number(query.value("sizeNo").toDouble()));
-        ui->MMLineEdit->setText(QString::number(query.value("sizeMM").toDouble()));
-        ui->lengthLineEdit->setText(QString::number(query.value("length").toDouble()));
-        ui->widthLineEdit->setText(QString::number(query.value("width").toDouble()));
-        ui->heightLineEdit->setText(QString::number(query.value("height").toDouble()));
-
-        // ✅ Load image if image1path exists
-        QString imagePath = query.value("image1path").toString();
-        QString fullPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + imagePath);
-
-        QPixmap pixmap(fullPath);
-        if (!imagePath.isNull()) {
-            ui->productImageLabel->setScaledContents(true);
-            ui->productImageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-            ui->productImageLabel->setPixmap(pixmap);
-        }
-        else {
-            qDebug() << "⚠️ Could not load image for design from:" << fullPath;
-        }
-
-    } else {
+    auto dataOpt = DatabaseUtils::fetchJobSheetData(jobNo);
+    if (!dataOpt) {
         qDebug() << "No record found for jobNo:" << jobNo;
-    }
-
-    // Extract designNo
-    QString designNo = query.value("designNo1").toString();
-    ui->desigNoLineEdit->setText(designNo);
-
-    // Switch to image DB
-    QSqlDatabase imageDb = QSqlDatabase::addDatabase("QSQLITE", "design_info_conn");
-    imageDb.setDatabaseName("database/mega_mine_image.db");
-
-    if (!imageDb.open()) {
-        qDebug() << "❌ Could not open image database:" << imageDb.lastError().text();
         return;
     }
+    const auto &data = *dataOpt;
 
-    // Query diamond & stone info
-    QSqlQuery imgQuery(imageDb);
-    imgQuery.prepare("SELECT diamond, stone FROM image_data WHERE design_no = :designNo");
-    imgQuery.bindValue(":designNo", designNo);
+    // Fill UI
+    ui->jobIssuLineEdit->setText(data.sellerId);
+    ui->orderPartyLineEdit->setText(data.partyId);
+    ui->jobNoLineEdit->setText(data.jobNo);
+    ui->orderNoLineEdit->setText(data.orderNo);
+    ui->clientIdLineEdit->setText(data.clientId);
 
-    if (!imgQuery.exec()) {
-        qDebug() << "❌ Failed to query diamond & stone:" << imgQuery.lastError().text();
-        imageDb.close();
-        QSqlDatabase::removeDatabase("design_info_conn");
-        return;
+    ui->dateOrderDateEdit->setDate(QDate::fromString(data.orderDate, "yyyy-MM-dd"));
+    ui->deliDateDateEdit->setDate(QDate::fromString(data.deliveryDate, "yyyy-MM-dd"));
+
+    ui->itemDesignLineEdit->setText(QString::number(data.productPis));
+    ui->desigNoLineEdit->setText(data.designNo);
+    ui->purityLineEdit->setText(data.metalPurity);
+    ui->metColLineEdit->setText(data.metalColor);
+
+    ui->sizeNoLineEdit->setText(QString::number(data.sizeNo));
+    ui->MMLineEdit->setText(QString::number(data.sizeMM));
+    ui->lengthLineEdit->setText(QString::number(data.length));
+    ui->widthLineEdit->setText(QString::number(data.width));
+    ui->heightLineEdit->setText(QString::number(data.height));
+
+    // Image
+    if (!data.imagePath.isEmpty()) {
+        QString fullPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + data.imagePath);
+        QPixmap pixmap(fullPath);
+        ui->productImageLabel->setScaledContents(true);
+        ui->productImageLabel->setPixmap(pixmap);
     }
 
-    QTableWidget* table = ui->diaAndStoneForDesignTableWidget;
-    table->setRowCount(0); // Clear existing
+    // Diamond & Stone
+    auto [diamondJson, stoneJson] = DatabaseUtils::fetchDiamondAndStoneJson(data.designNo);
+
+    QTableWidget *table = ui->diaAndStoneForDesignTableWidget;
+    table->setRowCount(0);
     table->setColumnCount(4);
     table->setHorizontalHeaderLabels({"Type", "Name", "Quantity", "Size (MM)"});
 
-    auto parseAndAddRows = [&](const QString& jsonStr, const QString& typeLabel) {
+    auto parseAndAddRows = [&](const QString &jsonStr, const QString &typeLabel) {
         QJsonParseError parseError;
         QJsonDocument doc = QJsonDocument::fromJson(jsonStr.toUtf8(), &parseError);
-        if (parseError.error != QJsonParseError::NoError || !doc.isArray()) {
-            qDebug() << "⚠️ Failed to parse JSON for" << typeLabel << ":" << parseError.errorString();
+        if (parseError.error != QJsonParseError::NoError || !doc.isArray())
             return;
-        }
-
-        QJsonArray array = doc.array();
-        for (const QJsonValue& value : array) {
+        for (auto value : doc.array()) {
             if (!value.isObject()) continue;
-
             QJsonObject obj = value.toObject();
-            QString name = obj.value("type").toString();
-            QString qty = obj.value("quantity").toString();
-            QString size = obj.value("sizeMM").toString();
-
             int row = table->rowCount();
             table->insertRow(row);
             table->setItem(row, 0, new QTableWidgetItem(typeLabel));
-            table->setItem(row, 1, new QTableWidgetItem(name));
-            table->setItem(row, 2, new QTableWidgetItem(qty));
-            table->setItem(row, 3, new QTableWidgetItem(size));
+            table->setItem(row, 1, new QTableWidgetItem(obj["type"].toString()));
+            table->setItem(row, 2, new QTableWidgetItem(obj["quantity"].toString()));
+            table->setItem(row, 3, new QTableWidgetItem(obj["sizeMM"].toString()));
         }
     };
 
-    if (imgQuery.next()) {
-        QString diamondJson = imgQuery.value("diamond").toString();
-        QString stoneJson = imgQuery.value("stone").toString();
-
-        parseAndAddRows(diamondJson, "Diamond");
-        parseAndAddRows(stoneJson, "Stone");
-
-        table->resizeColumnsToContents();
-    } else {
-        qDebug() << "ℹ️ No diamond/stone data found for design:" << designNo;
-    }
-
-    imageDb.close();
-    QSqlDatabase::removeDatabase("design_info_conn");
-
-
-    db.close();  // Always close the DB
-    QSqlDatabase::removeDatabase("set_jobsheet");
+    parseAndAddRows(diamondJson, "Diamond");
+    parseAndAddRows(stoneJson, "Stone");
+    table->resizeColumnsToContents();
 }
 
 void JobSheet::loadImageForDesignNo()
@@ -302,95 +217,29 @@ void JobSheet::loadImageForDesignNo()
         return;
     }
 
-    // Set working directory
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-
-    // Open the image database
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "image_conn");
-    db.setDatabaseName("database/mega_mine_image.db");
-
-    if (!db.open()) {
-        QMessageBox::critical(this, "Database Error", "Failed to open image database:\n" + db.lastError().text());
-        return;
-    }
-
-    QSqlQuery query(db);
-    query.prepare("SELECT image_path FROM image_data WHERE design_no = :designNo");
-    query.bindValue(":designNo", designNo);
-
-    if (!query.exec()) {
-        QMessageBox::critical(this, "Query Error", "Failed to execute query:\n" + query.lastError().text());
-        db.close();
-        QSqlDatabase::removeDatabase("image_conn");
-        return;
-    }
-
-    if (query.next()) {
-        QString imagePath = query.value("image_path").toString();
-        QString fullPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + imagePath);
-
-        QPixmap pixmap(fullPath);
-        if (!pixmap.isNull()) {
-            ui->productImageLabel->setPixmap(pixmap.scaled(ui->productImageLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-
-            // ✅ Save to OrderBook-Detail table
-            saveDesignNoAndImagePath(designNo, imagePath);
-
-        } else {
-            QMessageBox::warning(this, "Image Error", "Image not found at path:\n" + fullPath);
-        }
-    } else {
+    // --- Fetch image path from DB ---
+    QString imagePath = DatabaseUtils::fetchImagePathForDesign(designNo);
+    if (imagePath.isEmpty()) {
         QMessageBox::information(this, "Not Found", "No image found for design number: " + designNo);
+        return;
     }
 
-    QSqlQuery detailsQuery(db);
-    detailsQuery.prepare("SELECT diamond, stone FROM image_data WHERE design_no = :designNo");
-    detailsQuery.bindValue(":designNo", designNo);
+    QString fullPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + imagePath);
+    QPixmap pixmap(fullPath);
 
-    if (!detailsQuery.exec()) {
-        QMessageBox::critical(this, "Query Error", "Failed to fetch diamond and stone data:\n" + detailsQuery.lastError().text());
-    } else if (detailsQuery.next()) {
-        QString diamondJson = detailsQuery.value("diamond").toString();
-        QString stoneJson = detailsQuery.value("stone").toString();
-
-        QTableWidget* table = ui->diaAndStoneForDesignTableWidget;
-        table->setRowCount(0); // clear previous
-        table->setColumnCount(4);
-        table->setHorizontalHeaderLabels({"Type", "Name", "Quantity", "Size (MM)"});
-
-        auto parseAndAddRows = [&](const QString& jsonStr, const QString& typeLabel) {
-            QJsonParseError parseError;
-            QJsonDocument doc = QJsonDocument::fromJson(jsonStr.toUtf8(), &parseError);
-            if (parseError.error != QJsonParseError::NoError || !doc.isArray())
-                return;
-
-            QJsonArray array = doc.array();
-            for (const QJsonValue& value : array) {
-                if (!value.isObject()) continue;
-
-                QJsonObject obj = value.toObject();
-                QString name = obj.value("type").toString();
-                QString qty = obj.value("quantity").toString();
-                QString size = obj.value("sizeMM").toString();
-
-                int row = table->rowCount();
-                table->insertRow(row);
-                table->setItem(row, 0, new QTableWidgetItem(typeLabel)); // "Diamond" or "Stone"
-                table->setItem(row, 1, new QTableWidgetItem(name));
-                table->setItem(row, 2, new QTableWidgetItem(qty));
-                table->setItem(row, 3, new QTableWidgetItem(size));
-            }
-        };
-
-        parseAndAddRows(diamondJson, "Diamond");
-        parseAndAddRows(stoneJson, "Stone");
-
-        table->resizeColumnsToContents(); // optional
+    if (!pixmap.isNull()) {
+        ui->productImageLabel->setPixmap(
+            pixmap.scaled(ui->productImageLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation)
+            );
+        // ✅ Save into OrderBook-Detail
+        saveDesignNoAndImagePath(designNo, imagePath);
+    } else {
+        QMessageBox::warning(this, "Image Error", "Image not found at path:\n" + fullPath);
+        return;
     }
 
-
-    db.close();
-    QSqlDatabase::removeDatabase("image_conn");
+    // --- Fill diamond & stone table ---
+    DatabaseUtils::fillStoneTable(ui->diaAndStoneForDesignTableWidget, designNo);
 }
 
 void JobSheet::saveDesignNoAndImagePath(const QString &designNo, const QString &imagePath)
@@ -401,34 +250,7 @@ void JobSheet::saveDesignNoAndImagePath(const QString &designNo, const QString &
         return;
     }
 
-    // Set working directory
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "save_design_image");
-    db.setDatabaseName("database/mega_mine_orderbook.db");
-
-    if (!db.open()) {
-        QMessageBox::critical(this, "DB Error", "Failed to open orderbook DB:\n" + db.lastError().text());
-        return;
+    if (!DatabaseUtils::updateDesignNoAndImagePath(jobNo, designNo, imagePath)) {
+        QMessageBox::critical(this, "Query Error", "Failed to update OrderBook-Detail.");
     }
-
-    QSqlQuery query(db);
-    query.prepare(R"(
-        UPDATE "OrderBook-Detail"
-        SET designNo1 = :designNo, image1path = :imagePath
-        WHERE jobNo = :jobNo
-    )");
-
-    query.bindValue(":designNo", designNo);
-    query.bindValue(":imagePath", imagePath);
-    query.bindValue(":jobNo", jobNo);
-
-    if (!query.exec()) {
-        QMessageBox::critical(this, "Query Error", "Failed to update OrderBook-Detail:\n" + query.lastError().text());
-    } else {
-        qDebug() << "✅ Design number and image path updated for jobNo:" << jobNo;
-    }
-
-    db.close();
-    QSqlDatabase::removeDatabase("save_design_image");
 }

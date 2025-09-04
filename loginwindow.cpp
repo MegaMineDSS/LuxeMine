@@ -33,17 +33,22 @@ void LoginWindow::on_savePartyButton_clicked()
     party.name = ui->partyNameLineEdit->text().trimmed();
     party.id = ui->setPartyIdLineEdit->text().trimmed();
     party.email = ui->partyEmailLineEdit->text().trimmed();
-    party.mobileNo = ui->partyMobileNoLineEdit->text().toInt();
+
+    bool okMobile = false, okArea = false;
+    party.mobileNo = ui->partyMobileNoLineEdit->text().toInt(&okMobile);
+    party.areaCode = ui->partyAreaCodeLineEdit->text().toInt(&okArea);
+
     party.address = ui->partyAddressTextEdit->toPlainText().trimmed();
     party.city = ui->partyCityLineEdit->text().trimmed();
     party.state = ui->partyStateLineEdit->text().trimmed();
     party.country = ui->partyCountryLineEdit->text().trimmed();
-    party.areaCode = ui->partyAreaCodeLineEdit->text().toInt();
     party.userId = userId;
     party.date = QDate::currentDate().toString("yyyy-MM-dd");
 
-    if (party.id.isEmpty() || party.name.isEmpty()) {
-        QMessageBox::warning(this, "Input Error", "All fields are required.");
+    // Validate required fields
+    if (party.id.isEmpty() || party.name.isEmpty() ||
+        party.email.isEmpty() || !okMobile || !okArea) {
+        QMessageBox::warning(this, "Input Error", "Please fill all fields correctly.");
         return;
     }
 
@@ -56,6 +61,7 @@ void LoginWindow::on_savePartyButton_clicked()
     ui->stackedWidget->setCurrentIndex(1);
     set_comboBox_selectParty();
 
+    // Clear inputs
     ui->partyNameLineEdit->clear();
     ui->setPartyIdLineEdit->clear();
     ui->partyMobileNoLineEdit->clear();
@@ -80,11 +86,13 @@ void LoginWindow::on_goPushButton_clicked()
         return;
     }
 
-    QRegularExpression regex("^(.*) \\((.*)\\)$");
+    // Improved regex: capture name and numeric ID safely
+    QRegularExpression regex(R"(^(.+)\s\((\d+)\)$)");
     QRegularExpressionMatch match = regex.match(partyText);
 
     if (!match.hasMatch()) {
-        qDebug() << "Invalid combo box text format:" << partyText;
+        qDebug() << "⚠️ Invalid combo box text format:" << partyText;
+        QMessageBox::warning(this, "Format Error", "Selected party format is invalid.");
         return;
     }
 
@@ -98,6 +106,7 @@ void LoginWindow::on_goPushButton_clicked()
         return;
     }
 
+    // Store values
     this->partyId = info.id;
     this->partyName = info.name;
     this->partyAddress = info.address;
@@ -107,7 +116,7 @@ void LoginWindow::on_goPushButton_clicked()
 
     emit loginAccepted("orderMenu");
 
-    this->accept();
+    this->accept();  // Close the dialog
 }
 
 void LoginWindow::on_backPartyPushButton_clicked()
@@ -154,14 +163,13 @@ void LoginWindow::on_loginPushButton_clicked()
 
 void LoginWindow::on_orderListPushButton_clicked()
 {
-    if (userId.isEmpty() || role.isEmpty()) {
+    if (this->userId.isEmpty() || this->role.isEmpty()) {
         QMessageBox::warning(this, "Error", "You must log in first.");
         return;
     }
 
-    emit loginAccepted("orderList");
+    ui->orderListPushButton->setEnabled(false);  // prevent duplicate clicks
 
+    emit loginAccepted("orderList");
     this->accept();
 }
-
-
