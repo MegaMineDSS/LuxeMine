@@ -12,6 +12,7 @@
 #include <QHeaderView>
 #include <QCoreApplication>
 #include <QRandomGenerator>
+#include <QUuid>
 
 #include "databaseutils.h"
 #include "commontypes.h"
@@ -24,7 +25,9 @@ bool DatabaseUtils::deleteJewelryMenuItem(int id)
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) {
             qDebug() << "Error: Failed to open database:" << db.lastError().text();
             return false;
@@ -53,10 +56,12 @@ bool DatabaseUtils::insertJewelryMenuItem(int parentId, const QString &name, con
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
 
         if (!db.open()) {
-            qDebug() << "❌ Failed to open DB in insertJewelryMenuItem:" << db.lastError().text();
+            qDebug() << "Failed to open DB in insertJewelryMenuItem:" << db.lastError().text();
             return false;
         }
 
@@ -73,7 +78,7 @@ bool DatabaseUtils::insertJewelryMenuItem(int parentId, const QString &name, con
 
             success = query.exec();
             if (!success) {
-                qDebug() << "❌ Insert failed in jewelry_menu:" << query.lastError().text();
+                qDebug() << "Insert failed in jewelry_menu:" << query.lastError().text();
             }
         } // ✅ query destroyed here
 
@@ -130,7 +135,9 @@ QMap<QString, QString> DatabaseUtils::fetchGoldPrices()
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) return {};
 
         {
@@ -156,7 +163,9 @@ bool DatabaseUtils::updateGoldPrices(const QMap<QString, QString> &priceUpdates)
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) return false;
 
         db.transaction(); // ✅ start transaction
@@ -193,7 +202,9 @@ bool DatabaseUtils::sizeMMExists(const QString &table, double sizeMM)
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) {
             qWarning() << "DB open failed (sizeMMExists):" << db.lastError();
             QSqlDatabase::removeDatabase(connectionName);  // ✅ cleanup
@@ -222,7 +233,9 @@ bool DatabaseUtils::insertRoundDiamond(const QString &sieve, double sizeMM, doub
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) {
             qWarning() << "DB open failed (insertRoundDiamond):" << db.lastError();
             QSqlDatabase::removeDatabase(connectionName);  // ✅ cleanup
@@ -255,7 +268,9 @@ bool DatabaseUtils::insertFancyDiamond(const QString &shape, const QString &size
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
 
         if (!db.open()) {
             qWarning() << "DB open failed (insertFancyDiamond):" << db.lastError();
@@ -294,7 +309,9 @@ QSqlTableModel* DatabaseUtils::createTableModel(QObject *parent, const QString &
         db = QSqlDatabase::database("table_model_conn");
     } else {
         db = QSqlDatabase::addDatabase("QSQLITE", "table_model_conn");
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
     }
 
     if (!db.open()) {
@@ -312,6 +329,17 @@ QSqlTableModel* DatabaseUtils::createTableModel(QObject *parent, const QString &
         return nullptr;
     }
 
+    // this is for debug lines of values of select query
+
+    // qDebug() << "Dumping table:" << table;
+    // for (int row = 0; row < model->rowCount(); ++row) {
+    //     QStringList rowValues;
+    //     for (int col = 0; col < model->columnCount(); ++col) {
+    //         rowValues << model->data(model->index(row, col)).toString();
+    //     }
+    //     qDebug() << row << ":" << rowValues.join(" | ");
+    // }
+
     return model; // keep DB alive while model exists
 }
 
@@ -324,7 +352,9 @@ QStringList DatabaseUtils::fetchRoles()
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName("database/luxeMineAuthentication.db");
+        // db.setDatabaseName("database/luxeMineAuthentication.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/luxeMineAuthentication.db");
+        db.setDatabaseName(dbPath);
 
         if (!db.open()) {
             qDebug() << "Failed to open database for fetchRoles:" << db.lastError().text();
@@ -357,7 +387,9 @@ QStringList DatabaseUtils::fetchImagePaths()
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
 
         if (!db.open()) {
             qWarning() << "Failed to open image DB:" << db.lastError();
@@ -593,7 +625,9 @@ bool DatabaseUtils::checkAdminCredentials(const QString &username, const QString
     {
         QDir::setCurrent(QCoreApplication::applicationDirPath());
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName("database/mega_mine.db");
+        // db.setDatabaseName("database/mega_mine.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
 
         if (!db.open()) {
             qDebug() << "Failed to connect to admin_login DB:" << db.lastError().text();
@@ -699,7 +733,9 @@ bool DatabaseUtils::updateStatusChangeRequest(int requestId, bool approved, cons
     const QString connName = "status_change_update_conn";
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName("database/mega_mine_orderbook.db");
+        // db.setDatabaseName("database/mega_mine_orderbook.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
+        db.setDatabaseName(dbPath);
 
         if (!db.open()) {
             qDebug() << "❌ DB Open Failed:" << db.lastError().text();
@@ -795,27 +831,30 @@ bool DatabaseUtils::updateRoleStatus(const QString &jobNo, const QString &role, 
 {
     const QString connName = "update_role_status_conn";
     bool success = false;
-
+    // qDebug()<<role;
+    QString normalizedRole = role.toLower();
     // 🔒 Explicit whitelist mapping of roles -> columns
     static const QMap<QString, QString> roleToColumn = {
         {"manager",      "Manager"},
         {"designer",     "Designer"},
-        {"manufacturer", "Manufacturer"},
+        {"manufacturer", "Manufacturer"}, //Manufacturer
         {"accountant",   "Accountant"}
     };
 
-    if (!roleToColumn.contains(role)) {
+    if (!roleToColumn.contains(normalizedRole)) {
         qWarning() << "❌ Invalid role passed to updateRoleStatus:" << role;
         return false;
     }
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName("database/mega_mine_orderbook.db");
+        // db.setDatabaseName("database/mega_mine_orderbook.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
+        db.setDatabaseName(dbPath);
 
         if (db.open()) {
             QSqlQuery query(db);
-            QString column = roleToColumn[role];
+            QString column = roleToColumn[normalizedRole];
             QString sql = QString(R"(UPDATE "Order-Status" SET "%1" = :status WHERE jobNo = :jobNo)").arg(column);
 
             query.prepare(sql);
@@ -927,7 +966,9 @@ bool DatabaseUtils::userExists(const QString &userId)
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) return false;
 
         {
@@ -951,7 +992,9 @@ bool DatabaseUtils::userExistsByMobileAndName(const QString &userId, const QStri
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) return false;
 
         {
@@ -976,7 +1019,9 @@ bool DatabaseUtils::insertUser(const QString &userId, const QString &companyName
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) return false;
 
         {
@@ -1009,7 +1054,9 @@ QList<SelectionData> DatabaseUtils::loadUserCart(const QString &userId)
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) return selections;
 
         {
@@ -1211,7 +1258,9 @@ QList<ImageRecord> DatabaseUtils::getAllItems()
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) {
             qDebug() << "Error: Could not open database for getAllItems:" << db.lastError().text();
             return items;
@@ -1254,8 +1303,8 @@ QPixmap DatabaseUtils::fetchImagePixmap(int imageId)
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName(QDir(QCoreApplication::applicationDirPath())
-                               .filePath("database/mega_mine_image.db"));
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) {
             qDebug() << "Failed to open DB for fetchImagePixmap:" << db.lastError().text();
             return QPixmap(":/icon/placeholder.png");
@@ -1297,7 +1346,8 @@ QString DatabaseUtils::fetchJsonData(int imageId, const QString &column)
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName(QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db"));
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) {
             qDebug() << "Error: Failed to open database for fetchJsonData:" << db.lastError().text();
             return "[]";
@@ -1331,7 +1381,9 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondDetails(int imageId)
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) return {};
 
         {
@@ -1413,7 +1465,9 @@ QPair<QString, QString> DatabaseUtils::fetchStoneDetails(int imageId)
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) return {};
 
         {
@@ -1476,7 +1530,9 @@ double DatabaseUtils::calculateTotalGoldWeight(const QList<SelectionData> &selec
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) return 0.0;
 
         QHash<int, QString> goldCache;
@@ -1561,7 +1617,9 @@ void DatabaseUtils::updateSummaryTable(QTableWidget *table, const QList<Selectio
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
         if (!db.open()) return;
 
         {
@@ -1662,7 +1720,8 @@ QStringList DatabaseUtils::fetchShapes(const QString &tableType)
     QStringList shapes;
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-    db.setDatabaseName(QCoreApplication::applicationDirPath() + "/database/mega_mine_image.db");
+    QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+    db.setDatabaseName(dbPath);
 
     if (!db.open()) {
         QSqlDatabase::removeDatabase(connectionName);
@@ -1697,7 +1756,8 @@ QStringList DatabaseUtils::fetchSizes(const QString &tableType, const QString &s
     QStringList sizes;
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-    db.setDatabaseName(QCoreApplication::applicationDirPath() + "/database/mega_mine_image.db");
+    QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+    db.setDatabaseName(dbPath);
 
     if (!db.open()) {
         QSqlDatabase::removeDatabase(connectionName);
@@ -1737,25 +1797,35 @@ QStringList DatabaseUtils::fetchSizes(const QString &tableType, const QString &s
 
 QString DatabaseUtils::saveImage(const QString &imagePath)
 {
-    if (!QFile::exists(imagePath))
+    QFileInfo sourceInfo(imagePath);
+    if (!sourceInfo.exists()) {
+        qWarning() << "Source image does not exist:" << imagePath;
         return {};
-
-    QString targetDir = QDir(QCoreApplication::applicationDirPath()).filePath("images");
-    QDir().mkpath(targetDir);
-
-    QString newImagePath = QDir(targetDir).filePath(QFileInfo(imagePath).fileName());
-
-    // Handle existing file (overwrite safely)
-    if (QFile::exists(newImagePath)) {
-        QFile::remove(newImagePath);
     }
 
-    if (!QFile::copy(imagePath, newImagePath))
+    // 1. Get the file extension (e.g., "jpg", "png")
+    QString extension = sourceInfo.suffix();
+
+    // 2. Generate a new, unique filename using a UUID
+    // Example result: "67c9a2e65a5c4c6d979953a1a632b70d.jpg"
+    QString uniqueName = QUuid::createUuid().toString(QUuid::WithoutBraces) + "." + extension;
+
+    // 3. Construct the full destination path where the file will be saved
+    QString targetDir = QDir(QCoreApplication::applicationDirPath()).filePath("images");
+    QDir().mkpath(targetDir); // Ensure the directory exists
+    QString newImagePath = QDir(targetDir).filePath(uniqueName);
+
+    // 4. Perform the copy operation
+    if (!QFile::copy(imagePath, newImagePath)) {
+        qWarning() << "Failed to copy image from" << imagePath << "to" << newImagePath;
         return {};
+    }
 
-    return newImagePath;
+    // 5. MODIFIED: Return the relative path in the exact format "images/filename.type"
+    // The filename here is our new unique filename.
+
+    return "images/" + uniqueName;
 }
-
 
 bool DatabaseUtils::insertCatalogData(const QString &imagePath, const QString &imageType, const QString &designNo,
                                       const QString &companyName, const QJsonArray &goldArray,
@@ -1765,44 +1835,48 @@ bool DatabaseUtils::insertCatalogData(const QString &imagePath, const QString &i
     const QString connectionName = "insert_conn";
     bool success = false;
 
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-    db.setDatabaseName(QCoreApplication::applicationDirPath() + "/database/mega_mine_image.db");
-
-    if (!db.open()) {
-        QSqlDatabase::removeDatabase(connectionName);
-        return false;
-    }
-
-    QJsonDocument goldDoc(goldArray);
-    QJsonDocument diamondDoc(diamondArray);
-    QJsonDocument stoneDoc(stoneArray);
-
     {
-        QSqlQuery query(db);
-        query.prepare(R"(
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
+
+        if (!db.open()) {
+            QSqlDatabase::removeDatabase(connectionName);
+            return false;
+        }
+
+        QJsonDocument goldDoc(goldArray);
+        QJsonDocument diamondDoc(diamondArray);
+        QJsonDocument stoneDoc(stoneArray);
+
+        {
+            QSqlQuery query(db);
+            query.prepare(R"(
             INSERT INTO image_data
             (image_path, image_type, design_no, company_name, gold_weight, diamond, stone, time, note)
             VALUES (:image_path, :image_type, :design_no, :company_name, :gold_weight, :diamond, :stone, :time, :note)
         )");
 
-        query.bindValue(":image_path", imagePath);
-        query.bindValue(":image_type", imageType);
-        query.bindValue(":design_no", designNo);
-        query.bindValue(":company_name", companyName);
-        query.bindValue(":gold_weight", goldDoc.toJson(QJsonDocument::Compact));
-        query.bindValue(":diamond", diamondDoc.toJson(QJsonDocument::Compact));
-        query.bindValue(":stone", stoneDoc.toJson(QJsonDocument::Compact));
-        query.bindValue(":time", QDateTime::currentDateTime().toString(Qt::ISODate));
-        query.bindValue(":note", note);
+            query.bindValue(":image_path", imagePath);
+            query.bindValue(":image_type", imageType);
+            query.bindValue(":design_no", designNo);
+            query.bindValue(":company_name", companyName);
+            query.bindValue(":gold_weight", goldDoc.toJson(QJsonDocument::Compact));
+            query.bindValue(":diamond", diamondDoc.toJson(QJsonDocument::Compact));
+            query.bindValue(":stone", stoneDoc.toJson(QJsonDocument::Compact));
+            query.bindValue(":time", QDateTime::currentDateTime().toString(Qt::ISODate));
+            query.bindValue(":note", note);
 
-        if (!query.exec()) {
-            qDebug() << "Insert failed:" << query.lastError().text();
-        } else {
-            success = true;
+            if (!query.exec()) {
+                qDebug() << "Insert failed:" << query.lastError().text();
+            } else {
+                success = true;
+            }
         }
-    }
 
-    db.close();
+        db.close();
+
+    }
     QSqlDatabase::removeDatabase(connectionName);
     return success;
 }
@@ -2000,7 +2074,9 @@ int DatabaseUtils::insertDummyOrder(const QString &sellerName, const QString &se
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName("database/mega_mine_orderbook.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
+        db.setDatabaseName(dbPath);
+        qDebug()<<dbPath;
         if (!db.open()) {
             qDebug() << "❌ Failed to open DB:" << db.lastError().text();
             return -1;
@@ -2032,107 +2108,123 @@ int DatabaseUtils::insertDummyOrder(const QString &sellerName, const QString &se
 }
 
 int DatabaseUtils::getNextJobNumber() {
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "next_job_conn");
-    db.setDatabaseName("database/mega_mine_orderbook.db");
+    int nextJobNumber = 1;
 
-    if (!db.open()) {
-        qDebug() << "❌ Failed to open DB in getNextJobNumber:" << db.lastError().text();
-        return 1;
-    }
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "next_job_conn");
+        // db.setDatabaseName("database/mega_mine_orderbook.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
+        db.setDatabaseName(dbPath);
 
-    QSqlQuery query(db);
-    query.prepare(R"(
+        if (!db.open()) {
+            qDebug() << "❌ Failed to open DB in getNextJobNumber:" << db.lastError().text();
+            return 1;
+        }
+
+        QSqlQuery query(db);
+        query.prepare(R"(
         SELECT jobNo FROM "OrderBook-Detail"
         WHERE jobNo LIKE 'JOB%' AND LENGTH(jobNo) > 3
         ORDER BY CAST(SUBSTR(jobNo, 4) AS INTEGER) DESC
         LIMIT 1
     )");
 
-    int nextJobNumber = 1;
-    if (query.exec() && query.next()) {
-        QString lastJobNo = query.value(0).toString(); // e.g., "JOB00023"
-        bool ok;
-        int number = lastJobNo.mid(3).toInt(&ok);      // "00023" → 23
-        if (ok) nextJobNumber = number + 1;
-    } else {
-        qDebug() << "ℹ️ No previous jobNo found. Starting from 1.";
+
+        if (query.exec() && query.next()) {
+            QString lastJobNo = query.value(0).toString(); // e.g., "JOB00023"
+            bool ok;
+            int number = lastJobNo.mid(3).toInt(&ok);      // "00023" → 23
+            if (ok) nextJobNumber = number + 1;
+        } else {
+            qDebug() << "ℹ️ No previous jobNo found. Starting from 1.";
+        }
+
+        db.close();
     }
 
-    db.close();
     QSqlDatabase::removeDatabase("next_job_conn");
     return nextJobNumber;
 }
 
 int DatabaseUtils::getNextOrderNumberForSeller(const QString &sellerId) {
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "next_order_conn");
-    db.setDatabaseName("database/mega_mine_orderbook.db");
+    int nextOrder = 1;
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "next_order_conn");
+        // db.setDatabaseName("database/mega_mine_orderbook.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
+        db.setDatabaseName(dbPath);
 
-    if (!db.open()) {
-        qDebug() << "❌ Failed to open DB in getNextOrderNumberForSeller:" << db.lastError().text();
-        return 1;
-    }
+        if (!db.open()) {
+            qDebug() << "❌ Failed to open DB in getNextOrderNumberForSeller:" << db.lastError().text();
+            return 1;
+        }
 
-    QSqlQuery query(db);
-    // Extract numeric part after sellerId and cast to integer, then order by it
-    query.prepare(QString(R"(
+        QSqlQuery query(db);
+        // Extract numeric part after sellerId and cast to integer, then order by it
+        query.prepare(QString(R"(
         SELECT orderNo FROM "OrderBook-Detail"
         WHERE orderNo LIKE :prefix AND LENGTH(orderNo) > :minLen
         ORDER BY CAST(SUBSTR(orderNo, :startPos) AS INTEGER) DESC
         LIMIT 1
     )"));
 
-    query.bindValue(":prefix", sellerId + "%");
-    query.bindValue(":minLen", sellerId.length());
-    query.bindValue(":startPos", sellerId.length() + 1); // SQLite is 1-based indexing
+        query.bindValue(":prefix", sellerId + "%");
+        query.bindValue(":minLen", sellerId.length());
+        query.bindValue(":startPos", sellerId.length() + 1); // SQLite is 1-based indexing
 
-    int nextOrder = 1;
-    if (query.exec() && query.next()) {
-        QString lastOrder = query.value(0).toString(); // e.g., SELL12300007
-        QString numericPart = lastOrder.mid(sellerId.length()); // "00007"
-        bool ok;
-        int number = numericPart.toInt(&ok);
-        if (ok) nextOrder = number + 1;
-    } else {
-        qDebug() << "ℹ️ No previous orderNo found for seller:" << sellerId;
+
+        if (query.exec() && query.next()) {
+            QString lastOrder = query.value(0).toString(); // e.g., SELL12300007
+            QString numericPart = lastOrder.mid(sellerId.length()); // "00007"
+            bool ok;
+            int number = numericPart.toInt(&ok);
+            if (ok) nextOrder = number + 1;
+        } else {
+            qDebug() << "ℹ️ No previous orderNo found for seller:" << sellerId;
+        }
+
+        db.close();
+
     }
-
-    db.close();
     QSqlDatabase::removeDatabase("next_order_conn");
     return nextOrder;
 }
 
 bool DatabaseUtils::updateDummyOrder(int orderId, const QString &jobNo, const QString &orderNo) {
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "update_order_conn");
-    db.setDatabaseName("database/mega_mine_orderbook.db");
+    // QDir::setCurrent(QCoreApplication::applicationDirPath());
+    bool success = false;
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "update_order_conn");
+        // db.setDatabaseName("database/mega_mine_orderbook.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
+        db.setDatabaseName(dbPath);
 
-    if (!db.open()) {
-        qDebug() << "Failed to open DB for update:" << db.lastError().text();
-        return false;
-    }
+        if (!db.open()) {
+            qDebug() << "Failed to open DB for update:" << db.lastError().text();
+            return false;
+        }
 
-    QSqlQuery query(db);
-    query.prepare(R"(
+        QSqlQuery query(db);
+        query.prepare(R"(
         UPDATE "OrderBook-Detail"
         SET jobNo = :jobNo, orderNo = :orderNo
         WHERE id = :orderId
     )");
 
-    query.bindValue(":jobNo", jobNo);
-    query.bindValue(":orderNo", orderNo);
-    query.bindValue(":orderId", orderId);
+        query.bindValue(":jobNo", jobNo);
+        query.bindValue(":orderNo", orderNo);
+        query.bindValue(":orderId", orderId);
 
-    bool success = query.exec();
-    if (!success) {
-        qDebug() << "❌ Update failed:" << query.lastError().text();
-    } else if (query.numRowsAffected() == 0) {
-        qDebug() << "⚠️ No row updated: Check orderId:" << orderId;
-        success = false;
+        success = query.exec();
+        if (!success) {
+            qDebug() << "❌ Update failed:" << query.lastError().text();
+        } else if (query.numRowsAffected() == 0) {
+            qDebug() << "⚠️ No row updated: Check orderId:" << orderId;
+            success = false;
+        }
+
+        db.close();
     }
-
-    db.close();
     QSqlDatabase::removeDatabase("update_order_conn");
     return success;
 }
@@ -2144,7 +2236,8 @@ bool DatabaseUtils::cleanupUnsavedOrders()
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName("database/mega_mine_orderbook.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
+        db.setDatabaseName(dbPath);
 
         if (db.open()) {
             QSqlQuery query(db);
@@ -2167,11 +2260,12 @@ bool DatabaseUtils::saveOrder(const OrderData &order) {
     bool success = false;  // final result
     const QString connName = "save_order_conn";
     // QDir::setCurrent(QCoreApplication::applicationDirPath());
-    const QString dbPath = QCoreApplication::applicationDirPath() + "/database/mega_mine_orderbook.db";
+    // const QString dbPath = QCoreApplication::applicationDirPath() + "/database/mega_mine_orderbook.db";
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
         // db.setDatabaseName("database/mega_mine_orderbook.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
         db.setDatabaseName(dbPath);
 
         if (!db.open()) {
@@ -2319,7 +2413,9 @@ std::optional<JobSheetData> DatabaseUtils::fetchJobSheetData(const QString &jobN
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName(QCoreApplication::applicationDirPath() + "/database/mega_mine_orderbook.db");
+        // db.setDatabaseName(QCoreApplication::applicationDirPath() + "/database/mega_mine_orderbook.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
+        db.setDatabaseName(dbPath);
 
         if (!db.open()) {
             qWarning() << "❌ Failed to open DB in fetchJobSheetData:" << db.lastError().text();
@@ -2377,7 +2473,9 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondAndStoneJson(const QString &d
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
 
         if (!db.open()) {
             qWarning() << "❌ Failed to open DB in fetchDiamondAndStoneJson:" << db.lastError().text();
@@ -2415,7 +2513,9 @@ bool DatabaseUtils::insertStatusChangeRequest(const QString &jobNo, const QStrin
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName("database/mega_mine_orderbook.db");
+        // db.setDatabaseName("database/mega_mine_orderbook.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
+        db.setDatabaseName(dbPath);
 
         if (db.open()) {
             QSqlQuery query(db);
@@ -2453,7 +2553,9 @@ bool DatabaseUtils::approveStatusChange(const QString &jobNo, const QString &rol
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName("database/mega_mine_orderbook.db");
+        // db.setDatabaseName("database/mega_mine_orderbook.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
+        db.setDatabaseName(dbPath);
 
         if (db.open()) {
             QSqlQuery query(db);
@@ -2569,7 +2671,9 @@ QString DatabaseUtils::fetchImagePathForDesign(const QString &designNo)
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName("database/mega_mine_image.db");
+        // db.setDatabaseName("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        db.setDatabaseName(dbPath);
 
         if (db.open()) {
             QSqlQuery query(db);
@@ -2633,7 +2737,9 @@ bool DatabaseUtils::updateDesignNoAndImagePath(const QString &jobNo, const QStri
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        db.setDatabaseName("database/mega_mine_orderbook.db");
+        // db.setDatabaseName("database/mega_mine_orderbook.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
+        db.setDatabaseName(dbPath);
 
         if (db.open()) {
             QSqlQuery query(db);

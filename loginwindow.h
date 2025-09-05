@@ -38,7 +38,7 @@ private slots:
 
     void on_backPartyPushButton_clicked();
 
-    void on_backPushButton_clicked();
+    // void on_backPushButton_clicked();
 
     void set_comboBox_selectParty();
 

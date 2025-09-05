@@ -684,9 +684,10 @@ void Admin::on_FancyDiamond_Price_clicked()
     fancyDiamondModel->setHeaderData(3, Qt::Horizontal, "Price");
 
     // 🔧 Clear any existing delegates before reassigning
-    ui->tableView_2->setItemDelegate(nullptr);
+    // ui->tableView_2->setItemDelegate(nullptr);
 
     for (int col = 0; col < fancyDiamondModel->columnCount(); ++col) {
+        // qDebug()<<fancyDiamondModel->;
         if (col != 3) {
             ui->tableView_2->setItemDelegateForColumn(col, new ReadOnlyDelegate(ui->tableView_2));
         }

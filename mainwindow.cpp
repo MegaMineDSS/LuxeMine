@@ -118,7 +118,7 @@ void MainWindow::on_pushButton_4_clicked()
         newAddCatalog->raise();
         newAddCatalog->activateWindow();
     } else {
-        newAddCatalog = new AddCatalog(this);   // give MainWindow as parent
+        newAddCatalog = new AddCatalog();   // give MainWindow as parent
         newAddCatalog->setAttribute(Qt::WA_DeleteOnClose);  // auto-delete when closed
 
         // Reset pointer when destroyed

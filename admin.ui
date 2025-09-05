@@ -1215,7 +1215,7 @@ QPushButton:pressed {
              <item row="1" column="0" colspan="12">
               <widget class="QStackedWidget" name="gold_dia_update_price">
                <property name="currentIndex">
-                <number>0</number>
+                <number>1</number>
                </property>
                <widget class="QWidget" name="GoldPrice_update">
                 <layout class="QGridLayout" name="gridLayout_12">

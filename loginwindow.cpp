@@ -87,7 +87,8 @@ void LoginWindow::on_goPushButton_clicked()
     }
 
     // Improved regex: capture name and numeric ID safely
-    QRegularExpression regex(R"(^(.+)\s\((\d+)\)$)");
+    // QRegularExpression regex(R"(^(.+)\s\((\d+)\)$)");
+    QRegularExpression regex(R"(^(.+?)\s\((\w+)\)$)");
     QRegularExpressionMatch match = regex.match(partyText);
 
     if (!match.hasMatch()) {
@@ -125,10 +126,10 @@ void LoginWindow::on_backPartyPushButton_clicked()
     set_comboBox_selectParty();
 }
 
-void LoginWindow::on_backPushButton_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(0);
-}
+// void LoginWindow::on_backPushButton_clicked()
+// {
+//     ui->stackedWidget->setCurrentIndex(0);
+// }
 
 void LoginWindow::on_loginPushButton_clicked()
 {
