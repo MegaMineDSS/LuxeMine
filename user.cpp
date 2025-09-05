@@ -299,7 +299,7 @@ void User::updateGoldWeight(const QString &goldJson) {
 void User::on_pushButton_clicked()
 {
     if (saveOrLoadUser()) {
-        ui->stackedWidget->setCurrentIndex(1);
+        ui->stackedWidget->setCurrentIndex(2);
         loadData();
     }
 }
@@ -378,12 +378,12 @@ bool User::saveOrLoadUser()
 
 void User::on_cartMainpage_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(2);
+    ui->stackedWidget->setCurrentIndex(3);
     updateCartDisplay();
 }
 
 void User::on_backMainpage_clicked() {
-    ui->stackedWidget->setCurrentIndex(1);
+    ui->stackedWidget->setCurrentIndex(2);
     loadData();
 }
 
@@ -393,7 +393,7 @@ bool User::eventFilter(QObject *obj, QEvent *event)
         if (event->type() == QEvent::Enter && !currentDiamondJson.isEmpty()) {
             QJsonArray array = DatabaseUtils::parseJsonArray(currentDiamondJson);
 
-            diamondTable->clearContents();                  // ✅ clear old items
+            diamondTable->clearContents();                  // clear old items
             diamondTable->setRowCount(array.size());
 
             for (int i = 0; i < array.size(); ++i) {
@@ -695,4 +695,17 @@ void User::saveCartToDatabase()
 }
 
 
+
+
+void User::on_make_pdf_Mainpage_clicked()
+{
+
+}
+
+
+void User::on_user_register_redirect_button_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(1);
+    resizeEvent(nullptr); // Force background recalculation so that background image properly set
+}
 

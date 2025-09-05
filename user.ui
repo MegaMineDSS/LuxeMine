@@ -51,12 +51,25 @@
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="page_2">
         <layout class="QGridLayout" name="gridLayout_4">
-         <item row="2" column="2">
-          <spacer name="horizontalSpacer_17">
+         <item row="7" column="9">
+          <spacer name="verticalSpacer_8">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="7" column="0">
+          <spacer name="horizontalSpacer_61">
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
            </property>
@@ -68,8 +81,8 @@
            </property>
           </spacer>
          </item>
-         <item row="2" column="1">
-          <spacer name="horizontalSpacer_3">
+         <item row="7" column="11">
+          <spacer name="horizontalSpacer_59">
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
            </property>
@@ -81,8 +94,8 @@
            </property>
           </spacer>
          </item>
-         <item row="2" column="4">
-          <spacer name="horizontalSpacer_19">
+         <item row="7" column="8">
+          <spacer name="horizontalSpacer_56">
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
            </property>
@@ -94,8 +107,21 @@
            </property>
           </spacer>
          </item>
-         <item row="2" column="9">
-          <spacer name="horizontalSpacer_33">
+         <item row="0" column="1">
+          <spacer name="verticalSpacer_15">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="7" column="7">
+          <spacer name="horizontalSpacer_55">
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
            </property>
@@ -107,59 +133,46 @@
            </property>
           </spacer>
          </item>
-         <item row="2" column="10">
-          <spacer name="horizontalSpacer">
+         <item row="5" column="9">
+          <spacer name="verticalSpacer_26">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>40</width>
-             <height>20</height>
+             <width>20</width>
+             <height>40</height>
             </size>
            </property>
           </spacer>
          </item>
-         <item row="2" column="3">
-          <spacer name="horizontalSpacer_18">
+         <item row="3" column="9">
+          <spacer name="verticalSpacer_28">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>40</width>
-             <height>20</height>
+             <width>20</width>
+             <height>40</height>
             </size>
            </property>
           </spacer>
          </item>
-         <item row="2" column="6">
-          <spacer name="horizontalSpacer_20">
+         <item row="6" column="9">
+          <spacer name="verticalSpacer_18">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>40</width>
-             <height>20</height>
+             <width>20</width>
+             <height>40</height>
             </size>
            </property>
           </spacer>
          </item>
-         <item row="2" column="7">
-          <spacer name="horizontalSpacer_21">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="1" column="0" colspan="7">
+         <item row="1" column="1" colspan="7">
           <widget class="QFrame" name="user_login_frame">
            <property name="frameShape">
             <enum>QFrame::Shape::StyledPanel</enum>
@@ -168,7 +181,59 @@
             <enum>QFrame::Shadow::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
-            <item row="1" column="1" colspan="4">
+            <item row="4" column="3">
+             <spacer name="horizontalSpacer_46">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="4" column="2">
+             <spacer name="horizontalSpacer_49">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="4" column="1">
+             <spacer name="horizontalSpacer_48">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="4" column="0">
+             <spacer name="horizontalSpacer_47">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="2" column="1" colspan="6">
              <widget class="QLineEdit" name="user_login_password">
               <property name="styleSheet">
                <string notr="true">QLineEdit {
@@ -197,7 +262,7 @@ QLineEdit::placeholder {
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="2" column="0">
              <widget class="QLabel" name="label_12">
               <property name="styleSheet">
                <string notr="true">QLabel {
@@ -227,53 +292,8 @@ QLabel[dim=&quot;true&quot;] {
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_11">
-              <property name="styleSheet">
-               <string notr="true">QLabel {
-    color: #2c3e75;
-    font-size: 16px;
-    font-weight: 600;
-    background: transparent;
-    padding: 2px;
-}
-
-QLabel[highlight=&quot;true&quot;] {
-    color: #c0392b;
-    font-weight: 600;
-}
-
-QLabel[dim=&quot;true&quot;] {
-    color: #7f8c8d;
-    font-style: italic;
-}
-</string>
-              </property>
-              <property name="text">
-               <string>User Id:</string>
-              </property>
-              <property name="textFormat">
-               <enum>Qt::TextFormat::AutoText</enum>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="4">
+            <item row="4" column="5" colspan="2">
              <widget class="QPushButton" name="user_login_button">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="layoutDirection">
-               <enum>Qt::LayoutDirection::LeftToRight</enum>
-              </property>
               <property name="styleSheet">
                <string notr="true">QPushButton {
     background-color: #2c3e50;
@@ -315,20 +335,50 @@ QPushButton:disabled {
               </property>
              </widget>
             </item>
-            <item row="3" column="3">
-             <spacer name="horizontalSpacer_34">
-              <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
+            <item row="4" column="4">
+             <widget class="QPushButton" name="user_register_redirect_button">
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
+    background-color: #2c3e50;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    border: 2px solid #2c3e50;
+    border-radius: 5px;
+    padding: 0px 20px;
+    padding-bottom: 3px;
+    min-width: 70px;
+    min-height: 32px;
+}
+
+QPushButton:hover {
+    background-color: #34495e;
+    border: 2px solid #34495e;
+}
+
+QPushButton:pressed {
+    background-color: #1a252f;
+    border: 2px solid #1a252f;
+}
+
+QPushButton:focus {
+    border: 2px solid #f1c40f;
+    background-color: #2c3e50;
+}
+
+QPushButton:disabled {
+    background-color: #95a5a6;   /* muted gray */
+    color: #ecf0f1;
+    border: 2px solid #7f8c8d;
+}
+</string>
               </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
+              <property name="text">
+               <string>Register</string>
               </property>
-             </spacer>
+             </widget>
             </item>
-            <item row="0" column="1" colspan="4">
+            <item row="1" column="1" colspan="6">
              <widget class="QLineEdit" name="user_login_userid">
               <property name="styleSheet">
                <string notr="true">QLineEdit {
@@ -357,50 +407,44 @@ QLineEdit::placeholder {
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <spacer name="horizontalSpacer_5">
-              <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="styleSheet">
+               <string notr="true">QLabel {
+    color: #2c3e75;
+    font-size: 16px;
+    font-weight: 600;
+    background: transparent;
+    padding: 2px;
+}
+
+QLabel[highlight=&quot;true&quot;] {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+QLabel[dim=&quot;true&quot;] {
+    color: #7f8c8d;
+    font-style: italic;
+}
+</string>
               </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
+              <property name="text">
+               <string>User Id:</string>
               </property>
-             </spacer>
-            </item>
-            <item row="3" column="1">
-             <spacer name="horizontalSpacer_6">
-              <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
+              <property name="textFormat">
+               <enum>Qt::TextFormat::AutoText</enum>
               </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
               </property>
-             </spacer>
-            </item>
-            <item row="3" column="2">
-             <spacer name="horizontalSpacer_35">
-              <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
+             </widget>
             </item>
            </layout>
           </widget>
          </item>
-         <item row="2" column="5">
-          <spacer name="horizontalSpacer_31">
+         <item row="7" column="5">
+          <spacer name="horizontalSpacer_54">
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
            </property>
@@ -412,8 +456,8 @@ QLineEdit::placeholder {
            </property>
           </spacer>
          </item>
-         <item row="2" column="0">
-          <spacer name="horizontalSpacer_8">
+         <item row="7" column="6">
+          <spacer name="horizontalSpacer_57">
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
            </property>
@@ -425,8 +469,8 @@ QLineEdit::placeholder {
            </property>
           </spacer>
          </item>
-         <item row="2" column="8">
-          <spacer name="horizontalSpacer_32">
+         <item row="7" column="4">
+          <spacer name="horizontalSpacer_53">
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
            </property>
@@ -437,6 +481,125 @@ QLineEdit::placeholder {
             </size>
            </property>
           </spacer>
+         </item>
+         <item row="7" column="1">
+          <spacer name="horizontalSpacer_50">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="7" column="12">
+          <spacer name="horizontalSpacer_60">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="7" column="2">
+          <spacer name="horizontalSpacer_51">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="4" column="9">
+          <spacer name="verticalSpacer_27">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="7" column="3">
+          <spacer name="horizontalSpacer_52">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="7" column="10">
+          <spacer name="horizontalSpacer_58">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="9">
+          <spacer name="verticalSpacer_29">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="2" colspan="6">
+          <widget class="QLabel" name="label_13">
+           <property name="styleSheet">
+            <string notr="true">QLabel {
+    color: #2c3e75;
+    font-size: 28px;
+    font-weight: 600;
+    background: transparent;
+    padding: 2px;
+    qproperty-alignment: 'AlignCenter';
+}
+
+QLabel[highlight=&quot;true&quot;] {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+QLabel[dim=&quot;true&quot;] {
+    color: #7f8c8d;
+    font-style: italic;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Client Login</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -484,7 +647,7 @@ QWidget#page {
 }
 
 QTextEdit:focus {
-    border: 2px solid #f1c40f;
+    border: 2px solid #2c3e75;
     background-color: #f9f9f9;
 }
 
@@ -565,7 +728,7 @@ QPushButton:disabled {
 }
 
 QLineEdit:focus {
-    border: 2px solid #f1c40f;
+    border: 2px solid #2c3e75;
     background-color: #f9f9f9;
 }
 
@@ -607,7 +770,7 @@ QLineEdit::placeholder {
 }
 
 QLineEdit:focus {
-    border: 2px solid #f1c40f;
+    border: 2px solid #2c3e75;
     background-color: #f9f9f9;
 }
 
@@ -757,7 +920,7 @@ QLabel[dim=&quot;true&quot;] {
 }
 
 QLineEdit:focus {
-    border: 2px solid #f1c40f;
+    border: 2px solid #2c3e75;
     background-color: #f9f9f9;
 }
 
@@ -848,7 +1011,7 @@ QLabel[dim=&quot;true&quot;] {
 }
 
 QLineEdit:focus {
-    border: 2px solid #f1c40f;
+    border: 2px solid #2c3e75;
     background-color: #f9f9f9;
 }
 
@@ -890,7 +1053,7 @@ QLineEdit::placeholder {
 }
 
 QLineEdit:focus {
-    border: 2px solid #f1c40f;
+    border: 2px solid #2c3e75;
     background-color: #f9f9f9;
 }
 
@@ -958,7 +1121,7 @@ QLabel[dim=&quot;true&quot;] {
 }
 
 QLineEdit:focus {
-    border: 2px solid #f1c40f;
+    border: 2px solid #2c3e75;
     background-color: #f9f9f9;
 }
 
@@ -1082,7 +1245,7 @@ QLabel[dim=&quot;true&quot;] {
 }
 
 QComboBox:focus {
-    border: 2px solid #f1c40f;
+    border: 2px solid #2c3e75;
     background-color: #f9f9f9;
 }
 
@@ -1091,7 +1254,7 @@ QComboBox:hover {
     background-color: #f4f6f7;
 }
 
-/* Dropdown arrow */
+
 QComboBox::down-arrow {
     image: url(&quot;:/icon/expand-arrow.png&quot;);
     width: 15px;
@@ -1104,13 +1267,19 @@ QComboBox::drop-down {
     margin-right: 4px;
 }
 
-/* Popup list */
 QComboBox QAbstractItemView {
     background-color: #FFFFFF;
-    border: 1px solid #f4f6f7;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
     selection-background-color: #305C91;
     selection-color: #FFFFFF;
     font-size: 14px;
+    padding: 3px;
+}
+
+QComboBox QAbstractItemView::item {
+    min-height: 28px;
+    padding: 4px 8px;
 }</string>
               </property>
              </widget>
@@ -1377,16 +1546,6 @@ QLabel[dim=&quot;true&quot;] {
            </property>
           </spacer>
          </item>
-         <item row="0" column="2">
-          <widget class="QToolButton" name="user_filter_btn">
-           <property name="text">
-            <string>Filter</string>
-           </property>
-           <property name="popupMode">
-            <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
-           </property>
-          </widget>
-         </item>
          <item row="16" column="14">
           <spacer name="horizontalSpacer_44">
            <property name="orientation">
@@ -1401,7 +1560,64 @@ QLabel[dim=&quot;true&quot;] {
           </spacer>
          </item>
          <item row="15" column="28">
-          <widget class="QSpinBox" name="itemSelectionSpinBox"/>
+          <widget class="QSpinBox" name="itemSelectionSpinBox">
+           <property name="styleSheet">
+            <string notr="true">QSpinBox {
+    background-color: #F3F3F3;
+    border: 1px solid #2A4E7C;
+    border-radius: 2px;
+    color: #2C2C2C;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0px 14px;
+    min-width: 80px;
+    min-height: 30px;
+    padding-right: 30px; /* space for arrows */
+}
+
+/* Up/Down buttons */
+QSpinBox::up-button,
+QSpinBox::down-button {
+    background-color: #E0E0E0;
+    border: 1px solid #2A4E7C;
+    width: 20px;
+    subcontrol-origin: border;
+}
+QSpinBox::down-button{
+    border-top: none;
+}
+
+/* Hover buttons */
+QSpinBox::up-button:hover,
+QSpinBox::down-button:hover {
+    background-color: #93b7e1;
+}
+
+/* Pressed buttons */
+QSpinBox::up-button:pressed,
+QSpinBox::down-button:pressed {
+    background-color: #DADADA;
+}
+
+/* Arrow symbols — force them to center */
+QSpinBox::up-arrow,
+QSpinBox::down-arrow {
+    width: 10px;
+    height: 10px;
+    margin: 0px;   /* prevent shifting */
+    padding: 0px;  /* keep centered */
+}
+
+QSpinBox::up-arrow {
+    image: url(:/icon/arrow-up-1.png);
+}
+
+QSpinBox::down-arrow {
+    image: url(:/icon/expand-arrow.png);
+}
+</string>
+           </property>
+          </widget>
          </item>
          <item row="16" column="27">
           <spacer name="horizontalSpacer_3">
@@ -1541,8 +1757,41 @@ QLabel[dim=&quot;true&quot;] {
          </item>
          <item row="0" column="28">
           <widget class="QPushButton" name="pushButton_2">
+           <property name="font">
+            <font>
+             <pointsize>-1</pointsize>
+             <fontweight>DemiBold</fontweight>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: #F3F3F3;
+    border: 1px solid #2A4E7C;
+    border-radius: 2px;
+    color: #2C2C2C;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 14px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: #93b7e1;
+}
+
+QPushButton:pressed {
+    background-color: #DADADA;
+    border: 1px solid #666;
+}
+
+QPushButton:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1px solid #D0D0D0;
+}</string>
+           </property>
            <property name="text">
-            <string>search</string>
+            <string>Search</string>
            </property>
           </widget>
          </item>
@@ -1595,22 +1844,6 @@ QLabel[dim=&quot;true&quot;] {
            </property>
           </widget>
          </item>
-         <item row="2" column="1" rowspan="13" colspan="27">
-          <widget class="QLabel" name="image_viewUser">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>25</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignmentFlag::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
          <item row="16" column="29">
           <widget class="QPushButton" name="make_pdf_Mainpage">
            <property name="sizePolicy">
@@ -1619,8 +1852,35 @@ QLabel[dim=&quot;true&quot;] {
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: #F3F3F3;
+    border: 1px solid #2A4E7C;
+    border-radius: 2px;
+    color: #2C2C2C;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 14px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: #93b7e1;
+}
+
+QPushButton:pressed {
+    background-color: #DADADA;
+    border: 1px solid #666;
+}
+
+QPushButton:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1px solid #D0D0D0;
+}</string>
+           </property>
            <property name="text">
-            <string>Show detail</string>
+            <string>Show details</string>
            </property>
           </widget>
          </item>
@@ -1668,8 +1928,38 @@ QLabel[dim=&quot;true&quot;] {
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1px solid #D0D0D0;
+}
+
+
+QPushButton {
+    background-color: #305C91;
+    color: white;
+    border: 1px solid #2A4E7C;
+    border-radius: 2px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 14px;
+    min-width: 80px;
+    text-align: center;
+}
+
+QPushButton:hover {
+    background-color: #6e9cd2;
+    border: 1px solid #2A4E7C;
+}
+
+QPushButton:pressed {
+    background-color: #254166;
+    border: 1px solid #1E3554;
+}</string>
+           </property>
            <property name="text">
-            <string>next</string>
+            <string>Next   🡪</string>
            </property>
           </widget>
          </item>
@@ -1756,8 +2046,44 @@ QLabel[dim=&quot;true&quot;] {
          </item>
          <item row="15" column="29">
           <widget class="QPushButton" name="selectButton">
+           <property name="font">
+            <font>
+             <family>Segoe UI</family>
+             <pointsize>-1</pointsize>
+             <fontweight>DemiBold</fontweight>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1px solid #D0D0D0;
+}
+
+
+QPushButton {
+    background-color: #305C91;
+    color: white;
+    border: 1px solid #2A4E7C;
+    border-radius: 2px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 14px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: #6e9cd2;
+    border: 1px solid #2A4E7C;
+}
+
+QPushButton:pressed {
+    background-color: #254166;
+    border: 1px solid #1E3554;
+}</string>
+           </property>
            <property name="text">
-            <string>select</string>
+            <string>Select</string>
            </property>
           </widget>
          </item>
@@ -1812,8 +2138,51 @@ QLabel[dim=&quot;true&quot;] {
          </item>
          <item row="0" column="29">
           <widget class="QPushButton" name="cartMainpage">
+           <property name="font">
+            <font>
+             <pointsize>-1</pointsize>
+             <fontweight>DemiBold</fontweight>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: #F3F3F3;
+    border: 1px solid #2A4E7C;
+    border-radius: 2px;
+    color: #2C2C2C;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 4px 14px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: #93b7e1;
+}
+
+QPushButton:pressed {
+    background-color: #DADADA;
+    border: 1px solid #666;
+}
+
+QPushButton:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1px solid #D0D0D0;
+}</string>
+           </property>
            <property name="text">
-            <string>cart</string>
+            <string>Cart</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Resource.qrc">
+             <normaloff>:/icon/shopping-cart-checkout.png</normaloff>:/icon/shopping-cart-checkout.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -1858,8 +2227,38 @@ QLabel[dim=&quot;true&quot;] {
          </item>
          <item row="0" column="1">
           <widget class="QPushButton" name="newItem_Mainpage">
+           <property name="styleSheet">
+            <string notr="true">QPushButton:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1px solid #D0D0D0;
+}
+
+
+QPushButton {
+    background-color: #305C91;
+    color: white;
+    border: 1px solid #2A4E7C;
+    border-radius: 2px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 14px;
+    min-width: 80px;
+    text-align: center;
+}
+
+QPushButton:hover {
+    background-color: #6e9cd2;
+    border: 1px solid #2A4E7C;
+}
+
+QPushButton:pressed {
+    background-color: #254166;
+    border: 1px solid #1E3554;
+}</string>
+           </property>
            <property name="text">
-            <string>New Item</string>
+            <string>New Items</string>
            </property>
           </widget>
          </item>
@@ -1906,16 +2305,6 @@ QLabel[dim=&quot;true&quot;] {
            </property>
           </spacer>
          </item>
-         <item row="0" column="3" colspan="25">
-          <widget class="QLineEdit" name="searchbarMainpage">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>5</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
          <item row="16" column="12">
           <spacer name="horizontalSpacer_42">
            <property name="orientation">
@@ -1937,8 +2326,35 @@ QLabel[dim=&quot;true&quot;] {
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: #F3F3F3;
+    border: 1px solid #2A4E7C;
+    border-radius: 2px;
+    color: #2C2C2C;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: #93b7e1;
+}
+
+QPushButton:pressed {
+    background-color: #DADADA;
+    border: 1px solid #666;
+}
+
+QPushButton:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1px solid #D0D0D0;
+}</string>
+           </property>
            <property name="text">
-            <string>prev</string>
+            <string>🡨 Previous</string>
            </property>
           </widget>
          </item>
@@ -2004,6 +2420,105 @@ QLabel[dim=&quot;true&quot;] {
            </property>
           </spacer>
          </item>
+         <item row="0" column="2">
+          <widget class="QToolButton" name="user_filter_btn">
+           <property name="styleSheet">
+            <string notr="true">QToolButton:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1px solid #D0D0D0;
+}
+
+
+QToolButton {
+    background-color: #305C91;
+    color: white;
+    border: 1px solid #2A4E7C;
+    border-radius: 2px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 5px 14px;
+    min-width: 80px;
+    text-align: center;
+}
+
+QToolButton:hover {
+    background-color: #6e9cd2;
+    border: 1px solid #2A4E7C;
+}
+
+QToolButton:pressed {
+    background-color: #254166;
+    border: 1px solid #1E3554;
+}</string>
+           </property>
+           <property name="text">
+            <string>Filter</string>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3" colspan="25">
+          <widget class="QLineEdit" name="searchbarMainpage">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>5</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QLineEdit {
+    background-color: #FFFFFF;         /* Light gray background */
+    border: 1px solid #111111;       /* Subtle gray border */
+    border-radius: 2px;                /* Rounded corners */
+    padding: 6px 12px;                 /* Spacing inside */
+    padding-bottom:6px;
+    color: #111111;                    /* Dark text */
+    font-size: 14px;
+}
+
+QLineEdit:hover {
+    border: 1px solid #7F8C8D;       /* Darker border on hover */
+    background-color: #FFFFFF;         /* Slightly brighter */
+}
+
+QLineEdit:focus {
+    border: 2px solid #305C91;         /* Blue border highlight */
+    background-color: #FFFFFF;         /* White background */
+}
+
+QLineEdit:disabled {
+    background-color: #E5E5E5;         /* Muted gray */
+    color: #AAAAAA;                    /* Dim text */
+    border: 1px solid #CCCCCC;
+}
+
+QLineEdit::placeholder {
+    color: #95A5A6;                    /* Lighter gray placeholder */
+    font-style: italic;
+}
+</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" rowspan="13" colspan="27">
+          <widget class="QLabel" name="image_viewUser">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>25</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
        <widget class="QWidget" name="cart">
@@ -2045,7 +2560,7 @@ QLabel[dim=&quot;true&quot;] {
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>643</width>
+              <width>610</width>
               <height>686</height>
              </rect>
             </property>
@@ -2233,6 +2748,37 @@ QLabel[dim=&quot;true&quot;] {
    </item>
   </layout>
  </widget>
- <resources/>
+ <tabstops>
+  <tabstop>user_login_userid</tabstop>
+  <tabstop>user_login_password</tabstop>
+  <tabstop>userid</tabstop>
+  <tabstop>companyNameuser</tabstop>
+  <tabstop>mobileall</tabstop>
+  <tabstop>mobileNouser</tabstop>
+  <tabstop>gstnouser</tabstop>
+  <tabstop>nameuser</tabstop>
+  <tabstop>mailiduser</tabstop>
+  <tabstop>addressuser</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>newItem_Mainpage</tabstop>
+  <tabstop>user_filter_btn</tabstop>
+  <tabstop>searchbarMainpage</tabstop>
+  <tabstop>pushButton_2</tabstop>
+  <tabstop>cartMainpage</tabstop>
+  <tabstop>itemSelectionSpinBox</tabstop>
+  <tabstop>selectButton</tabstop>
+  <tabstop>previousImage</tabstop>
+  <tabstop>nextImage</tabstop>
+  <tabstop>make_pdf_Mainpage</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>backMainpage</tabstop>
+  <tabstop>diamondFinaldetail</tabstop>
+  <tabstop>stoneFinaldetail</tabstop>
+  <tabstop>pushButton_4</tabstop>
+  <tabstop>makePdfButton</tabstop>
+ </tabstops>
+ <resources>
+  <include location="Resource.qrc"/>
+ </resources>
  <connections/>
 </ui>
