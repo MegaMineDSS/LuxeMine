@@ -1,0 +1,10 @@
+--- user.h
++++ user.h
+@@ -72,7 +68,6 @@ private:
+     QWidget *cartItemsContainer;
+     QString currentUserId;
+     QString currentGoldSelection;
+-    User *newUser = nullptr;
+ };
+ 
+ #endif // USER_H

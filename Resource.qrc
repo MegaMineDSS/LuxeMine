@@ -38,5 +38,7 @@
         <file>icon/search-1.png</file>
         <file>Backgrounds/Client-details.png</file>
         <file>json_files/country_codes.json</file>
+        <file>icon/shopping-cart-checkout.png</file>
+        <file>icon/arrow-up-1.png</file>
     </qresource>
 </RCC>
