@@ -64,13 +64,14 @@ JobSheet::JobSheet(QWidget *parent, const QString &jobNo, const QString &role)
     QList<QTableWidget*> tableWidgets = findChildren<QTableWidget*>();
     for (QTableWidget* table : tableWidgets) {
         table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        table->setEnabled(false);
     }
 
     QList<QLabel*> labels = findChildren<QLabel*>();
     for (QLabel* label : labels) {
         if (label != ui->productImageLabel) {
             label->setEnabled(false);
-        } else if (userRole != "designer") {
+        } else if (userRole != "designer" && label != ui->productImageLabel) {
             label->setEnabled(false); // restrict image even for label if not designer
         }
     }
@@ -253,4 +254,8 @@ void JobSheet::saveDesignNoAndImagePath(const QString &designNo, const QString &
     if (!DatabaseUtils::updateDesignNoAndImagePath(jobNo, designNo, imagePath)) {
         QMessageBox::critical(this, "Query Error", "Failed to update OrderBook-Detail.");
     }
+}
+
+void JobSheet::set_value_designer(){
+
 }
