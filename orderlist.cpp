@@ -49,16 +49,16 @@ OrderList::OrderList(QWidget *parent, const QString &role)
     setRoleAndUserRole(role);
     // qDebug()<<"---------"<<role;
     if (role == "designer") {
-        show_order_list_with_role("designer", 4);
+        show_order_list_with_role("designer", 5);
     } else if (role == "manufacturer") {
-        show_order_list_with_role("manufacturer", 5);
+        show_order_list_with_role("manufacturer", 6);
     } else if (role == "accountant") {
-        show_order_list_with_role("accountant", 6);
+        show_order_list_with_role("accountant", 7);
     } else if (role == "seller"){
         // qDebug()<<"---------"<<role;
         show_order_list_with_role("seller", 1);
     } else if (role == "manager") {
-        show_order_list_with_role("manager", 3); // editable column index for manager
+        show_order_list_with_role("manager", 4); // editable column index for manager
     }
 }
 
@@ -460,7 +460,7 @@ void OrderList::setupStatusCombo(int row, int col, const QString &role, const QS
                      (role == "designer" && managerStatus == "Order Checked") ||
                      (role == "manufacturer" && managerStatus == "Bagging") ||
                      (role == "accountant" && managerStatus == "QC Done");
-
+    // qDebug()<<allowEdit;
     if (!allowEdit) {
         combo->setEnabled(false);
         QString reason;
@@ -629,8 +629,8 @@ void OrderList::show_order_list_with_role(const QString &role, int editableStatu
         QString jobNo = order[2].toString();
 
         // Assuming order[3..6] correspond to status columns
-        for (int col = 3; col <= 6; ++col) {
-            QString currentStatus = order[col].toString();
+        for (int col = 4; col <= 7; ++col) {
+            QString currentStatus = order[col-1].toString();
 
             if (col == editableStatusCol) {
                 // ✅ Use correct col (not col+1)
@@ -645,4 +645,3 @@ void OrderList::show_order_list_with_role(const QString &role, int editableStatu
 
     ui->orderListTableWidget->resizeColumnsToContents();
 }
-

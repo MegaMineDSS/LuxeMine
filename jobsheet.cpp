@@ -37,43 +37,6 @@ JobSheet::JobSheet(QWidget *parent, const QString &jobNo, const QString &role)
     resize(finalWidth, finalHeight);
     move(screenGeometry.center() - rect().center());
 
-    QList<QLineEdit*> lineEdits = findChildren<QLineEdit*>();
-    for (QLineEdit* edit : lineEdits) {
-        if (edit != ui->desigNoLineEdit) {
-            edit->setReadOnly(true);
-        } else if (userRole != "designer") {
-            edit->setReadOnly(true);  // disable even this for non-designers
-        }
-    }
-
-    QList<QDateEdit*> dateEdits = findChildren<QDateEdit*>();
-    for (QDateEdit* dateEdit : dateEdits) {
-        dateEdit->setEnabled(false);
-    }
-
-    QList<QTextEdit*> textEdits = findChildren<QTextEdit*>();
-    for (QTextEdit* textEdit : textEdits) {
-        textEdit->setReadOnly(true);
-    }
-
-    QList<QComboBox*> comboBoxes = findChildren<QComboBox*>();
-    for (QComboBox* combo : comboBoxes) {
-        combo->setEnabled(false);
-    }
-
-    QList<QTableWidget*> tableWidgets = findChildren<QTableWidget*>();
-    for (QTableWidget* table : tableWidgets) {
-        table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    }
-
-    QList<QLabel*> labels = findChildren<QLabel*>();
-    for (QLabel* label : labels) {
-        if (label != ui->productImageLabel) {
-            label->setEnabled(false);
-        } else if (userRole != "designer") {
-            label->setEnabled(false); // restrict image even for label if not designer
-        }
-    }
 
 
     set_value(jobNo);
@@ -88,6 +51,7 @@ We Hereby acknowledge receipt of the following goods mentioned overleaf which yo
     ui->extraNoteTextEdit->setStyleSheet("font-size: 7.3pt;");
 
     if (userRole == "designer") {
+        set_value_designer();
         connect(ui->desigNoLineEdit, &QLineEdit::returnPressed, this, &JobSheet::loadImageForDesignNo);
     }
 }
@@ -253,4 +217,46 @@ void JobSheet::saveDesignNoAndImagePath(const QString &designNo, const QString &
     if (!DatabaseUtils::updateDesignNoAndImagePath(jobNo, designNo, imagePath)) {
         QMessageBox::critical(this, "Query Error", "Failed to update OrderBook-Detail.");
     }
+}
+
+void JobSheet::set_value_designer(){
+    QList<QLineEdit*> lineEdits = findChildren<QLineEdit*>();
+    for (QLineEdit* edit : lineEdits) {
+        if (edit != ui->desigNoLineEdit) {
+            edit->setReadOnly(true);
+        } else if (userRole != "designer") {
+            edit->setReadOnly(true);  // disable even this for non-designers
+        }
+    }
+
+    QList<QDateEdit*> dateEdits = findChildren<QDateEdit*>();
+    for (QDateEdit* dateEdit : dateEdits) {
+        dateEdit->setEnabled(false);
+    }
+
+    QList<QTextEdit*> textEdits = findChildren<QTextEdit*>();
+    for (QTextEdit* textEdit : textEdits) {
+        textEdit->setReadOnly(true);
+    }
+
+    QList<QComboBox*> comboBoxes = findChildren<QComboBox*>();
+    for (QComboBox* combo : comboBoxes) {
+        combo->setEnabled(false);
+    }
+
+    QList<QTableWidget*> tableWidgets = findChildren<QTableWidget*>();
+    for (QTableWidget* table : tableWidgets) {
+        table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        table->setEnabled(false);
+    }
+
+    QList<QLabel*> labels = findChildren<QLabel*>();
+    for (QLabel* label : labels) {
+        if (label != ui->productImageLabel) {
+            label->setEnabled(false);
+        } else if (userRole != "designer" && label != ui->productImageLabel) {
+            label->setEnabled(false); // restrict image even for label if not designer
+        }
+    }
+
 }

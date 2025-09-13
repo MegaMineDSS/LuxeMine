@@ -28,6 +28,8 @@ private:
     void loadImageForDesignNo();
     void saveDesignNoAndImagePath(const QString &designNo, const QString &imagePath);
 
+    void set_value_designer();
+
     Ui::JobSheet *ui;
     QString userRole;
     int finalWidth = 0;
