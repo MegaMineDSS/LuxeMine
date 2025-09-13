@@ -92,7 +92,7 @@ public:
     // Login Window
         // Authentication
         static LoginResult authenticateUser(const QString &userId, const QString &password);
-
+        static bool userLoginValidate(const QString &userId, const QString &passwd);
         // Party Management
         static QStringList fetchPartyNamesForUser(const QString &userId);
         static bool insertParty(const PartyData &party);

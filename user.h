@@ -26,7 +26,7 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private slots:
-    void on_pushButton_clicked();
+    void on_user_registration_button_clicked();
     void on_previousImage_clicked();
     void on_nextImage_clicked();
     void on_cartMainpage_clicked();
@@ -39,6 +39,13 @@ private slots:
     void on_make_pdf_Mainpage_clicked();
 
     void on_user_register_redirect_button_clicked();
+
+    void on_user_login_button_clicked();
+
+
+    void on_registration_verify_checkbox_clicked();
+
+    void on_resigter_page_login_button_clicked();
 
 public slots:
     void loadImage(int index);
@@ -56,6 +63,8 @@ private:
     void updateDiamondSummary();
     void updateStoneSummary();
     bool saveOrLoadUser();
+    bool handleRegistration();
+    bool canRegister(const QString &mobilePrefix, const QString &mobileNo);
     void loadUserCart(const QString &userId);
     void saveCartToDatabase();
     void selectMobileCodeFromText(const QString &text);

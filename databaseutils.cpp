@@ -42,10 +42,10 @@ bool DatabaseUtils::deleteJewelryMenuItem(int id)
             qDebug() << "Error: Failed to delete jewelry menu item:" << query.lastError().text();
         }
 
-        db.close(); // ✅ Ensure DB is closed before removing
+        db.close(); // Ensure DB is closed before removing
     }
 
-    QSqlDatabase::removeDatabase(connName); // ✅ Proper cleanup
+    QSqlDatabase::removeDatabase(connName); // Proper cleanup
     return success;
 }
 
@@ -80,12 +80,12 @@ bool DatabaseUtils::insertJewelryMenuItem(int parentId, const QString &name, con
             if (!success) {
                 qDebug() << "Insert failed in jewelry_menu:" << query.lastError().text();
             }
-        } // ✅ query destroyed here
+        } // query destroyed here
 
         db.close();
     }
 
-    QSqlDatabase::removeDatabase(connName); // ✅ Safe cleanup
+    QSqlDatabase::removeDatabase(connName); // Safe cleanup
     return success;
 }
 
@@ -100,14 +100,14 @@ QList<QVariantList> DatabaseUtils::fetchJewelryMenuItems()
         db.setDatabaseName(dbPath);
 
         if (!db.open()) {
-            qWarning() << "❌ Failed to open database:" << db.lastError().text();
+            qWarning() << "[ERROR] Failed to open database:" << db.lastError().text();
             return menuItems;
         }
 
         QSqlQuery query(db);
         if (!query.exec("SELECT id, parent_id, name, display_text "
                         "FROM jewelry_menu ORDER BY parent_id ASC, name ASC")) {
-            qWarning() << "❌ Query failed:" << query.lastError().text();
+            qWarning() << "[ERROR] Query failed:" << query.lastError().text();
             db.close();
             return menuItems;
         }
@@ -168,7 +168,7 @@ bool DatabaseUtils::updateGoldPrices(const QMap<QString, QString> &priceUpdates)
         db.setDatabaseName(dbPath);
         if (!db.open()) return false;
 
-        db.transaction(); // ✅ start transaction
+        db.transaction(); // start transaction
 
         QSqlQuery query(db);
         query.prepare("UPDATE Gold_Price SET Price = :price WHERE Kt = :kt");
@@ -178,7 +178,7 @@ bool DatabaseUtils::updateGoldPrices(const QMap<QString, QString> &priceUpdates)
                 query.bindValue(":price", it.value());
                 query.bindValue(":kt", it.key());
                 if (!query.exec()) {
-                    qWarning() << "❌ Failed to update Gold_Price:" << query.lastError();
+                    qWarning() << "[ERROR] Failed to update Gold_Price:" << query.lastError();
                     success = false;
                     break;
                 }
@@ -207,7 +207,7 @@ bool DatabaseUtils::sizeMMExists(const QString &table, double sizeMM)
         db.setDatabaseName(dbPath);
         if (!db.open()) {
             qWarning() << "DB open failed (sizeMMExists):" << db.lastError();
-            QSqlDatabase::removeDatabase(connectionName);  // ✅ cleanup
+            QSqlDatabase::removeDatabase(connectionName);  // cleanup
             return false;
         }
 
@@ -238,7 +238,7 @@ bool DatabaseUtils::insertRoundDiamond(const QString &sieve, double sizeMM, doub
         db.setDatabaseName(dbPath);
         if (!db.open()) {
             qWarning() << "DB open failed (insertRoundDiamond):" << db.lastError();
-            QSqlDatabase::removeDatabase(connectionName);  // ✅ cleanup
+            QSqlDatabase::removeDatabase(connectionName);  // cleanup
             return false;
         }
 
@@ -274,7 +274,7 @@ bool DatabaseUtils::insertFancyDiamond(const QString &shape, const QString &size
 
         if (!db.open()) {
             qWarning() << "DB open failed (insertFancyDiamond):" << db.lastError();
-            QSqlDatabase::removeDatabase(connectionName);  // ✅ cleanup even on failure
+            QSqlDatabase::removeDatabase(connectionName);  // cleanup even on failure
             return false;
         }
 
@@ -297,7 +297,7 @@ bool DatabaseUtils::insertFancyDiamond(const QString &shape, const QString &size
         db.close(); // optional but good hygiene
     } // db out of scope
 
-    QSqlDatabase::removeDatabase(connectionName); // ✅ guaranteed cleanup
+    QSqlDatabase::removeDatabase(connectionName); // guaranteed cleanup
     return success;
 }
 
@@ -466,7 +466,7 @@ bool DatabaseUtils::deleteUser(const QString &userId)
         }
     } // db goes out of scope
 
-    QSqlDatabase::removeDatabase(connName); // ✅ safe now
+    QSqlDatabase::removeDatabase(connName); // safe now
     return success;
 }
 
@@ -541,7 +541,7 @@ QList<QVariantList> DatabaseUtils::fetchUserDetailsForAdmin()
 
     }
 
-    QSqlDatabase::removeDatabase(connName); // ✅ Now safe
+    QSqlDatabase::removeDatabase(connName); // Now safe
     return userDetails;
 }
 
@@ -604,7 +604,7 @@ QList<PdfRecord> DatabaseUtils::getUserPdfs(const QString &userId)
 
     }
 
-    QSqlDatabase::removeDatabase(connName); // ✅ safe now
+    QSqlDatabase::removeDatabase(connName); // safe now
 
     if (pdfRecords.isEmpty()) {
         qDebug() << "No PDFs found for user:" << userId;
@@ -631,7 +631,7 @@ bool DatabaseUtils::checkAdminCredentials(const QString &username, const QString
 
         if (!db.open()) {
             qDebug() << "Failed to connect to admin_login DB:" << db.lastError().text();
-            // ✅ ensure cleanup even on failure
+            // ensure cleanup even on failure
             QSqlDatabase::removeDatabase(connName);
             return false;
         }
@@ -710,7 +710,7 @@ bool DatabaseUtils::createOrderBookUser(const QString &userId, const QString &us
             )");
             query.bindValue(":userId", userId);
             query.bindValue(":userName", userName);
-            query.bindValue(":password", password); // 🔒 Consider hashing this
+            query.bindValue(":password", password); // Consider hashing this
             query.bindValue(":date", date);
             query.bindValue(":role", role);
 
@@ -738,7 +738,7 @@ bool DatabaseUtils::updateStatusChangeRequest(int requestId, bool approved, cons
         db.setDatabaseName(dbPath);
 
         if (!db.open()) {
-            qDebug() << "❌ DB Open Failed:" << db.lastError().text();
+            qDebug() << "[ERROR] DB Open Failed:" << db.lastError().text();
             return false; // db handle destroyed automatically
         }
 
@@ -755,7 +755,7 @@ bool DatabaseUtils::updateStatusChangeRequest(int requestId, bool approved, cons
                 selectQuery.bindValue(":id", requestId);
 
                 if (!selectQuery.exec() || !selectQuery.next()) {
-                    qDebug() << "❌ SELECT failed:" << selectQuery.lastError().text();
+                    qDebug() << "[ERROR] SELECT failed:" << selectQuery.lastError().text();
                     return false;
                 }
 
@@ -767,7 +767,7 @@ bool DatabaseUtils::updateStatusChangeRequest(int requestId, bool approved, cons
             QStringList roleOrder = {"Manager", "Designer", "Manufacturer", "Accountant"};
             int roleIndex = roleOrder.indexOf(role);
             if (roleIndex == -1) {
-                qDebug() << "❌ Invalid role:" << role;
+                qDebug() << "[ERROR] Invalid role:" << role;
                 return false;
             }
 
@@ -788,7 +788,7 @@ bool DatabaseUtils::updateStatusChangeRequest(int requestId, bool approved, cons
             {
                 QSqlQuery updateQuery(db);
                 if (!updateQuery.exec(updateSQL)) {
-                    qDebug() << "❌ Failed to update Order-Status:" << updateQuery.lastError().text();
+                    qDebug() << "[ERROR] Failed to update Order-Status:" << updateQuery.lastError().text();
                     return false;
                 }
             } // updateQuery destroyed here
@@ -815,7 +815,7 @@ bool DatabaseUtils::updateStatusChangeRequest(int requestId, bool approved, cons
             }
 
             if (!finalUpdateQuery.exec()) {
-                qDebug() << "❌ Failed to update StatusChangeRequests:" << finalUpdateQuery.lastError().text();
+                qDebug() << "[ERROR] Failed to update StatusChangeRequests:" << finalUpdateQuery.lastError().text();
                 return false;
             }
         } // finalUpdateQuery destroyed here
@@ -833,7 +833,7 @@ bool DatabaseUtils::updateRoleStatus(const QString &jobNo, const QString &role, 
     bool success = false;
     // qDebug()<<role;
     QString normalizedRole = role.toLower();
-    // 🔒 Explicit whitelist mapping of roles -> columns
+    // Explicit whitelist mapping of roles -> columns
     static const QMap<QString, QString> roleToColumn = {
         {"manager",      "Manager"},
         {"designer",     "Designer"},
@@ -842,7 +842,7 @@ bool DatabaseUtils::updateRoleStatus(const QString &jobNo, const QString &role, 
     };
 
     if (!roleToColumn.contains(normalizedRole)) {
-        qWarning() << "❌ Invalid role passed to updateRoleStatus:" << role;
+        qWarning() << "[ERROR] Invalid role passed to updateRoleStatus:" << role;
         return false;
     }
 
@@ -863,13 +863,13 @@ bool DatabaseUtils::updateRoleStatus(const QString &jobNo, const QString &role, 
 
             success = query.exec();
             if (!success) {
-                qWarning() << "❌ Failed to update role status:" << query.lastError().text()
+                qWarning() << "[ERROR] Failed to update role status:" << query.lastError().text()
                     << "| SQL:" << sql
                     << "| jobNo:" << jobNo
                     << "| newStatus:" << newStatus;
             }
         } else {
-            qWarning() << "❌ DB open failed in updateRoleStatus:" << db.lastError().text();
+            qWarning() << "[ERROR] DB open failed in updateRoleStatus:" << db.lastError().text();
         }
 
         db.close();
@@ -889,7 +889,7 @@ QList<JobSheetRequest> DatabaseUtils::fetchJobSheetRequests()
         db.setDatabaseName(dbPath);
 
         if (!db.open()) {
-            qDebug() << "[fetchJobSheetRequests] ❌ DB open failed:" << db.lastError().text();
+            qDebug() << "[fetchJobSheetRequests][ERROR] DB open failed:" << db.lastError().text();
             // db will go out of scope before removeDatabase()
         } else {
             QString queryStr = R"(
@@ -924,7 +924,7 @@ QList<JobSheetRequest> DatabaseUtils::fetchJobSheetRequests()
 
             QSqlQuery query(db);
             if (!query.exec(queryStr)) {
-                qDebug() << "[fetchJobSheetRequests] ❌ Query failed:" << query.lastError().text();
+                qDebug() << "[fetchJobSheetRequests][ERROR] Query failed:" << query.lastError().text();
             } else {
                 while (query.next()) {
                     JobSheetRequest row;
@@ -976,12 +976,12 @@ bool DatabaseUtils::userExists(const QString &userId)
             query.prepare("SELECT user_id FROM users WHERE user_id = :user_id");
             query.bindValue(":user_id", userId);
             exists = query.exec() && query.next();
-        } // ✅ QSqlQuery destroyed here
+        } // QSqlQuery destroyed here
 
         db.close(); // optional
-    } // ✅ QSqlDatabase destroyed here
+    } // QSqlDatabase destroyed here
 
-    QSqlDatabase::removeDatabase(connectionName); // ✅ now safe
+    QSqlDatabase::removeDatabase(connectionName); // now safe
     return exists;
 }
 
@@ -1003,12 +1003,12 @@ bool DatabaseUtils::userExistsByMobileAndName(const QString &userId, const QStri
             query.bindValue(":mobile_no", userId);
             query.bindValue(":name", name);
             exists = query.exec() && query.next();
-        } // ✅ QSqlQuery destroyed here
+        } // QSqlQuery destroyed here
 
         db.close(); // optional but safe
-    } // ✅ QSqlDatabase destroyed here
+    } // QSqlDatabase destroyed here
 
-    QSqlDatabase::removeDatabase(connectionName); // ✅ now safe
+    QSqlDatabase::removeDatabase(connectionName); // now safe
     return exists;
 }
 
@@ -1038,12 +1038,12 @@ bool DatabaseUtils::insertUser(const QString &userId, const QString &companyName
             query.bindValue(":time", QDateTime::currentDateTime().toString(Qt::ISODate));
 
             success = query.exec();
-        } // ✅ QSqlQuery destroyed here
+        } // QSqlQuery destroyed here
 
         db.close(); // optional but safe
-    } // ✅ QSqlDatabase destroyed here
+    } // QSqlDatabase destroyed here
 
-    QSqlDatabase::removeDatabase(connectionName); // ✅ now safe
+    QSqlDatabase::removeDatabase(connectionName); // now safe
     return success;
 }
 
@@ -1077,15 +1077,15 @@ QList<SelectionData> DatabaseUtils::loadUserCart(const QString &userId)
                         selection.itemCount  = obj["itemCount"].toInt();
                         selection.diamondJson = obj["diamondJson"].toString();
                         selection.stoneJson   = obj["stoneJson"].toString();
-                        selection.pdf_path    = obj["pdf_path"].toString();   // ✅ restore pdf_path
+                        selection.pdf_path    = obj["pdf_path"].toString();   // restore pdf_path
                         selections.append(selection);
                     }
                 }
             }
-        } // ✅ QSqlQuery destroyed here
+        } // QSqlQuery destroyed here
 
         db.close();
-    } // ✅ db destroyed
+    } // db destroyed
 
     QSqlDatabase::removeDatabase(connectionName);
     return selections;
@@ -1140,12 +1140,12 @@ bool DatabaseUtils::saveUserCart(const QString &userId, const QList<SelectionDat
                 qDebug() << "Error: Failed to delete empty cart for user:" << userId
                          << deleteQuery.lastError().text();
                 db.close();
-                QSqlDatabase::removeDatabase(connName);   // ✅ cleanup even on failure
+                QSqlDatabase::removeDatabase(connName);   // cleanup even on failure
                 return false;
             }
 
             db.close();
-            QSqlDatabase::removeDatabase(connName);   // ✅ cleanup on success
+            QSqlDatabase::removeDatabase(connName);   // cleanup on success
             qDebug() << "Cart cleared for user:" << userId;
             return true;
         }
@@ -1199,9 +1199,9 @@ bool DatabaseUtils::saveUserCart(const QString &userId, const QList<SelectionDat
             obj["imageId"]     = s.imageId;
             obj["goldType"]    = s.goldType;
             obj["itemCount"]   = s.itemCount;
-            obj["diamondJson"] = s.diamondJson;  // ✅ store as string
-            obj["stoneJson"]   = s.stoneJson;    // ✅ store as string
-            obj["pdf_path"]    = s.pdf_path;     // ✅ also keep in cart JSON
+            obj["diamondJson"] = s.diamondJson;  // store as string
+            obj["stoneJson"]   = s.stoneJson;    // store as string
+            obj["pdf_path"]    = s.pdf_path;     // also keep in cart JSON
             cartArray.append(obj);
         }
         QString cartJson = QString(QJsonDocument(cartArray).toJson(QJsonDocument::Compact));
@@ -1247,7 +1247,7 @@ bool DatabaseUtils::saveUserCart(const QString &userId, const QList<SelectionDat
         qDebug() << "Successfully saved cart for user:" << userId;
     }
 
-    QSqlDatabase::removeDatabase(connName); // ✅ safe now
+    QSqlDatabase::removeDatabase(connName); // safe now
     return true;
 }
 
@@ -1288,7 +1288,7 @@ QList<ImageRecord> DatabaseUtils::getAllItems()
             } else {
                 qDebug() << "Error: Failed to execute query in getAllItems:" << query.lastError().text();
             }
-        } // ✅ query destroyed here before db.close()
+        } // query destroyed here before db.close()
 
         db.close();
     }
@@ -1325,10 +1325,10 @@ QPixmap DatabaseUtils::fetchImagePixmap(int imageId)
             } else {
                 qDebug() << "No image path found for id:" << imageId << query.lastError().text();
             }
-        } // ✅ query destroyed
+        } // query destroyed
 
         db.close();
-    } // ✅ db destroyed
+    } // db destroyed
 
     QSqlDatabase::removeDatabase(connectionName);
     return pixmap.isNull() ? QPixmap(":/icon/placeholder.png") : pixmap;
@@ -1394,7 +1394,7 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondDetails(int imageId)
             if (query.exec() && query.next()) {
                 json = query.value("diamond").toString();
 
-                // ✅ validate JSON before using
+                // validate JSON before using
                 QJsonParseError parseError;
                 QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &parseError);
                 if (parseError.error != QJsonParseError::NoError || !doc.isArray()) {
@@ -1436,7 +1436,7 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondDetails(int imageId)
                                 totalWeight += totalWeightForEntry;
                                 // qDebug()<<totalWeight;
                             }
-                        } // ✅ weightQuery destroyed here
+                        } // weightQuery destroyed here
                     }
                     // qDebug()<<json<<"-----"<<detailText;
                     for (auto it = weightByType.constBegin(); it != weightByType.constEnd(); ++it) {
@@ -1446,10 +1446,10 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondDetails(int imageId)
                     }
                 }
             }
-        } // ✅ outer query destroyed
+        } // outer query destroyed
 
         db.close();
-    } // ✅ QSqlDatabase destroyed
+    } // QSqlDatabase destroyed
 
     QSqlDatabase::removeDatabase(connectionName);
 
@@ -1478,7 +1478,7 @@ QPair<QString, QString> DatabaseUtils::fetchStoneDetails(int imageId)
             if (query.exec() && query.next()) {
                 json = query.value("stone").toString();
 
-                // ✅ validate JSON before using
+                // validate JSON before using
                 QJsonParseError parseError;
                 QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &parseError);
                 if (parseError.error == QJsonParseError::NoError && doc.isArray()) {
@@ -1490,7 +1490,7 @@ QPair<QString, QString> DatabaseUtils::fetchStoneDetails(int imageId)
                         QJsonObject obj = value.toObject();
                         QString type = obj["type"].toString().trimmed().toLower();
                         QString sizeMM = obj["sizeMM"].toString().trimmed();
-                        int quantity = obj["quantity"].toString().toInt(); // ✅ simpler & safer
+                        int quantity = obj["quantity"].toString().toInt(); // simpler & safer
 
                         {
                             QSqlQuery weightQuery(db);
@@ -1504,20 +1504,20 @@ QPair<QString, QString> DatabaseUtils::fetchStoneDetails(int imageId)
                                 weightByType[type] += totalWeightForEntry;
                                 totalWeight += totalWeightForEntry;
                             }
-                        } // ✅ weightQuery destroyed here
+                        } // weightQuery destroyed here
                     }
 
                     for (auto it = weightByType.constBegin(); it != weightByType.constEnd(); ++it) {
                         detailText += QString("%1\t\t%2ct\n").arg(it.key(), -10).arg(it.value(), 0, 'f', 2);
                     }
                 } else {
-                    json.clear(); // ✅ don't store bad JSON
+                    json.clear(); // don't store bad JSON
                 }
             }
-        } // ✅ query destroyed
+        } // query destroyed
 
         db.close();
-    } // ✅ db destroyed
+    } // db destroyed
 
     QSqlDatabase::removeDatabase(connectionName);
     return {json, detailText};
@@ -1661,7 +1661,7 @@ void DatabaseUtils::updateSummaryTable(QTableWidget *table, const QList<Selectio
                             if (weightQuery.exec() && weightQuery.next()) {
                                 singleWeight = weightQuery.value("weight").toDouble();
                             }
-                        } // ✅ weightQuery destroyed here
+                        } // weightQuery destroyed here
 
                         QPair<QString, QString> key(shape, sizeMMStr);
                         QPair<int, double> &aggregate = aggregates[key];
@@ -1670,12 +1670,12 @@ void DatabaseUtils::updateSummaryTable(QTableWidget *table, const QList<Selectio
                     }
                 }
             }
-        } // ✅ all QSqlQuery destroyed here
+        } // all QSqlQuery destroyed here
 
         db.close(); // optional
-    } // ✅ db destroyed here
+    } // db destroyed here
 
-    QSqlDatabase::removeDatabase(connectionName); // ✅ now safe
+    QSqlDatabase::removeDatabase(connectionName); // now safe
 
     // Fill table
     int totalQuantity = 0;
@@ -1881,6 +1881,48 @@ bool DatabaseUtils::insertCatalogData(const QString &imagePath, const QString &i
     return success;
 }
 
+bool DatabaseUtils::userLoginValidate(const QString &userId, const QString &passwd) {
+    QString dbPath = QDir(QCoreApplication::applicationDirPath())
+        .filePath("database/mega_mine_image.db");
+    QString connName = QStringLiteral("auth_conn_%1").arg(QUuid::createUuid().toString());
+
+    QString userStoredPasswd;
+
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+        db.setDatabaseName(dbPath);
+
+        if (!db.open()) {
+            qDebug() << "[ERROR] Failed to open authentication DB:" << db.lastError().text();
+            return false;
+        }
+
+        {
+            QSqlQuery query(db);
+            query.prepare(R"(
+                SELECT password
+                FROM users
+                WHERE user_id = :id
+            )");
+            query.bindValue(":id", userId);
+
+            if (query.exec()) {
+                if (query.next()) {
+                    userStoredPasswd = query.value(0).toString();
+                }
+            } else {
+                qDebug() << "[ERROR] Login query error:" << query.lastError().text();
+                return false;
+            }
+        }
+
+        db.close();
+    }
+
+    QSqlDatabase::removeDatabase(connName);
+
+    return (!userStoredPasswd.isEmpty() && passwd == userStoredPasswd);
+}
 
 //Login Window Logic
 LoginResult DatabaseUtils::authenticateUser(const QString &userId, const QString &password)
@@ -1890,14 +1932,14 @@ LoginResult DatabaseUtils::authenticateUser(const QString &userId, const QString
                          .filePath("database/luxeMineAuthentication.db");
 
     // Unique connection name
-    QString connName = QString("auth_conn_%1").arg(QDateTime::currentMSecsSinceEpoch());
+    QString connName = QStringLiteral("auth_conn_%1").arg(QUuid::createUuid().toString());
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
         db.setDatabaseName(dbPath);
 
         if (!db.open()) {
-            qDebug() << "❌ Failed to open authentication DB:" << db.lastError().text();
+            qDebug() << "[ERROR] Failed to open authentication DB: " << db.lastError().text();
             return result;
         }
 
@@ -1908,7 +1950,6 @@ LoginResult DatabaseUtils::authenticateUser(const QString &userId, const QString
                 FROM OrderBook_Login
                 WHERE userId = :id AND password = :pwd
             )");
-
             query.bindValue(":id", userId);
             query.bindValue(":pwd", password);
 
@@ -1917,7 +1958,7 @@ LoginResult DatabaseUtils::authenticateUser(const QString &userId, const QString
                 result.userName = query.value("userName").toString();
                 result.role = query.value("role").toString();
             } else if (query.lastError().isValid()) {
-                qDebug() << "❌ Login query error:" << query.lastError().text();
+                qDebug() << "[ERROR] Login query error:" << query.lastError().text();
             }
         } // query destroyed
 
@@ -1981,7 +2022,7 @@ bool DatabaseUtils::insertParty(const PartyData &party)
         db.setDatabaseName(dbPath);
 
         if (!db.open()) {
-            qDebug() << "❌ Failed to open DB for party insert:" << db.lastError().text();
+            qDebug() << "[ERROR] Failed to open DB for party insert:" << db.lastError().text();
             return false;
         }
 
@@ -2006,7 +2047,7 @@ bool DatabaseUtils::insertParty(const PartyData &party)
 
             success = query.exec();
             if (!success) {
-                qDebug() << "❌ Failed to insert party:" << query.lastError().text();
+                qDebug() << "[ERROR] Failed to insert party:" << query.lastError().text();
             }
         } // query destroyed here
 
@@ -2031,7 +2072,7 @@ PartyInfo DatabaseUtils::fetchPartyDetails(const QString &userId, const QString 
         db.setDatabaseName(dbPath);
 
         if (!db.open()) {
-            qDebug() << "❌ Failed to open DB in fetchPartyDetails:" << db.lastError().text();
+            qDebug() << "[ERROR] Failed to open DB in fetchPartyDetails:" << db.lastError().text();
             return info;
         }
 
@@ -2054,7 +2095,7 @@ PartyInfo DatabaseUtils::fetchPartyDetails(const QString &userId, const QString 
                 info.state   = query.value("state").toString();
                 info.country = query.value("country").toString();
             } else {
-                qDebug() << "❌ Query failed or no result in fetchPartyDetails:"
+                qDebug() << "[ERROR] Query failed or no result in fetchPartyDetails:"
                          << query.lastError().text();
             }
         } // query destroyed here
@@ -2078,7 +2119,7 @@ int DatabaseUtils::insertDummyOrder(const QString &sellerName, const QString &se
         db.setDatabaseName(dbPath);
         qDebug()<<dbPath;
         if (!db.open()) {
-            qDebug() << "❌ Failed to open DB:" << db.lastError().text();
+            qDebug() << "[ERROR] Failed to open DB:" << db.lastError().text();
             return -1;
         }
 
@@ -2097,7 +2138,7 @@ int DatabaseUtils::insertDummyOrder(const QString &sellerName, const QString &se
         query.addBindValue(QDate::currentDate().addDays(1).toString("yyyy-MM-dd"));
 
         if (!query.exec()) {
-            qDebug() << "❌ Insert failed:" << query.lastError().text();
+            qDebug() << "[ERROR] Insert failed:" << query.lastError().text();
         } else {
             newId = query.lastInsertId().toInt();
         }
@@ -2117,7 +2158,7 @@ int DatabaseUtils::getNextJobNumber() {
         db.setDatabaseName(dbPath);
 
         if (!db.open()) {
-            qDebug() << "❌ Failed to open DB in getNextJobNumber:" << db.lastError().text();
+            qDebug() << "[ERROR] Failed to open DB in getNextJobNumber:" << db.lastError().text();
             return 1;
         }
 
@@ -2136,7 +2177,7 @@ int DatabaseUtils::getNextJobNumber() {
             int number = lastJobNo.mid(3).toInt(&ok);      // "00023" → 23
             if (ok) nextJobNumber = number + 1;
         } else {
-            qDebug() << "ℹ️ No previous jobNo found. Starting from 1.";
+            qDebug() << "[ERROR] No previous jobNo found. Starting from 1.";
         }
 
         db.close();
@@ -2155,7 +2196,7 @@ int DatabaseUtils::getNextOrderNumberForSeller(const QString &sellerId) {
         db.setDatabaseName(dbPath);
 
         if (!db.open()) {
-            qDebug() << "❌ Failed to open DB in getNextOrderNumberForSeller:" << db.lastError().text();
+            qDebug() << "[ERROR] Failed to open DB in getNextOrderNumberForSeller:" << db.lastError().text();
             return 1;
         }
 
@@ -2180,7 +2221,7 @@ int DatabaseUtils::getNextOrderNumberForSeller(const QString &sellerId) {
             int number = numericPart.toInt(&ok);
             if (ok) nextOrder = number + 1;
         } else {
-            qDebug() << "ℹ️ No previous orderNo found for seller:" << sellerId;
+            qDebug() << "[ERROR] No previous orderNo found for seller:" << sellerId;
         }
 
         db.close();
@@ -2217,9 +2258,9 @@ bool DatabaseUtils::updateDummyOrder(int orderId, const QString &jobNo, const QS
 
         success = query.exec();
         if (!success) {
-            qDebug() << "❌ Update failed:" << query.lastError().text();
+            qDebug() << "[ERROR] Update failed:" << query.lastError().text();
         } else if (query.numRowsAffected() == 0) {
-            qDebug() << "⚠️ No row updated: Check orderId:" << orderId;
+            qDebug() << "[WARNING] No row updated: Check orderId:" << orderId;
             success = false;
         }
 
@@ -2244,10 +2285,10 @@ bool DatabaseUtils::cleanupUnsavedOrders()
             query.prepare(R"(DELETE FROM "OrderBook-Detail" WHERE isSaved = 0)");
             success = query.exec();
             if (!success) {
-                qWarning() << "❌ Failed to cleanup unsaved orders:" << query.lastError().text();
+                qWarning() << "[ERROR] Failed to cleanup unsaved orders:" << query.lastError().text();
             }
         } else {
-            qWarning() << "❌ DB open failed in cleanupUnsavedOrders:" << db.lastError().text();
+            qWarning() << "[ERROR] DB open failed in cleanupUnsavedOrders:" << db.lastError().text();
         }
 
         db.close();
@@ -2269,12 +2310,12 @@ bool DatabaseUtils::saveOrder(const OrderData &order) {
         db.setDatabaseName(dbPath);
 
         if (!db.open()) {
-            qDebug() << "❌ Failed to open DB in saveOrder:" << db.lastError().text();
+            qDebug() << "[ERROR] Failed to open DB in saveOrder:" << db.lastError().text();
             return false;
         }
 
         if (!db.transaction()) {
-            qDebug() << "❌ Failed to start transaction:" << db.lastError().text();
+            qDebug() << "[ERROR] Failed to start transaction:" << db.lastError().text();
             db.close();
             QSqlDatabase::removeDatabase(connName);
             return false;
@@ -2366,7 +2407,7 @@ bool DatabaseUtils::saveOrder(const OrderData &order) {
             query.bindValue(":id", order.id);
 
             if (!query.exec()) {
-                qDebug() << "❌ Update failed:" << query.lastError().text();
+                qDebug() << "[ERROR] Update failed:" << query.lastError().text();
                 db.rollback();
             } else {
                 QSqlQuery addStatus(db);
@@ -2374,25 +2415,25 @@ bool DatabaseUtils::saveOrder(const OrderData &order) {
                 addStatus.bindValue(":jobNo", order.jobNo);
 
                 if (!addStatus.exec()) {
-                    qDebug() << "❌ Failed to insert into Order-Status:" << addStatus.lastError().text();
+                    qDebug() << "[ERROR] Failed to insert into Order-Status:" << addStatus.lastError().text();
                     db.rollback();
                 } else if (!db.commit()) {
-                    qDebug() << "❌ Commit failed:" << db.lastError().text();
+                    qDebug() << "[ERROR] Commit failed:" << db.lastError().text();
                     db.rollback();
                 } else {
                     success = true;
                 }
             }
-        } // ✅ queries go out of scope here
+        } // queries go out of scope here
 
         if (success) {
             if (!db.commit()) {
-                qDebug() << "❌ Commit failed:" << db.lastError().text();
+                qDebug() << "[ERROR] Commit failed:" << db.lastError().text();
                 db.rollback(); // Attempt to roll back on failed commit
                 success = false;
             }
         } else {
-            qDebug() << "❌ One of the queries failed. Rolling back transaction.";
+            qDebug() << "[ERROR] One of the queries failed. Rolling back transaction.";
             db.rollback();
         }
 
@@ -2418,7 +2459,7 @@ std::optional<JobSheetData> DatabaseUtils::fetchJobSheetData(const QString &jobN
         db.setDatabaseName(dbPath);
 
         if (!db.open()) {
-            qWarning() << "❌ Failed to open DB in fetchJobSheetData:" << db.lastError().text();
+            qWarning() << "[ERROR] Failed to open DB in fetchJobSheetData:" << db.lastError().text();
             return std::nullopt;
         }
 
@@ -2455,7 +2496,7 @@ std::optional<JobSheetData> DatabaseUtils::fetchJobSheetData(const QString &jobN
 
             result = data;
         } else {
-            qWarning() << "⚠️ No data found for jobNo:" << jobNo
+            qWarning() << "[WARNING] No data found for jobNo:" << jobNo
                        << " Error:" << query.lastError().text();
         }
 
@@ -2478,7 +2519,7 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondAndStoneJson(const QString &d
         db.setDatabaseName(dbPath);
 
         if (!db.open()) {
-            qWarning() << "❌ Failed to open DB in fetchDiamondAndStoneJson:" << db.lastError().text();
+            qWarning() << "[ERROR] Failed to open DB in fetchDiamondAndStoneJson:" << db.lastError().text();
             QSqlDatabase::removeDatabase(connName);
             return {};
         }
@@ -2488,9 +2529,9 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondAndStoneJson(const QString &d
         query.bindValue(":designNo", designNo);
 
         if (!query.exec()) {
-            qWarning() << "❌ Query exec failed in fetchDiamondAndStoneJson:" << query.lastError().text();
+            qWarning() << "[ERROR] Query exec failed in fetchDiamondAndStoneJson:" << query.lastError().text();
         } else if (!query.next()) {
-            qWarning() << "⚠️ No diamond/stone JSON found for designNo:" << designNo;
+            qWarning() << "[WARNING] No diamond/stone JSON found for designNo:" << designNo;
         } else {
             int colDiamond = query.record().indexOf("diamond");
             int colStone   = query.record().indexOf("stone");
@@ -2536,9 +2577,9 @@ bool DatabaseUtils::insertStatusChangeRequest(const QString &jobNo, const QStrin
 
             success = query.exec();
             if (!success)
-                qWarning() << "❌ Failed to insert status change request:" << query.lastError().text();
+                qWarning() << "[ERROR] Failed to insert status change request:" << query.lastError().text();
         } else {
-            qWarning() << "❌ DB open failed in insertStatusChangeRequest:" << db.lastError().text();
+            qWarning() << "[ERROR] DB open failed in insertStatusChangeRequest:" << db.lastError().text();
         }
         db.close();
     }
@@ -2587,7 +2628,7 @@ bool DatabaseUtils::approveStatusChange(const QString &jobNo, const QString &rol
                 query.bindValue(":note", note);
 
             } else {
-                // ✅ Fallback: update generic role column to new status
+                // [+] Fallback: update generic role column to new status
                 query.prepare(QString(R"(UPDATE "Order-Status" SET "%1" = :status WHERE jobNo = :jobNo)")
                                   .arg(role));
                 query.bindValue(":status", statusField);
@@ -2597,12 +2638,12 @@ bool DatabaseUtils::approveStatusChange(const QString &jobNo, const QString &rol
 
             success = query.exec();
             if (!success) {
-                qWarning() << "❌ Failed to approve status change:"
+                qWarning() << "[ERROR] Failed to approve status change:"
                            << query.lastError().text()
                            << "| SQL:" << query.lastQuery();
             }
         } else {
-            qWarning() << "❌ DB open failed in approveStatusChange:" << db.lastError().text();
+            qWarning() << "[ERROR] DB open failed in approveStatusChange:" << db.lastError().text();
         }
 
         db.close();
@@ -2623,7 +2664,7 @@ QList<QVariantList> DatabaseUtils::fetchOrderListDetails() {
         db.setDatabaseName(dbPath);
 
         if (!db.open()) {
-            qDebug() << "❌ Database not open:" << db.lastError().text();
+            qDebug() << "[ERROR] Database not open:" << db.lastError().text();
             return orderList;
         }
 
@@ -2640,7 +2681,7 @@ QList<QVariantList> DatabaseUtils::fetchOrderListDetails() {
         )");
 
         if (!query.exec()) {
-            qDebug() << "❌ Error executing query:" << query.lastError().text();
+            qDebug() << "[ERROR] Error executing query:" << query.lastError().text();
             db.close();
             QSqlDatabase::removeDatabase(connName);
             return orderList;
@@ -2655,7 +2696,7 @@ QList<QVariantList> DatabaseUtils::fetchOrderListDetails() {
             orderList.append(row);
         }
 
-        db.close(); // ✅ close before remove
+        db.close(); // close before remove
     }
 
     QSqlDatabase::removeDatabase(connName);
@@ -2683,12 +2724,12 @@ QString DatabaseUtils::fetchImagePathForDesign(const QString &designNo)
             if (query.exec() && query.next()) {
                 imagePath = query.value("image_path").toString();
             } else {
-                qWarning() << "❌ No image found for designNo:" << designNo;
+                qWarning() << "[ERROR] No image found for designNo:" << designNo;
             }
 
             db.close();
         } else {
-            qWarning() << "❌ Failed to open DB in fetchImagePathForDesign:" << db.lastError().text();
+            qWarning() << "[ERROR] Failed to open DB in fetchImagePathForDesign:" << db.lastError().text();
         }
     }
     QSqlDatabase::removeDatabase(connName);
@@ -2707,7 +2748,7 @@ void DatabaseUtils::fillStoneTable(QTableWidget *table, const QString &designNo)
         QJsonParseError parseError;
         QJsonDocument doc = QJsonDocument::fromJson(jsonStr.toUtf8(), &parseError);
         if (parseError.error != QJsonParseError::NoError || !doc.isArray()) {
-            qWarning() << "⚠️ JSON parse error for" << typeLabel << ":" << parseError.errorString();
+            qWarning() << "[WARNING] JSON parse error for" << typeLabel << ":" << parseError.errorString();
             return;
         }
 
@@ -2753,15 +2794,15 @@ bool DatabaseUtils::updateDesignNoAndImagePath(const QString &jobNo, const QStri
             query.bindValue(":jobNo", jobNo);
 
             if (query.exec()) {
-                qDebug() << "✅ Design number and image path updated for jobNo:" << jobNo;
+                qDebug() << "[+] Design number and image path updated for jobNo:" << jobNo;
                 success = true;
             } else {
-                qWarning() << "❌ Failed to update OrderBook-Detail:" << query.lastError().text();
+                qWarning() << "[ERROR] Failed to update OrderBook-Detail:" << query.lastError().text();
             }
 
             db.close();
         } else {
-            qWarning() << "❌ Failed to open DB in updateDesignNoAndImagePath:" << db.lastError().text();
+            qWarning() << "[ERROR] Failed to open DB in updateDesignNoAndImagePath:" << db.lastError().text();
         }
     }
 
