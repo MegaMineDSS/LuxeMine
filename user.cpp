@@ -19,13 +19,24 @@ void User::resizeEvent(QResizeEvent *event)
 {
     QDialog::resizeEvent(event);
 
-    QPixmap bg(":/Backgrounds/Client-details.png");
-    if (!bg.isNull()) {
-        bg = bg.scaled(ui->page->size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+    QPixmap bg_page_stackedWidget(":/Backgrounds/Client-details.png");
+    if (!bg_page_stackedWidget.isNull()) {
+        bg_page_stackedWidget = bg_page_stackedWidget.scaled(ui->page->size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
         QPalette pal;
-        pal.setBrush(ui->page->backgroundRole(), bg);
+        pal.setBrush(ui->page->backgroundRole(), bg_page_stackedWidget);
         ui->page->setAutoFillBackground(true);
         ui->page->setPalette(pal);
+
+        ui->page->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    }
+
+    QPixmap bg_client_login_stackedWidget(":/Backgrounds/Client-details.png");
+    if (!bg_client_login_stackedWidget.isNull()) {
+        bg_client_login_stackedWidget = bg_client_login_stackedWidget.scaled(ui->client_login->size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+        QPalette pal;
+        pal.setBrush(ui->client_login->backgroundRole(), bg_client_login_stackedWidget);
+        ui->client_login->setAutoFillBackground(true);
+        ui->client_login->setPalette(pal);
 
         ui->page->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     }
@@ -96,13 +107,15 @@ void User::setupUi()
     // cartItemsContainer
     cartItemsContainer = ui->scrollArea->widget();
     if (!cartItemsContainer) {
-        cartItemsContainer = new QWidget(this);   // ✅ give it a parent
+        cartItemsContainer = new QWidget(this);   // give it a parent
         ui->scrollArea->setWidget(cartItemsContainer);
     }
-    cartItemsContainer->setLayout(new QVBoxLayout(cartItemsContainer));  // ✅ parent layout properly
+    cartItemsContainer->setLayout(new QVBoxLayout(cartItemsContainer));  // parent layout properly
     ui->scrollArea->setWidgetResizable(true);
 
     ui->goldFinaldetail->setText("Total Gold Weight: 0.00g");
+
+    ui->userid->setEnabled(false) ;
 
     loadData();
 
@@ -141,7 +154,7 @@ void User::setupMobileComboBox() {
     ui->mobileall->lineEdit()->setPlaceholderText("Search by code or country…");
     ui->mobileall->lineEdit()->setClearButtonEnabled(true);
 
-    // 🔑 Prevent completer leak
+    // Prevent completer leak
     if (ui->mobileall->completer())
         ui->mobileall->completer()->deleteLater();
 
@@ -230,7 +243,7 @@ void User::loadImage(int index)
     if (QFile::exists(record.imagePath)) {
         QPixmap pixmap(record.imagePath);
 
-        // ✅ capture a pre-scaled copy so we don't use a dangling local
+        // capture a pre-scaled copy so we don't use a dangling local
         QPixmap scaled = pixmap.scaled(ui->image_viewUser->size(),
                                        Qt::KeepAspectRatio,
                                        Qt::SmoothTransformation);
@@ -282,7 +295,7 @@ void User::updateGoldWeight(const QString &goldJson) {
                 );
         });
 
-        // ✅ Set first value by default (so when image changes, something is shown immediately)
+        // Set first value by default (so when image changes, something is shown immediately)
         if (!firstSet) {
             currentGoldSelection = karat;
             ui->goldWeight->setText(
@@ -294,26 +307,212 @@ void User::updateGoldWeight(const QString &goldJson) {
 
     // Attach menu to button
     ui->user_filter_btn->setMenu(filterMenu);
+    filterMenu->setStyleSheet(
+    R"(
+        QMenu:disabled {
+            background-color: #F0F0F0;
+            color: #A0A0A0;
+            border: 1px solid #D0D0D0;
+        }
+
+
+        QMenu {
+            background-color: #305C91;
+            color: #111;
+            border: 1px solid #2A4E7C;
+            border-radius: 2px;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 3px 10px;
+            min-width: 50px;
+        }
+
+        QMenu:hover {
+            background-color: #6e9cd2;
+            border: 1px solid #2A4E7C;
+            color: #EEE;
+        }
+
+        QMenu:pressed {
+            background-color: #254166;
+            border: 1px solid #1E3554;
+        }
+    )"
+    );
+    goldMenu->setStyleSheet(
+    R"(
+        QMenu:disabled {
+            background-color: #F0F0F0;
+            color: #A0A0A0;
+            border: 1px solid #D0D0D0;
+        }
+
+
+        QMenu {
+            background-color: #305C91;
+            color: #111;
+            border: 1px solid #2A4E7C;
+            border-radius: 2px;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 3px 10px;
+            min-width: 50px;
+        }
+
+        QMenu:hover {
+            background-color: #6e9cd2;
+            border: 1px solid #2A4E7C;
+            color: #EEE;
+        }
+
+        QMenu:pressed {
+            background-color: #254166;
+            border: 1px solid #1E3554;
+        }
+    )");
 }
 
-void User::on_pushButton_clicked()
+void User::on_user_registration_button_clicked()
 {
-    if (saveOrLoadUser()) {
+    // if (saveOrLoadUser()) {
+    //     ui->stackedWidget->setCurrentIndex(2);
+    //     loadData();
+    // }
+
+    if (User::handleRegistration()) {
         ui->stackedWidget->setCurrentIndex(2);
         loadData();
     }
 }
 
+void User::on_user_login_button_clicked() {
+    QString userId = ui->user_login_userid->text().trimmed().normalized(QString::NormalizationForm_C);
+    QString passwd = ui->user_login_password->text(); // Passwords can have any character codes including puny-codes
+
+    if (!userId.isEmpty() && DatabaseUtils::userLoginValidate(userId, passwd)) {
+        qDebug() << "[+]" << QString("User %1 logged in successfully.").arg(userId);
+        currentUserId = userId;
+        loadUserCart(userId);
+    } else {
+        QMessageBox::warning(this, "Login Error", "Incorrect UserId or Password");
+    }
+}
+
+
+bool User::canRegister(const QString &mobilePrefix, const QString &mobileNo){
+    // Validate mobile number and name for new user
+    if (mobileNo.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "Mobile number and name is required to generate user id.");
+        return false;
+    }
+
+    QRegularExpression mobileRegex(R"(\d{7,15})");
+    if (!mobileRegex.match(mobileNo).hasMatch()) {
+        QMessageBox::warning(this, "Input Error", "Mobile number must be 7-15 digits.");
+        return false;
+    }
+    QString userId = mobilePrefix + mobileNo ;
+
+    // Check if user exists with mobile number and name
+    if (DatabaseUtils::userExists(userId)) {
+        QMessageBox::warning(this,"Input Error", "User already exists with this user id.") ;
+        return false;
+    }
+
+    return true ;
+}
+
+void User::on_registration_verify_checkbox_clicked()
+{
+    QString mobilePrefix = ui->mobileall->currentData().toString().trimmed().normalized(QString::NormalizationForm_C).remove('+');
+    QString mobileNo = ui->mobileNouser->text().trimmed().normalized(QString::NormalizationForm_C);
+
+    if(User::canRegister(mobilePrefix, mobileNo)){
+        // Handle checkbox true
+        ui->registration_verify_checkbox->setChecked(true);
+
+        // generate user_ID (mobileNo for now) and show in UI.
+        QString userId = mobileNo ;
+        ui->userid->setText(mobileNo);
+        QMessageBox::information(this, "Registration info", "User Id is verified!") ;
+    }else{
+        ui->registration_verify_checkbox->setChecked(false);
+    }
+}
+
+bool User::handleRegistration(){
+    QString userId = ui->userid->text().trimmed().normalized(QString::NormalizationForm_C);
+    QString mobilePrefix = ui->mobileall->currentData().toString().trimmed().normalized(QString::NormalizationForm_C).remove('+');  // FIX: fetch actual code, not display text
+    QString mobileNo = ui->mobileNouser->text().trimmed().normalized(QString::NormalizationForm_C);
+    QString name = ui->nameuser->text().trimmed().normalized(QString::NormalizationForm_C);
+    QString companyName = ui->companyNameuser->text().trimmed().normalized(QString::NormalizationForm_C);
+    QString gstNo = ui->gstnouser->text().trimmed().normalized(QString::NormalizationForm_C);
+    QString emailId = ui->mailiduser->text().trimmed().normalized(QString::NormalizationForm_C);
+    QString address = ui->addressuser->toPlainText().trimmed().normalized(QString::NormalizationForm_C);
+
+    if(userId.isEmpty()){
+        QMessageBox::warning(this, "Input Error", "Verify UserId first") ;
+    }
+
+    // Validate mobile number and name for new user
+    if (mobileNo.isEmpty() || name.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "Mobile number and name are required.");
+        return false;
+    }
+
+    QRegularExpression mobileRegex(R"(\d{7,15})");
+    if (!mobileRegex.match(mobileNo).hasMatch()) {
+        QMessageBox::warning(this, "Input Error", "Mobile number must be 7-15 digits.");
+        return false;
+    }
+
+    // Check company name for new user
+    if (companyName.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "Company name is required for new user.");
+        return false;
+    }
+
+    // Validate email if provided
+    if (!emailId.isEmpty()) {
+        QRegularExpression emailRegex(R"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)");
+        if (!emailRegex.match(emailId).hasMatch()) {
+            QMessageBox::warning(this, "Input Error", "Invalid email format.");
+            return false;
+        }
+    }
+
+    // Generate userId from mobile prefix and number
+    userId = mobilePrefix + mobileNo;
+
+    // Check if user exists with mobile number and name
+    if (DatabaseUtils::userExistsByMobileAndName(userId, name) || DatabaseUtils::userExists(userId)) {
+        QMessageBox::warning(this, "Input Error", "User already exists with this name and mobile number") ;
+        return false;
+    }
+
+    // Insert new user
+    if (DatabaseUtils::insertUser(userId, companyName, userId, gstNo, name, emailId, address)) {
+        QMessageBox::information(this, "Success", QString("User %1 created successfully.").arg(userId));
+        currentUserId = userId;
+        loadUserCart(userId);
+        return true;
+    } else {
+        QMessageBox::critical(this, "Database Error", "Failed to create new user.");
+        return false;
+    }
+    return false ;
+}
+
 bool User::saveOrLoadUser()
 {
-    QString userId = ui->userid->text().trimmed();
-    QString mobilePrefix = ui->mobileall->currentData().toString().trimmed();  // ✅ FIX: fetch actual code, not display text
-    QString mobileNo = ui->mobileNouser->text().trimmed();
-    QString name = ui->nameuser->text().trimmed();
-    QString companyName = ui->companyNameuser->text().trimmed();
-    QString gstNo = ui->gstnouser->text().trimmed();
-    QString emailId = ui->mailiduser->text().trimmed();
-    QString address = ui->addressuser->toPlainText().trimmed();
+    QString userId = ui->userid->text().trimmed().normalized(QString::NormalizationForm_C);
+    QString mobilePrefix = ui->mobileall->currentData().toString().trimmed().normalized(QString::NormalizationForm_C).remove('+');  // FIX: fetch actual code, not display text
+    QString mobileNo = ui->mobileNouser->text().trimmed().normalized(QString::NormalizationForm_C);
+    QString name = ui->nameuser->text().trimmed().normalized(QString::NormalizationForm_C);
+    QString companyName = ui->companyNameuser->text().trimmed().normalized(QString::NormalizationForm_C);
+    QString gstNo = ui->gstnouser->text().trimmed().normalized(QString::NormalizationForm_C);
+    QString emailId = ui->mailiduser->text().trimmed().normalized(QString::NormalizationForm_C);
+    QString address = ui->addressuser->toPlainText().trimmed().normalized(QString::NormalizationForm_C);
 
     // Check if userId is provided
     if (!userId.isEmpty()) {
@@ -414,7 +613,7 @@ bool User::eventFilter(QObject *obj, QEvent *event)
         if (event->type() == QEvent::Enter && !currentStoneJson.isEmpty()) {
             QJsonArray array = DatabaseUtils::parseJsonArray(currentStoneJson);
 
-            stoneTable->clearContents();                   // ✅ clear old items
+            stoneTable->clearContents();                   // clear old items
             stoneTable->setRowCount(array.size());
 
             for (int i = 0; i < array.size(); ++i) {
@@ -618,10 +817,10 @@ void User::on_cartItemRemoveRequested(int imageId, const QString &goldType)
         }
     }
 
-    // 🔹 Save updated cart
+    // Save updated cart
     saveCartToDatabase();
 
-    // 🔹 Just update summaries, not whole UI
+    // Just update summaries, not whole UI
     updateGoldSummary();
     updateDiamondSummary();
     updateStoneSummary();
@@ -707,5 +906,12 @@ void User::on_user_register_redirect_button_clicked()
 {
     ui->stackedWidget->setCurrentIndex(1);
     resizeEvent(nullptr); // Force background recalculation so that background image properly set
+}
+
+
+void User::on_resigter_page_login_button_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(0);
+    resizeEvent(nullptr);
 }
 

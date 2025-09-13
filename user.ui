@@ -51,9 +51,9 @@
         <string notr="true"/>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>1</number>
        </property>
-       <widget class="QWidget" name="page_2">
+       <widget class="QWidget" name="client_login">
         <layout class="QGridLayout" name="gridLayout_4">
          <item row="7" column="9">
           <spacer name="verticalSpacer_8">
@@ -441,6 +441,12 @@ QLabel[dim=&quot;true&quot;] {
              </widget>
             </item>
            </layout>
+           <zorder>user_login_password</zorder>
+           <zorder>label_12</zorder>
+           <zorder>user_register_redirect_button</zorder>
+           <zorder>user_login_userid</zorder>
+           <zorder>label_11</zorder>
+           <zorder>user_login_button</zorder>
           </widget>
          </item>
          <item row="7" column="5">
@@ -616,7 +622,59 @@ QWidget#page {
 */</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_12">
-         <item row="2" column="0" colspan="4">
+         <item row="4" column="1">
+          <spacer name="horizontalSpacer_14">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="4" column="2">
+          <spacer name="horizontalSpacer_15">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="8">
+          <spacer name="horizontalSpacer_63">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="5" column="5">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="1" colspan="5">
           <widget class="QFrame" name="frame">
            <property name="styleSheet">
             <string notr="true"/>
@@ -628,16 +686,23 @@ QWidget#page {
             <enum>QFrame::Shadow::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_6">
-            <item row="6" column="2" colspan="7">
-             <widget class="QTextEdit" name="addressuser">
-              <property name="maximumSize">
+            <item row="7" column="3">
+             <spacer name="horizontalSpacer_13">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
                <size>
-                <width>16777215</width>
-                <height>80</height>
+                <width>40</width>
+                <height>20</height>
                </size>
               </property>
+             </spacer>
+            </item>
+            <item row="1" column="1" colspan="7">
+             <widget class="QLineEdit" name="companyNameuser">
               <property name="styleSheet">
-               <string notr="true">QTextEdit {
+               <string notr="true">QLineEdit {
     background-color: #ecf0f1;
     color: #2c3e50;
     font-size: 16px;
@@ -646,25 +711,224 @@ QWidget#page {
     padding: 8px 15px;
 }
 
-QTextEdit:focus {
+QLineEdit:focus {
     border: 2px solid #2c3e75;
     background-color: #f9f9f9;
 }
 
-QTextEdit:hover {
+QLineEdit:hover {
     border: 2px solid #7f8c8d;
     background-color: #f4f6f7;
 }
 
-QTextEdit::placeholder {
+QLineEdit::placeholder {
     color: #95a5a6;
     font-style: italic;
 }</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="8">
-             <widget class="QPushButton" name="pushButton">
+            <item row="4" column="1" colspan="7">
+             <widget class="QLineEdit" name="nameuser">
+              <property name="styleSheet">
+               <string notr="true">QLineEdit {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    font-size: 16px;
+    border: 2px solid #bdc3c7;
+    border-radius: 5px;
+    padding: 8px 15px;
+}
+
+QLineEdit:focus {
+    border: 2px solid #2c3e75;
+    background-color: #f9f9f9;
+}
+
+QLineEdit:hover {
+    border: 2px solid #7f8c8d;
+    background-color: #f4f6f7;
+}
+
+QLineEdit::placeholder {
+    color: #95a5a6;
+    font-style: italic;
+}</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="font">
+               <font>
+                <pointsize>-1</pointsize>
+                <fontweight>DemiBold</fontweight>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QLabel {
+    color: #2c3e75;
+    font-size: 16px;
+    font-weight: 600;
+    background: transparent;
+    padding: 2px;
+}
+
+QLabel[highlight=&quot;true&quot;] {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+QLabel[dim=&quot;true&quot;] {
+    color: #7f8c8d;
+    font-style: italic;
+}
+</string>
+              </property>
+              <property name="text">
+               <string>User Id:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label">
+              <property name="font">
+               <font>
+                <pointsize>-1</pointsize>
+                <fontweight>DemiBold</fontweight>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QLabel {
+    color: #2c3e75;
+    font-size: 16px;
+    font-weight: 600;
+    background: transparent;
+    padding: 2px;
+}
+
+QLabel[highlight=&quot;true&quot;] {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+QLabel[dim=&quot;true&quot;] {
+    color: #7f8c8d;
+    font-style: italic;
+}
+</string>
+              </property>
+              <property name="text">
+               <string>Company Name:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" colspan="7">
+             <widget class="QLineEdit" name="userid">
+              <property name="styleSheet">
+               <string notr="true">QLineEdit {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    font-size: 16px;
+    border: 2px solid #bdc3c7;
+    border-radius: 5px;
+    padding: 8px 15px;
+}
+
+QLineEdit:focus {
+    border: 2px solid #2c3e75;
+    background-color: #f9f9f9;
+}
+
+QLineEdit:hover {
+    border: 2px solid #7f8c8d;
+    background-color: #f4f6f7;
+}
+
+QLineEdit::placeholder {
+    color: #95a5a6;
+    font-style: italic;
+}</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_2">
+              <property name="font">
+               <font>
+                <pointsize>-1</pointsize>
+                <fontweight>DemiBold</fontweight>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QLabel {
+    color: #2c3e75;
+    font-size: 16px;
+    font-weight: 600;
+    background: transparent;
+    padding: 2px;
+}
+
+QLabel[highlight=&quot;true&quot;] {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+QLabel[dim=&quot;true&quot;] {
+    color: #7f8c8d;
+    font-style: italic;
+}
+</string>
+              </property>
+              <property name="text">
+               <string>Mobile No:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="font">
+               <font>
+                <pointsize>-1</pointsize>
+                <fontweight>DemiBold</fontweight>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QLabel {
+    color: #2c3e75;
+    font-size: 16px;
+    font-weight: 600;
+    background: transparent;
+    padding: 2px;
+}
+
+QLabel[highlight=&quot;true&quot;] {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+QLabel[dim=&quot;true&quot;] {
+    color: #7f8c8d;
+    font-style: italic;
+}
+</string>
+              </property>
+              <property name="text">
+               <string>Address:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTop|Qt::AlignmentFlag::AlignTrailing</set>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="7">
+             <widget class="QPushButton" name="user_registration_button">
               <property name="maximumSize">
                <size>
                 <width>100</width>
@@ -715,10 +979,16 @@ QPushButton:disabled {
               </property>
              </widget>
             </item>
-            <item row="1" column="2" colspan="7">
-             <widget class="QLineEdit" name="companyNameuser">
+            <item row="6" column="1" colspan="7">
+             <widget class="QTextEdit" name="addressuser">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>80</height>
+               </size>
+              </property>
               <property name="styleSheet">
-               <string notr="true">QLineEdit {
+               <string notr="true">QTextEdit {
     background-color: #ecf0f1;
     color: #2c3e50;
     font-size: 16px;
@@ -727,25 +997,25 @@ QPushButton:disabled {
     padding: 8px 15px;
 }
 
-QLineEdit:focus {
+QTextEdit:focus {
     border: 2px solid #2c3e75;
     background-color: #f9f9f9;
 }
 
-QLineEdit:hover {
+QTextEdit:hover {
     border: 2px solid #7f8c8d;
     background-color: #f4f6f7;
 }
 
-QLineEdit::placeholder {
+QTextEdit::placeholder {
     color: #95a5a6;
     font-style: italic;
 }</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="1">
-             <spacer name="horizontalSpacer_10">
+            <item row="7" column="4">
+             <spacer name="horizontalSpacer_29">
               <property name="orientation">
                <enum>Qt::Orientation::Horizontal</enum>
               </property>
@@ -757,121 +1027,7 @@ QLineEdit::placeholder {
               </property>
              </spacer>
             </item>
-            <item row="4" column="2" colspan="7">
-             <widget class="QLineEdit" name="nameuser">
-              <property name="styleSheet">
-               <string notr="true">QLineEdit {
-    background-color: #ecf0f1;
-    color: #2c3e50;
-    font-size: 16px;
-    border: 2px solid #bdc3c7;
-    border-radius: 5px;
-    padding: 8px 15px;
-}
-
-QLineEdit:focus {
-    border: 2px solid #2c3e75;
-    background-color: #f9f9f9;
-}
-
-QLineEdit:hover {
-    border: 2px solid #7f8c8d;
-    background-color: #f4f6f7;
-}
-
-QLineEdit::placeholder {
-    color: #95a5a6;
-    font-style: italic;
-}</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1">
-             <widget class="QLabel" name="label_6">
-              <property name="font">
-               <font>
-                <pointsize>-1</pointsize>
-                <fontweight>DemiBold</fontweight>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QLabel {
-    color: #2c3e75;
-    font-size: 16px;
-    font-weight: 600;
-    background: transparent;
-    padding: 2px;
-}
-
-QLabel[highlight=&quot;true&quot;] {
-    color: #c0392b;
-    font-weight: 600;
-}
-
-QLabel[dim=&quot;true&quot;] {
-    color: #7f8c8d;
-    font-style: italic;
-}
-</string>
-              </property>
-              <property name="text">
-               <string>Address:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTop|Qt::AlignmentFlag::AlignTrailing</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLabel" name="label_2">
-              <property name="font">
-               <font>
-                <pointsize>-1</pointsize>
-                <fontweight>DemiBold</fontweight>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QLabel {
-    color: #2c3e75;
-    font-size: 16px;
-    font-weight: 600;
-    background: transparent;
-    padding: 2px;
-}
-
-QLabel[highlight=&quot;true&quot;] {
-    color: #c0392b;
-    font-weight: 600;
-}
-
-QLabel[dim=&quot;true&quot;] {
-    color: #7f8c8d;
-    font-style: italic;
-}
-</string>
-              </property>
-              <property name="text">
-               <string>Mobile No:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="5">
-             <spacer name="horizontalSpacer_26">
-              <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="3" column="1">
+            <item row="3" column="0">
              <widget class="QLabel" name="label_3">
               <property name="font">
                <font>
@@ -907,37 +1063,8 @@ QLabel[dim=&quot;true&quot;] {
               </property>
              </widget>
             </item>
-            <item row="2" column="3" colspan="6">
-             <widget class="QLineEdit" name="mobileNouser">
-              <property name="styleSheet">
-               <string notr="true">QLineEdit {
-    background-color: #ecf0f1;
-    color: #2c3e50;
-    font-size: 16px;
-    border: 2px solid #bdc3c7;
-    border-radius: 5px;
-    padding: 8px 15px;
-}
-
-QLineEdit:focus {
-    border: 2px solid #2c3e75;
-    background-color: #f9f9f9;
-}
-
-QLineEdit:hover {
-    border: 2px solid #7f8c8d;
-    background-color: #f4f6f7;
-}
-
-QLineEdit::placeholder {
-    color: #95a5a6;
-    font-style: italic;
-}</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="6">
-             <spacer name="horizontalSpacer_12">
+            <item row="7" column="0">
+             <spacer name="horizontalSpacer_10">
               <property name="orientation">
                <enum>Qt::Orientation::Horizontal</enum>
               </property>
@@ -949,127 +1076,7 @@ QLineEdit::placeholder {
               </property>
              </spacer>
             </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="label_10">
-              <property name="font">
-               <font>
-                <pointsize>-1</pointsize>
-                <fontweight>DemiBold</fontweight>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QLabel {
-    color: #2c3e75;
-    font-size: 16px;
-    font-weight: 600;
-    background: transparent;
-    padding: 2px;
-}
-
-QLabel[highlight=&quot;true&quot;] {
-    color: #c0392b;
-    font-weight: 600;
-}
-
-QLabel[dim=&quot;true&quot;] {
-    color: #7f8c8d;
-    font-style: italic;
-}
-</string>
-              </property>
-              <property name="text">
-               <string>User Id:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="7">
-             <spacer name="horizontalSpacer_13">
-              <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="0" column="2" colspan="7">
-             <widget class="QLineEdit" name="userid">
-              <property name="styleSheet">
-               <string notr="true">QLineEdit {
-    background-color: #ecf0f1;
-    color: #2c3e50;
-    font-size: 16px;
-    border: 2px solid #bdc3c7;
-    border-radius: 5px;
-    padding: 8px 15px;
-}
-
-QLineEdit:focus {
-    border: 2px solid #2c3e75;
-    background-color: #f9f9f9;
-}
-
-QLineEdit:hover {
-    border: 2px solid #7f8c8d;
-    background-color: #f4f6f7;
-}
-
-QLineEdit::placeholder {
-    color: #95a5a6;
-    font-style: italic;
-}</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="4">
-             <spacer name="horizontalSpacer_28">
-              <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="5" column="2" colspan="7">
-             <widget class="QLineEdit" name="mailiduser">
-              <property name="styleSheet">
-               <string notr="true">QLineEdit {
-    background-color: #ecf0f1;
-    color: #2c3e50;
-    font-size: 16px;
-    border: 2px solid #bdc3c7;
-    border-radius: 5px;
-    padding: 8px 15px;
-}
-
-QLineEdit:focus {
-    border: 2px solid #2c3e75;
-    background-color: #f9f9f9;
-}
-
-QLineEdit:hover {
-    border: 2px solid #7f8c8d;
-    background-color: #f4f6f7;
-}
-
-QLineEdit::placeholder {
-    color: #95a5a6;
-    font-style: italic;
-}</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
+            <item row="5" column="0">
              <widget class="QLabel" name="label_5">
               <property name="font">
                <font>
@@ -1108,7 +1115,79 @@ QLabel[dim=&quot;true&quot;] {
               </property>
              </widget>
             </item>
-            <item row="3" column="2" colspan="7">
+            <item row="7" column="6">
+             <widget class="QPushButton" name="resigter_page_login_button">
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
+    background-color: #2c3e50;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    border: 2px solid #2c3e50;
+    border-radius: 5px;
+    padding: 0px 20px;
+    padding-bottom: 3px;
+    min-width: 80px;
+    min-height: 32px;
+}
+
+QPushButton:hover {
+    background-color: #34495e;
+    border: 2px solid #34495e;
+}
+
+QPushButton:pressed {
+    background-color: #1a252f;
+    border: 2px solid #1a252f;
+}
+
+QPushButton:focus {
+    border: 2px solid #f1c40f;
+    background-color: #2c3e50;
+}
+
+QPushButton:disabled {
+    background-color: #95a5a6;   /* muted gray */
+    color: #ecf0f1;
+    border: 2px solid #7f8c8d;
+}
+</string>
+              </property>
+              <property name="text">
+               <string>Login</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1" colspan="7">
+             <widget class="QLineEdit" name="mailiduser">
+              <property name="styleSheet">
+               <string notr="true">QLineEdit {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    font-size: 16px;
+    border: 2px solid #bdc3c7;
+    border-radius: 5px;
+    padding: 8px 15px;
+}
+
+QLineEdit:focus {
+    border: 2px solid #2c3e75;
+    background-color: #f9f9f9;
+}
+
+QLineEdit:hover {
+    border: 2px solid #7f8c8d;
+    background-color: #f4f6f7;
+}
+
+QLineEdit::placeholder {
+    color: #95a5a6;
+    font-style: italic;
+}</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1" colspan="7">
              <widget class="QLineEdit" name="gstnouser">
               <property name="styleSheet">
                <string notr="true">QLineEdit {
@@ -1137,102 +1216,36 @@ QLineEdit::placeholder {
               </property>
              </widget>
             </item>
-            <item row="4" column="1">
-             <widget class="QLabel" name="label_4">
-              <property name="font">
-               <font>
-                <pointsize>-1</pointsize>
-                <fontweight>DemiBold</fontweight>
-               </font>
-              </property>
+            <item row="2" column="4" colspan="4">
+             <widget class="QLineEdit" name="mobileNouser">
               <property name="styleSheet">
-               <string notr="true">QLabel {
-    color: #2c3e75;
+               <string notr="true">QLineEdit {
+    background-color: #ecf0f1;
+    color: #2c3e50;
     font-size: 16px;
-    font-weight: 600;
-    background: transparent;
-    padding: 2px;
+    border: 2px solid #bdc3c7;
+    border-radius: 5px;
+    padding: 8px 15px;
 }
 
-QLabel[highlight=&quot;true&quot;] {
-    color: #c0392b;
-    font-weight: 600;
+QLineEdit:focus {
+    border: 2px solid #2c3e75;
+    background-color: #f9f9f9;
 }
 
-QLabel[dim=&quot;true&quot;] {
-    color: #7f8c8d;
+QLineEdit:hover {
+    border: 2px solid #7f8c8d;
+    background-color: #f4f6f7;
+}
+
+QLineEdit::placeholder {
+    color: #95a5a6;
     font-style: italic;
-}
-</string>
-              </property>
-              <property name="text">
-               <string>Name:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+}</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="3">
-             <spacer name="horizontalSpacer_29">
-              <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="label">
-              <property name="font">
-               <font>
-                <pointsize>-1</pointsize>
-                <fontweight>DemiBold</fontweight>
-               </font>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QLabel {
-    color: #2c3e75;
-    font-size: 16px;
-    font-weight: 600;
-    background: transparent;
-    padding: 2px;
-}
-
-QLabel[highlight=&quot;true&quot;] {
-    color: #c0392b;
-    font-weight: 600;
-}
-
-QLabel[dim=&quot;true&quot;] {
-    color: #7f8c8d;
-    font-style: italic;
-}
-</string>
-              </property>
-              <property name="text">
-               <string>Company Name:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="2">
-             <spacer name="horizontalSpacer_11">
-              <property name="orientation">
-               <enum>Qt::Orientation::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="2" column="2">
+            <item row="2" column="1">
              <widget class="QComboBox" name="mobileall">
               <property name="styleSheet">
                <string notr="true">QComboBox {
@@ -1284,8 +1297,75 @@ QComboBox QAbstractItemView::item {
               </property>
              </widget>
             </item>
-            <item row="7" column="0">
-             <spacer name="horizontalSpacer_30">
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="font">
+               <font>
+                <pointsize>-1</pointsize>
+                <fontweight>DemiBold</fontweight>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QLabel {
+    color: #2c3e75;
+    font-size: 16px;
+    font-weight: 600;
+    background: transparent;
+    padding: 2px;
+}
+
+QLabel[highlight=&quot;true&quot;] {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+QLabel[dim=&quot;true&quot;] {
+    color: #7f8c8d;
+    font-style: italic;
+}
+</string>
+              </property>
+              <property name="text">
+               <string>Name:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1" colspan="2">
+             <widget class="QCheckBox" name="registration_verify_checkbox">
+              <property name="styleSheet">
+               <string notr="true">QCheckBox {
+    color: #2c3e75;
+    font-size: 16px;
+    font-weight: 600;
+    background: transparent;
+    padding: 2px;
+    max-width: 150px;
+}
+
+QCheckBox[highlight=&quot;true&quot;] {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+QCheckBox[dim=&quot;true&quot;] {
+    color: #7f8c8d;
+    font-style: italic;
+}
+QCheckBox:hover{
+    border:2px solid  #2c3e75;
+}
+</string>
+              </property>
+              <property name="text">
+               <string>Verify UserID</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="5">
+             <spacer name="horizontalSpacer_11">
               <property name="orientation">
                <enum>Qt::Orientation::Horizontal</enum>
               </property>
@@ -1300,85 +1380,7 @@ QComboBox QAbstractItemView::item {
            </layout>
           </widget>
          </item>
-         <item row="4" column="1">
-          <spacer name="horizontalSpacer_15">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="4" column="3">
-          <spacer name="verticalSpacer_3">
-           <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="4" column="0">
-          <spacer name="horizontalSpacer_14">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="3">
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="5" column="3">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="5">
-          <spacer name="horizontalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="3" column="3">
+         <item row="3" column="5">
           <spacer name="verticalSpacer_4">
            <property name="orientation">
             <enum>Qt::Orientation::Vertical</enum>
@@ -1391,33 +1393,7 @@ QComboBox QAbstractItemView::item {
            </property>
           </spacer>
          </item>
-         <item row="0" column="6">
-          <spacer name="horizontalSpacer_7">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="4">
-          <spacer name="horizontalSpacer_9">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="4" column="2">
+         <item row="4" column="4">
           <spacer name="horizontalSpacer_16">
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
@@ -1430,7 +1406,98 @@ QComboBox QAbstractItemView::item {
            </property>
           </spacer>
          </item>
-         <item row="0" column="1" colspan="2">
+         <item row="0" column="10">
+          <spacer name="horizontalSpacer_62">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="5">
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="6">
+          <spacer name="horizontalSpacer_64">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="12">
+          <spacer name="horizontalSpacer_30">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="7">
+          <spacer name="horizontalSpacer_9">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="4" column="5">
+          <spacer name="verticalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Orientation::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="9">
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="2" colspan="3">
           <widget class="QLabel" name="label_7">
            <property name="font">
             <font>
@@ -1463,6 +1530,45 @@ QLabel[dim=&quot;true&quot;] {
             <string>Client Registration</string>
            </property>
           </widget>
+         </item>
+         <item row="0" column="11">
+          <spacer name="horizontalSpacer_7">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="4" column="0">
+          <spacer name="horizontalSpacer_12">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="4" column="3">
+          <spacer name="horizontalSpacer_65">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>
@@ -2525,6 +2631,33 @@ QLineEdit::placeholder {
         <layout class="QGridLayout" name="gridLayout_11">
          <item row="2" column="5">
           <widget class="QPushButton" name="pushButton_4">
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: #F3F3F3;
+    border: 1px solid #2A4E7C;
+    border-radius: 2px;
+    color: #2C2C2C;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: #93b7e1;
+}
+
+QPushButton:pressed {
+    background-color: #DADADA;
+    border: 1px solid #666;
+}
+
+QPushButton:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1px solid #D0D0D0;
+}</string>
+           </property>
            <property name="text">
             <string>clear</string>
            </property>
@@ -2545,8 +2678,28 @@ QLineEdit::placeholder {
          </item>
          <item row="0" column="1" colspan="2">
           <widget class="QLabel" name="label_8">
+           <property name="styleSheet">
+            <string notr="true">QLabel {
+    color: #2c3e75;
+    font-size: 18px;
+    font-weight: 600;
+    background: transparent;
+    padding: 2px;
+}
+
+QLabel[highlight=&quot;true&quot;] {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+QLabel[dim=&quot;true&quot;] {
+    color: #7f8c8d;
+    font-style: italic;
+}
+</string>
+           </property>
            <property name="text">
-            <string>shopping cart</string>
+            <string>Shopping Cart</string>
            </property>
           </widget>
          </item>
@@ -2560,8 +2713,8 @@ QLineEdit::placeholder {
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>610</width>
-              <height>686</height>
+              <width>585</width>
+              <height>687</height>
              </rect>
             </property>
            </widget>
@@ -2582,8 +2735,28 @@ QLineEdit::placeholder {
          </item>
          <item row="0" column="4">
           <widget class="QLabel" name="label_9">
+           <property name="styleSheet">
+            <string notr="true">QLabel {
+    color: #2c3e75;
+    font-size: 18px;
+    font-weight: 600;
+    background: transparent;
+    padding: 2px;
+}
+
+QLabel[highlight=&quot;true&quot;] {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+QLabel[dim=&quot;true&quot;] {
+    color: #7f8c8d;
+    font-style: italic;
+}
+</string>
+           </property>
            <property name="text">
-            <string>order summery</string>
+            <string>Order Summery</string>
            </property>
           </widget>
          </item>
@@ -2591,8 +2764,36 @@ QLineEdit::placeholder {
           <widget class="QPushButton" name="backMainpage">
            <property name="font">
             <font>
-             <pointsize>15</pointsize>
+             <pointsize>-1</pointsize>
+             <fontweight>DemiBold</fontweight>
             </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: #F3F3F3;
+    border: 1px solid #2A4E7C;
+    border-radius: 2px;
+    color: #2C2C2C;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: #93b7e1;
+}
+
+QPushButton:pressed {
+    background-color: #DADADA;
+    border: 1px solid #666;
+}
+
+QPushButton:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1px solid #D0D0D0;
+}</string>
            </property>
            <property name="text">
             <string>Back</string>
@@ -2627,6 +2828,33 @@ QLineEdit::placeholder {
          </item>
          <item row="2" column="6">
           <widget class="QPushButton" name="makePdfButton">
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: #F3F3F3;
+    border: 1px solid #2A4E7C;
+    border-radius: 2px;
+    color: #2C2C2C;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 14px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: #93b7e1;
+}
+
+QPushButton:pressed {
+    background-color: #DADADA;
+    border: 1px solid #666;
+}
+
+QPushButton:disabled {
+    background-color: #F0F0F0;
+    color: #A0A0A0;
+    border: 1px solid #D0D0D0;
+}</string>
+           </property>
            <property name="text">
             <string>Make Pdf</string>
            </property>
@@ -2649,6 +2877,26 @@ QLineEdit::placeholder {
            </item>
            <item row="0" column="0" colspan="2">
             <widget class="QLabel" name="goldFinaldetail">
+             <property name="styleSheet">
+              <string notr="true">QLabel {
+    color: #2c3e75;
+    font-size: 18px;
+    font-weight: 600;
+    background: transparent;
+    padding: 2px;
+}
+
+QLabel[highlight=&quot;true&quot;] {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+QLabel[dim=&quot;true&quot;] {
+    color: #7f8c8d;
+    font-style: italic;
+}
+</string>
+             </property>
              <property name="text">
               <string>TextLabel</string>
              </property>
@@ -2759,7 +3007,7 @@ QLineEdit::placeholder {
   <tabstop>nameuser</tabstop>
   <tabstop>mailiduser</tabstop>
   <tabstop>addressuser</tabstop>
-  <tabstop>pushButton</tabstop>
+  <tabstop>user_registration_button</tabstop>
   <tabstop>newItem_Mainpage</tabstop>
   <tabstop>user_filter_btn</tabstop>
   <tabstop>searchbarMainpage</tabstop>
