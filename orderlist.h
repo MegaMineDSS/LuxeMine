@@ -28,7 +28,7 @@ private slots:
     void openJobSheet(const QString &jobNo);
 
     void printJobSheet(const QString &jobNo);
-
+    void handleAxException(int code, const QString &source, const QString &desc, const QString &help);
 
 private:
     void show_order_list_with_role(const QString &role, int editableStatusCol);

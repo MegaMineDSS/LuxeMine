@@ -10,6 +10,10 @@
 #include <QMenu>
 #include <QFileDialog>
 #include <QProgressDialog>
+#include <winerror.h>
+#include <qt_windows.h>
+#include <QProcess>
+#include <QThread>
 
 #include <QAxObject>
 #include <QInputDialog>
@@ -196,206 +200,13 @@ void OrderList::openJobSheet(const QString &jobNo) {
 }
 
 // Cleaned-up and modularized version of printJobSheet
+void OrderList::handleAxException(int code, const QString &source, const QString &desc, const QString &help) {
+    qDebug() << "COM Exception: Code=" << code << ", Source=" << source << ", Desc=" << desc << ", Help=" << help;
+    QMessageBox::critical(this, "Error", QString("Excel operation failed: %1\nCode: %2").arg(desc).arg(code));
+}
+
 void OrderList::printJobSheet(const QString &jobNo) {
-    QDir::setCurrent(QCoreApplication::applicationDirPath());
 
-    // --- Fetch JobSheet data ---
-    auto jobDataOpt = DatabaseUtils::fetchJobSheetData(jobNo);
-    if (!jobDataOpt) {
-        QMessageBox::warning(this, "Error", "No job sheet data found for job: " + jobNo);
-        return;
-    }
-    JobSheetData jobData = *jobDataOpt;
-
-    // --- Prepare Excel Template ---
-    QString templatePath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/sample_excel.xlsx");
-    QString tempPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/temp_jobsheet_" + jobNo + ".xlsx");
-    if (!QFile::copy(templatePath, tempPath)) {
-        QMessageBox::critical(this, "Error", "Failed to create temporary Excel file.");
-        return;
-    }
-
-    QProgressDialog progress("Generating job sheet, please wait...", QString(), 0, 0, this);
-    progress.setWindowModality(Qt::ApplicationModal);
-    progress.setCancelButton(nullptr);
-    progress.setWindowTitle("Please Wait");
-    progress.setMinimumDuration(0);
-    progress.setRange(0, 0);
-    progress.show();
-    QApplication::processEvents();
-
-    // --- Launch Excel ---
-    QAxObject *excel = new QAxObject("Excel.Application", this);
-    if (!excel || excel->isNull()) {
-        QMessageBox::critical(this, "Error", "Excel is not available.");
-        delete excel;
-        return;
-    }
-    excel->setProperty("DisplayAlerts", false);
-    excel->setProperty("ScreenUpdating", false);
-    excel->setProperty("EnableEvents", false);
-    excel->setProperty("Visible", false);
-
-    QAxObject *workbooks = excel->querySubObject("Workbooks");
-    QAxObject *workbook = workbooks->querySubObject("Open(const QString&)", tempPath);
-    QAxObject *sheet = workbook->querySubObject("Worksheets(int)", 1);
-
-    // // Auto Fit
-    // QAxObject *range = sheet->querySubObject("Range(const QString&)", "J11:M26");
-    // QAxObject *columns = range->querySubObject("EntireColumn");
-    // columns->dynamicCall("AutoFit()");
-    // Example: wrap querySubObject in smart cleanup
-    auto safeQuery = [&](QAxObject *parent, const char *member, const QVariant &arg = QVariant()) {
-        QAxObject *obj = arg.isValid() ? parent->querySubObject(member, arg) : parent->querySubObject(member);
-        return QScopedPointer<QAxObject>(obj);
-    };
-
-    { // Autofit
-        QScopedPointer<QAxObject> range(sheet->querySubObject("Range(const QString&)", "J11:M26"));
-        if (range) {
-            QScopedPointer<QAxObject> columns(range->querySubObject("EntireColumn"));
-            if (columns) columns->dynamicCall("AutoFit()");
-        }
-    }
-
-    // --- Fill Excel Template ---
-    auto setCell = [&](const QString &cell, const QVariant &value, const QString &format = QString()) {
-        QAxObject *r = sheet->querySubObject("Range(const QString&)", cell);
-        r->setProperty("Value", value);
-        if (!format.isEmpty()) r->setProperty("NumberFormat", format);
-    };
-
-    setCell("B3", jobData.partyId);
-    setCell("H5", jobData.jobNo);
-    setCell("H4", jobData.orderNo);
-    setCell("H3", jobData.clientId);
-    setCell("H2", QDate::fromString(jobData.orderDate, "yyyy-MM-dd").toString("MM/dd/yyyy"), "mm/dd/yyyy");
-    setCell("A6", QDate::fromString(jobData.deliveryDate, "yyyy-MM-dd").toString("MM/dd/yyyy"), "mm/dd/yyyy");
-
-    setCell("B4", jobData.productPis);
-    setCell("F4", jobData.designNo);
-    setCell("B6", jobData.metalPurity);
-    setCell("C6", jobData.metalColor);
-    setCell("D6", jobData.sizeNo);
-    setCell("E6", jobData.sizeMM);
-    setCell("F6", jobData.length);
-    setCell("G6", jobData.width);
-    setCell("H6", jobData.height);
-
-    // --- Insert Image ---
-    // QString imagePath = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/" + jobData.imagePath);
-    // if (QFile::exists(imagePath)) {
-    //     QAxObject *shapes = sheet->querySubObject("Shapes");
-    //     QAxObject *anchorCell = sheet->querySubObject("Range(const QString&)", "J2");
-    //     double left = anchorCell->property("Left").toDouble();
-    //     double top = anchorCell->property("Top").toDouble();
-    //     QAxObject *range = sheet->querySubObject("Range(const QString&)", "J2:N9");
-    //     double width = range->property("Width").toDouble();
-    //     double height = range->property("Height").toDouble();
-
-    //     shapes->querySubObject("AddPicture(const QString&, bool, bool, double, double, double, double)",
-    //                            imagePath, false, true, left, top, width, height);
-    // }
-    QString imagePath = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/" + jobData.imagePath);
-    if (QFile::exists(imagePath)) {
-        QScopedPointer<QAxObject> shapes(sheet->querySubObject("Shapes"));
-        QScopedPointer<QAxObject> anchorCell(sheet->querySubObject("Range(const QString&)", "J2"));
-        double left = anchorCell->property("Left").toDouble();
-        double top = anchorCell->property("Top").toDouble();
-        QScopedPointer<QAxObject> range(sheet->querySubObject("Range(const QString&)", "J2:N9"));
-        double width = range->property("Width").toDouble();
-        double height = range->property("Height").toDouble();
-
-        if (shapes)
-            shapes->querySubObject("AddPicture(const QString&, bool, bool, double, double, double, double)",
-                                   imagePath, false, true, left, top, width, height);
-    }
-
-    // --- Load and Insert Stones Table ---
-    auto [diamondJson, stoneJson] = DatabaseUtils::fetchDiamondAndStoneJson(jobData.designNo);
-
-    auto insertStones = [&](const QString &json, const QString &label, int &row) {
-        QJsonParseError err;
-        QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &err);
-        if (err.error != QJsonParseError::NoError || !doc.isArray()) {
-            qDebug() << "❌ JSON parse error for" << label << ":" << err.errorString();
-            return;
-        }
-
-        QJsonArray arr = doc.array();
-        for (const QJsonValue &v : arr) {
-            if (!v.isObject()) continue;
-
-            QJsonObject o = v.toObject();
-            QString type = o.value("type").toString();
-            QString quantity = o.value("quantity").toString();
-            QString size = o.value("sizeMM").toString();
-
-            setCell(QString("J%1").arg(row), label);    // Column J: "Diamond"/"Stone"
-            setCell(QString("L%1").arg(row), type);     // Column K: Type
-            setCell(QString("N%1").arg(row), quantity); // Column L: Quantity
-            setCell(QString("P%1").arg(row), size);     // Column M: Size
-
-            if (++row > 26) break; // Avoid overflow
-        }
-    };
-
-    // Header row
-    setCell("J11", "Type");
-    setCell("L11", "Name");
-    setCell("N11", "Qty");
-    setCell("P11", "Size");
-
-    int rowNum = 12;
-    insertStones(diamondJson, "Diamond", rowNum);
-    insertStones(stoneJson, "Stone", rowNum);
-
-    // Add border
-    int firstRow = 11;
-    int lastRow = rowNum - 1;
-    if (lastRow >= firstRow) {
-        QString rangeStr = QString("J%1:Q%2").arg(firstRow).arg(lastRow);
-        QAxObject* range = sheet->querySubObject("Range(const QString&)", rangeStr);
-        if (range) {
-            QAxObject* borders = range->querySubObject("Borders");
-            if (borders) {
-                QList<int> borderIndices = {7, 8, 9, 10, 11, 12}; // xlEdgeLeft..InsideHorizontal
-                for (int index : borderIndices) {
-                    QAxObject* border = borders->querySubObject("Item(int)", index);
-                    if (border) {
-                        border->setProperty("LineStyle", 1);  // xlContinuous
-                        border->setProperty("Weight", -4138); // xlThin
-                    }
-                }
-            }
-        }
-    }
-
-    // --- Save as PDF ---
-    workbook->dynamicCall("Save()");
-    QString pdfDir = QCoreApplication::applicationDirPath() + "/pdfs";
-    QDir().mkpath(pdfDir);
-
-    QString pdfPath = QDir::toNativeSeparators(pdfDir + "/jobSheet_" + jobNo + ".pdf");
-    workbook->dynamicCall("ExportAsFixedFormat(int, const QString&)", 0, pdfPath);
-
-    if (QFile::exists(pdfPath)) {
-        QMessageBox::information(this, "PDF Exported", "Saved PDF to:\n" + pdfPath);
-        QDesktopServices::openUrl(QUrl::fromLocalFile(pdfPath));
-    } else {
-        QMessageBox::critical(this, "Error", "Failed to export PDF:" + pdfPath);
-    }
-
-    // Cleanup
-    workbook->dynamicCall("Close()");
-    excel->dynamicCall("Quit()");
-
-    delete sheet;
-    delete workbook;
-    delete workbooks;
-    delete excel;
-
-    if (QFile::exists(tempPath)) QFile::remove(tempPath);
 }
 
 void OrderList::setupStatusCombo(int row, int col, const QString &role, const QString &currentStatus,

@@ -626,7 +626,7 @@ bool DatabaseUtils::checkAdminCredentials(const QString &username, const QString
         QDir::setCurrent(QCoreApplication::applicationDirPath());
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
         // db.setDatabaseName("database/mega_mine.db");
-        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
+        QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine.db");
         db.setDatabaseName(dbPath);
 
         if (!db.open()) {

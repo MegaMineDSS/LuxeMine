@@ -4,6 +4,9 @@
 #include <QDialog>
 #include <QKeyEvent>
 
+#include "managegold.h"
+#include "managegoldreturn.h"
+
 namespace Ui {
 class JobSheet;
 }
@@ -29,11 +32,26 @@ private:
     void saveDesignNoAndImagePath(const QString &designNo, const QString &imagePath);
 
     void set_value_designer();
+    void set_value_manuf();
 
+    void updateGoldTotalWeight();
+    void handleCellSave(int row, int col);
+
+private slots:
+        void onGoldDetailCellClicked(QTableWidgetItem *item); // New slot for cell click
+
+
+private:
     Ui::JobSheet *ui;
     QString userRole;
     int finalWidth = 0;
     int finalHeight = 0;
+
+    ManageGold *newManageGold = nullptr;
+    bool manageGold = false;
+
+    ManageGoldReturn *newManageGoldReturn = nullptr;
+    bool manageGoldReturn = false;
 
 
 
