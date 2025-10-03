@@ -374,11 +374,6 @@ void User::updateGoldWeight(const QString &goldJson) {
 
 void User::on_user_registration_button_clicked()
 {
-    // if (saveOrLoadUser()) {
-    //     ui->stackedWidget->setCurrentIndex(2);
-    //     loadData();
-    // }
-
     if (User::handleRegistration()) {
         ui->stackedWidget->setCurrentIndex(2);
         loadData();
@@ -393,6 +388,8 @@ void User::on_user_login_button_clicked() {
         qDebug() << "[+]" << QString("User %1 logged in successfully.").arg(userId);
         currentUserId = userId;
         loadUserCart(userId);
+        ui->stackedWidget->setCurrentIndex(2);
+        loadData();
     } else {
         QMessageBox::warning(this, "Login Error", "Incorrect UserId or Password");
     }
@@ -914,4 +911,6 @@ void User::on_resigter_page_login_button_clicked()
     ui->stackedWidget->setCurrentIndex(0);
     resizeEvent(nullptr);
 }
+
+
 
