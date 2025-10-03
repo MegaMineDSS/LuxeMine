@@ -1,4 +1,4 @@
-QT       += core gui sql axcontainer
+QT       += core gui sql printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -19,6 +19,7 @@ SOURCES += \
     cartitemwidget.cpp \
     commontypes.cpp \
     databaseutils.cpp \
+    diamonissueretbro.cpp \
     imageclicklabel.cpp \
     jewelrymenu.cpp \
     jobsheet.cpp \
@@ -43,6 +44,7 @@ HEADERS += \
     cartitemwidget.h \
     commontypes.h \
     databaseutils.h \
+    diamonissueretbro.h \
     imageclicklabel.h \
     jewelrymenu.h \
     jobsheet.h \
@@ -63,6 +65,7 @@ FORMS += \
     addcatalog.ui \
     admin.ui \
     adminmenubuttons.ui \
+    diamonissueretbro.ui \
     jobsheet.ui \
     loginwindow.ui \
     mainwindow.ui \
@@ -74,10 +77,10 @@ FORMS += \
     user.ui
 
 
-QXLSX_PARENTPATH=./         # current QXlsx path is . (. means curret directory)
-QXLSX_HEADERPATH=./header/  # current QXlsx header path is ./header/
-QXLSX_SOURCEPATH=./source/  # current QXlsx source path is ./source/
-include(./QXlsx.pri)
+# QXLSX_PARENTPATH=./         # current QXlsx path is . (. means curret directory)
+# QXLSX_HEADERPATH=./header/  # current QXlsx header path is ./header/
+# QXLSX_SOURCEPATH=./source/  # current QXlsx source path is ./source/
+# include(./QXlsx.pri)
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

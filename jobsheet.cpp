@@ -7,9 +7,9 @@
 #include <QDialog>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QInputDialog>
 
 #include "databaseutils.h"
-
 
 JobSheet::JobSheet(QWidget *parent, const QString &jobNo, const QString &role)
     : QDialog(parent),
@@ -39,6 +39,27 @@ JobSheet::JobSheet(QWidget *parent, const QString &jobNo, const QString &role)
 
     resize(finalWidth, finalHeight);
     move(screenGeometry.center() - rect().center());
+
+    // Resize rows to fit contents
+    ui->diamondAndStoneDetailTableWidget->resizeRowsToContents();
+    ui->goldDetailTableWidget->resizeRowsToContents();
+
+    // Function to adjust table height based on rows
+    auto adjustTableHeight = [](QTableWidget* table){
+        int totalHeight = table->horizontalHeader()->height();
+        qDebug() << table->rowCount();
+        for (int row = 0; row < table->rowCount(); ++row) {
+            totalHeight += table->rowHeight(row);
+        }
+        totalHeight += 2 * table->frameWidth();
+        table->setMinimumHeight(totalHeight);
+        table->setMaximumHeight(totalHeight);
+    };
+
+    // Apply to both tables
+    adjustTableHeight(ui->diamondAndStoneDetailTableWidget);
+    adjustTableHeight(ui->goldDetailTableWidget);
+
 
     set_value(jobNo);
 //     ui->extraNoteTextEdit->setText(R"(ACKNOWLEDGMENT OF ENTRUSTMENT
@@ -71,6 +92,14 @@ JobSheet::~JobSheet()
 void JobSheet::resizeEvent(QResizeEvent *event)
 {
     QDialog::resizeEvent(event);  // Call base class
+
+    if (!originalPixmap.isNull()) {
+        ui->productImageLabel->setPixmap(
+            originalPixmap.scaled(ui->productImageLabel->size(),
+                                  Qt::KeepAspectRatio,
+                                  Qt::SmoothTransformation)
+            );
+    }
 
     int windowW = width();
     int windowH = height();
@@ -145,9 +174,17 @@ void JobSheet::set_value(const QString &jobNo)
     // Image
     if (!data.imagePath.isEmpty()) {
         QString fullPath = QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + data.imagePath);
-        QPixmap pixmap(fullPath);
-        ui->productImageLabel->setScaledContents(true);
-        ui->productImageLabel->setPixmap(pixmap);
+        originalPixmap.load(fullPath);
+
+        // Optional: support high-DPI
+        originalPixmap.setDevicePixelRatio(devicePixelRatioF());
+
+        // Scale and set pixmap manually
+        ui->productImageLabel->setPixmap(
+            originalPixmap.scaled(ui->productImageLabel->size(),
+                                  Qt::KeepAspectRatio,
+                                  Qt::SmoothTransformation)
+            );
     }
 
     // Diamond & Stone
@@ -287,19 +324,34 @@ void JobSheet::set_value_manuf()
             }
             onGoldDetailCellClicked(item);
         }
+        // ✅ Special case: Dust cell (0,2) → open QInputDialog
+        else if (row == 0 && col == 2) {
+            handleCellSave(row, col); // this will trigger the QInputDialog version
+        }
     });
 
-    // ✅ Allow manual editing for dust (col 2 only)
+    // ✅ Allow manual editing ONLY for returns (col 4, row 1–4)
     ui->goldDetailTableWidget->setEditTriggers(
         QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed
         );
 
-    // ✅ Handle save for dust (row 0, col 2) and other return columns (col 4)
     connect(ui->goldDetailTableWidget, &QTableWidget::cellChanged, this, [this](int row, int col) {
-        if ((row == 0 && col == 2) || (col == 4 && row >= 1 && row <= 4)) {
+        if (col == 4 && row >= 1 && row <= 4) { // returns
             handleCellSave(row, col);
         }
     });
+
+    // ✅ Lock col 1, col 2 (dust is read-only in table), col 3, and col 5
+    for (int r = 0; r < ui->goldDetailTableWidget->rowCount(); ++r) {
+        for (int c : {1, 2, 3, 5}) {
+            QTableWidgetItem *item = ui->goldDetailTableWidget->item(r, c);
+            if (!item) {
+                item = new QTableWidgetItem();
+                ui->goldDetailTableWidget->setItem(r, c, item);
+            }
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable); // make read-only
+        }
+    }
 }
 
 void JobSheet::onGoldDetailCellClicked(QTableWidgetItem *item)
@@ -664,7 +716,6 @@ void JobSheet::updateGoldTotalWeight()
         totalReturnItem->setText(QString::number(totalReturnPercent, 'f', 2) + "%");
     }
 
-
 }
 
 void JobSheet::handleCellSave(int row, int col)
@@ -672,27 +723,12 @@ void JobSheet::handleCellSave(int row, int col)
     QTableWidgetItem *item = ui->goldDetailTableWidget->item(row, col);
     if (!item) return;
 
-    QString text = item->text().trimmed();
-    if (text.isEmpty()) return;
-
-    // Ensure numeric format
-    bool ok;
-    double value = text.toDouble(&ok);
-    if (!ok) {
-        QMessageBox::warning(this, "Invalid", "Please enter a valid number.");
-        item->setText(""); // reset
-        return;
-    }
-
-    QString formatted = QString::number(value, 'f', 3);
-
-    // Get job number
     QString jobNo = ui->jobNoLineEdit->text().trimmed();
     if (jobNo.isEmpty()) return;
 
     // Map row/col to database column name
     QString dbColumn;
-    if (row == 0 && col == 2) dbColumn = "filling_dust";
+    if (row == 0 && col == 2) dbColumn = "filling_dust";       // Dust (special case)
     else if (row == 1 && col == 4) dbColumn = "buffing_return";
     else if (row == 2 && col == 4) dbColumn = "free_polish_return";
     else if (row == 3 && col == 4) dbColumn = "setting_return";
@@ -704,29 +740,93 @@ void JobSheet::handleCellSave(int row, int col)
     QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
     db.setDatabaseName(dbPath);
 
-    bool alreadyExists = false;
-    QString existingValue;
+    double existingValue = 0.0;
     if (db.open()) {
         QSqlQuery q(db);
         q.prepare("SELECT " + dbColumn + " FROM jobsheet_detail WHERE job_no = ?");
         q.addBindValue(jobNo);
         if (q.exec() && q.next()) {
-            existingValue = q.value(0).toString();
-            if (!existingValue.isEmpty())
-                alreadyExists = true;
+            existingValue = q.value(0).toDouble();
+        }
+    }
+
+    // ✅ Special case: Dust (row 0, col 2) → always editable, ADD instead of overwrite
+    if (row == 0 && col == 2) {
+        bool okInput = false;
+        double addValue = QInputDialog::getDouble(
+            this,
+            "Add Dust Weight",
+            "Enter additional dust weight:",
+            0.0,        // default
+            0.0,        // min
+            100000.0,   // max
+            3,          // decimals
+            &okInput
+            );
+
+        if (!okInput) {
+            // user cancelled → restore old value
+            item->setText(QString::number(existingValue, 'f', 3));
+            db.close();
+            QSqlDatabase::removeDatabase("cell_save_conn");
+            return;
+        }
+
+        double newTotal = existingValue + addValue;
+        QString newFormatted = QString::number(newTotal, 'f', 3);
+
+        QSqlQuery q(db);
+        q.prepare("UPDATE jobsheet_detail SET " + dbColumn + " = ? WHERE job_no = ?");
+        q.addBindValue(newFormatted);
+        q.addBindValue(jobNo);
+        if (!q.exec() || q.numRowsAffected() == 0) {
+            q.prepare("INSERT INTO jobsheet_detail (job_no, " + dbColumn + ") VALUES (?, ?)");
+            q.addBindValue(jobNo);
+            q.addBindValue(newFormatted);
+            q.exec();
+        }
+
+        item->setText(newFormatted); // show updated total
+        db.close();
+        QSqlDatabase::removeDatabase("cell_save_conn");
+        updateGoldTotalWeight();
+        return;
+    }
+
+    // ✅ For other cells (one-time save)
+    QString text = item->text().trimmed();
+    if (text.isEmpty()) return;
+
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok) {
+        QMessageBox::warning(this, "Invalid", "Please enter a valid number.");
+        item->setText(""); // reset
+        return;
+    }
+
+    QString formatted = QString::number(value, 'f', 3);
+
+    bool alreadyExists = false;
+    QString existingText;
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT " + dbColumn + " FROM jobsheet_detail WHERE job_no = ?");
+        q.addBindValue(jobNo);
+        if (q.exec() && q.next()) {
+            existingText = q.value(0).toString();
+            if (!existingText.isEmpty()) alreadyExists = true;
         }
     }
 
     if (alreadyExists) {
         QMessageBox::warning(this, "Locked", "This cell is already filled and cannot be changed.");
-        // restore DB value
-        item->setText(existingValue);
+        item->setText(existingText);
         db.close();
         QSqlDatabase::removeDatabase("cell_save_conn");
         return;
     }
 
-    // Ask confirmation
     auto reply = QMessageBox::question(this, "Confirm", "Save value " + formatted + " ?");
     if (reply == QMessageBox::Yes) {
         QSqlQuery q(db);
@@ -739,9 +839,9 @@ void JobSheet::handleCellSave(int row, int col)
             q.addBindValue(formatted);
             q.exec();
         }
-        item->setText(formatted); // format back
+        item->setText(formatted);
     } else {
-        item->setText(""); // reset if cancelled
+        item->setText("");
     }
 
     db.close();

@@ -10,12 +10,10 @@
 #include <QMenu>
 #include <QFileDialog>
 #include <QProgressDialog>
-#include <winerror.h>
-#include <qt_windows.h>
-#include <QProcess>
-#include <QThread>
+#include <QPainter>
+// #include <QPrinter>
 
-#include <QAxObject>
+// #include <QAxObject>
 #include <QInputDialog>
 
 #include <QSqlDatabase>
@@ -24,9 +22,9 @@
 
 #include "jobsheet.h"
 
-#include "header/xlsxdocument.h"
+// #include "header/xlsxdocument.h"
 
-using namespace QXlsx;
+// using namespace QXlsx;
 // RPD  Casting Bagging
 OrderList::OrderList(QWidget *parent, const QString &role)
     : QDialog(parent), ui(new Ui::OrderList)
@@ -199,13 +197,267 @@ void OrderList::openJobSheet(const QString &jobNo) {
     sheet->exec();  // still modal
 }
 
-// Cleaned-up and modularized version of printJobSheet
-void OrderList::handleAxException(int code, const QString &source, const QString &desc, const QString &help) {
-    qDebug() << "COM Exception: Code=" << code << ", Source=" << source << ", Desc=" << desc << ", Help=" << help;
-    QMessageBox::critical(this, "Error", QString("Excel operation failed: %1\nCode: %2").arg(desc).arg(code));
+void OrderList::drawRow(QPainter &painter, int x, int y, const QVector<int> &widths, int height) {
+    for (int w : widths) {
+        painter.drawRect(x, y, w, height);
+        x += w; // move to next column
+    }
+}
+
+// Do NOT repeat the default argument here
+void OrderList::drawTextRow(QPainter &painter, int x, int y, const QVector<QString> &texts, const QVector<int> &widths)
+{
+    int curX = x;
+    for (int i = 0; i < texts.size(); ++i) {
+        painter.drawText(curX, y, texts[i]);
+        if (!widths.isEmpty() && i < widths.size()) {
+            curX += widths[i];
+            // qDebug() << widths[i];
+        } else {
+            curX += 150; // default spacing if widths not given
+        }
+    }
 }
 
 void OrderList::printJobSheet(const QString &jobNo) {
+
+    // Create "pdfs" folder inside the application directory
+    QString pdfDir = QCoreApplication::applicationDirPath() + "/pdfs";
+    QDir().mkpath(pdfDir);
+
+    // Generate PDF path with job number
+    QString pdfPath = QDir::toNativeSeparators(pdfDir + "/jobSheet_" + jobNo + ".pdf");
+
+    // Remove old file if it exists
+    QFile::remove(pdfPath);
+
+    // Set up QPdfWriter for PDF output
+    QPdfWriter writer(pdfPath);
+
+    // writer.setPageSize(QPageSize(QPageSize::A4));
+    // Set page size to 21 cm × 29.7 cm
+    // const qreal cm_to_pt = 72.0 / 2.54;
+    QSizeF pageSize(612, 842); // Width × Height in points
+    QPageSize customPageSize(pageSize, QPageSize::Point, "CustomA4");
+    writer.setPageSize(customPageSize);
+
+    // Zero margins
+    QMarginsF margins(0, 0, 0, 0); // left, top, right, bottom
+    QPageLayout layout(customPageSize, QPageLayout::Portrait, margins);
+    writer.setPageLayout(layout);
+
+    writer.setResolution(400);  // High resolution for print quality
+
+    QPainter painter(&writer);
+
+    painter.setRenderHint(QPainter::Antialiasing, false);
+    QPen pen(Qt::black, 7);
+    pen.setJoinStyle(Qt::MiterJoin);
+    painter.setPen(pen);
+    painter.setBrush(Qt::NoBrush);
+
+    // Black lines
+    painter.setBrush(Qt::black);
+    painter.drawRect(2125, 320, 8, 1545);
+    painter.drawRect(100, 645, 2025, 8);
+    painter.drawRect(100, 1240, 2025, 8);
+    painter.drawRect(100, 1670, 2025, 8);
+    painter.setBrush(Qt::NoBrush);
+
+    // Right Side default Rectangle
+    painter.drawRect(2133, 320, 700, 350);
+    painter.drawRect(2833, 320, 442, 65);
+    painter.drawRect(2833, 385, 442, 285);
+    painter.drawRect(2133, 670, 1142, 1130);
+
+    // Left Side Rectangles
+    int y_rect = 320 - 65; //this is -65 because of we are adding 65 in for loop
+
+    // First rows
+    // y_rect += 65;
+    // drawRow(painter, 100, y_rect, {275, 1200, 275, 275}, 65);
+
+
+    // Next 2 rows
+    for (int i = 0; i < 3; i++) {
+        y_rect += 65;
+        drawRow(painter, 100, y_rect, {275, 750, 250, 250, 250, 250}, 65);
+    }
+    // Next 2 rows
+    for (int i = 0; i < 2; i++) {
+        y_rect += 65;
+        drawRow(painter, 100, y_rect, {275, 250, 250, 250, 250, 250, 250, 250}, 65);
+    }
+
+    y_rect -= 20;
+    // Gold issue table (7 rows)
+    for (int i = 0; i < 7; i++) {
+        // if(i==0){painter.setBrush(QColor("#60e6eb"));} else {painter.setBrush(Qt::NoBrush);}
+        y_rect += 85;
+        drawRow(painter, 100, y_rect, {400, 325, 325, 325, 325, 325}, 85);
+    }
+    painter.setBrush(Qt::NoBrush);  //#60e6eb
+    // Next section
+    y_rect += 85;  // consistent height step
+    drawRow(painter, 100, y_rect, {275, 275, 925, 275, 275}, 90);
+
+    y_rect += 5;
+    // 4 rows of equal-height cells
+    for (int i = 0; i < 4; i++) {
+        y_rect += 85;
+        drawRow(painter, 100, y_rect, {375, 275, 275, 275, 275, 275, 275}, 85);
+    }
+
+    // Final block (3-row merged cells)
+    y_rect += 85; // move down before block
+    drawRow(painter, 100, y_rect, {460, 275, 275, 555, 460}, 65 * 3);
+
+    // Sub-rows inside merged block
+    int y_sub = y_rect;  // start at same top as merged block
+    for (int i = 0; i < 2; i++) {
+        y_sub += 65;
+        drawRow(painter, 100 + 460, y_sub, {275, 275, 280, 275}, 65);
+    }
+
+    // Last section (right side small cols)
+    y_rect += 65 * 2; // move below merged block
+    drawRow(painter, 2133, y_rect, {190, 190, 190, 190, 190, 190}, 65);
+
+
+    // Define font for header
+    // Company header
+    painter.setFont(QFont("Arial", 7, QFont::Bold));
+    drawTextRow(painter, 800, 300, {"SHREE LAXMINARAYAN EXPORT"});
+    drawTextRow(painter, 2500, 300, {"GST - 24AEXFS9858P1ZI"});
+
+    // Labels font
+    painter.setFont(QFont("Arial", 7));
+
+    int y_text = 370;
+
+    // Row 1
+    drawTextRow(painter, 110, y_text, {"Job Issue", "Order Date", "Delivery Date", "Note"},
+                {1025, 500, 1208, 700});
+
+    // Row 2
+    y_text += 68;
+    drawTextRow(painter, 110, y_text, {"Party Name", "Party Code", "Order No."},
+                {1025, 500, 500});
+
+    // Row 3
+    y_text += 63;
+    drawTextRow(painter, 110, y_text, {"Item Design", "Design No.", "Job No."},
+                {1025, 500, 500});
+
+    // Metal info row
+    y_text += 67;
+    drawTextRow(painter, 110, y_text,
+                {"Metal Name", "Met. Purity", "Met. Color", "Size No.", "MM", "Length", "Width", "Height"},
+                {275, 250, 250, 250, 250, 250, 250, 250});
+
+    // Gold Issue Table header (bold)
+    y_text += 143;
+    painter.setFont(QFont("Arial", 9, QFont::Bold));
+    drawTextRow(painter, 510, y_text, {"Issue Wt.", "Ret. Dust Wt.", "Loss Wt.", "Return Wt.", "Loss %"},
+                {325, 325, 325, 325, 325});
+
+    // Left side job process rows
+    // painter.setFont(QFont("Arial", 7));
+    y_text += 87;
+    drawTextRow(painter, 110, y_text, {"Filing"});
+
+    y_text += 87;
+    drawTextRow(painter, 110, y_text, {"Buffing"});
+
+    y_text += 87;
+    drawTextRow(painter, 110, y_text, {"Free Polich"});
+
+    y_text += 85;
+    drawTextRow(painter, 110, y_text, {"Setting"});
+
+    y_text += 85;
+    drawTextRow(painter, 110, y_text, {"Final Poliching"});
+
+    y_text += 83;
+    drawTextRow(painter, 110, y_text, {"Total"});
+
+    // Diamond & Stone Issue header
+    y_text += 90;
+    drawTextRow(painter, 110 + 275 + 275 + 180, y_text, {"Diamond & Stone Issue"});
+
+    painter.setFont(QFont("Arial", 8.5, QFont::Bold));
+    y_text += 85;
+    drawTextRow(painter, 110 + 375, y_text,
+                {"Issue Pcs.", "Issue Wt.", "Return Pcs.", "Return Wt.", "Broken Pcs.", "Broken Wt."},
+                {275, 275, 275, 275, 275, 275});
+
+    // Diamond / Stone / Other labels
+    // painter.setFont(QFont("Arial", 7));
+    y_text += 85;
+    drawTextRow(painter, 110, y_text, {"Diamond"});
+
+    y_text += 85;
+    drawTextRow(painter, 110, y_text, {"Stone"});
+
+    y_text += 85;
+    drawTextRow(painter, 110, y_text, {"Other"});
+
+    // Small footer text
+    y_text += 53;
+    painter.setFont(QFont("Arial", 5.5));
+    drawTextRow(painter, 110, y_text, {"For. Shree Laxminarayan Export"});
+
+    // Overleaf text with word wrap
+    painter.drawText(QRect(110 + 460 + 275 + 275 + 555, y_text - 25, 460, 1000),
+                     Qt::TextWordWrap,
+                     "Received the above goods as per conditions overleaf.");
+
+    painter.setFont(QFont("Arial", 7));
+    y_text += 20;
+
+    // Weight section
+    int x_text = 110 + 460;
+    drawTextRow(painter, x_text, y_text, {"Diamond Wt.", "Final Product Wt."}, {275+275+110, 660});
+
+    y_text += 62;
+    drawTextRow(painter, x_text, y_text, {"Stone Wt.", "Net. Wt."}, {275+275, 525});
+
+    y_text += 65;
+    drawTextRow(painter, x_text, y_text, {"Other Wt.", "Gross. Wt."}, {275+275, 525});
+
+    // Rightmost labels
+    drawTextRow(painter, x_text + 275 + 275 + 555 + 460 + 8, y_text, {"Diamond", "Stone", "Other"}, {190+190, 190+190, 190});
+
+    painter.setFont(QFont("Arial", 5.5));
+    // Signatures
+    x_text -= 460;
+    drawTextRow(painter, x_text, y_text, {"Proprietor/ Authorised Signature"});
+    drawTextRow(painter, x_text + 460 + 275 + 275 + 555, y_text, {"Receiver's Signature"});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    painter.end();  // Finish painting
+
+    if (QFile::exists(pdfPath)) {
+        QDesktopServices::openUrl(QUrl::fromLocalFile(pdfPath));
+    } else {
+        QMessageBox::warning(this, "Error", "Failed to create PDF file: " + pdfPath);
+    }
 
 }
 

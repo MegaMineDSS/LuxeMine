@@ -47,6 +47,10 @@ private:
     int finalWidth = 0;
     int finalHeight = 0;
 
+
+    QPixmap originalPixmap;
+
+
     ManageGold *newManageGold = nullptr;
     bool manageGold = false;
 
