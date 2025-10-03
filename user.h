@@ -47,6 +47,7 @@ private slots:
 
     void on_resigter_page_login_button_clicked();
 
+
 public slots:
     void loadImage(int index);
     void updateGoldWeight(const QString &goldJson);

@@ -138,7 +138,7 @@ void Admin::handleStatusChangeApproval(int requestId, bool approved, int rowInTa
         return;
     }
 
-    // ✅ DB changes successful. Clearing request fields in UI.
+    // DB changes successful. Clearing request fields in UI.
     for (int col = 7; col <= 13; ++col) {
         QWidget* widget = ui->jobsheet_request_table->cellWidget(rowInTable, col);
         if (widget) {
@@ -146,10 +146,11 @@ void Admin::handleStatusChangeApproval(int requestId, bool approved, int rowInTa
             ui->jobsheet_request_table->setCellWidget(rowInTable, col, nullptr);
         } else {
             QTableWidgetItem* item = ui->jobsheet_request_table->item(rowInTable, col);
-            if (!item)
+            if (!item){
                 item = new QTableWidgetItem();
+                ui->jobsheet_request_table->setItem(rowInTable, col, item);
+            }
             item->setText("");
-            ui->jobsheet_request_table->setItem(rowInTable, col, item);
         }
     }
 }
@@ -322,15 +323,23 @@ void Admin::on_orderBookRequestPushButton_clicked()
             layout->setContentsMargins(0, 0, 0, 0);
             layout->setAlignment(Qt::AlignCenter);
 
-            QPushButton *approveButton = new QPushButton("✔️", actionWidget);
-            QPushButton *rejectButton  = new QPushButton("❌", actionWidget);
+            QPushButton *approveButton = new QPushButton("✓", actionWidget);
+            QPushButton *rejectButton  = new QPushButton("✕", actionWidget);
+
+            approveButton->setStyleSheet(R"(                QPushButton {                    background-color: #F3F3F3;                    border: 1px solid #2A4E7C;                    border-radius: 2px;                    color: #2C2C2C;                    font-size: 14px;                    font-weight: 600;                    padding: 6px 14px;                   min-width: 50px;                }                                QPushButton:hover {                    background-color: #6CDA69;                }                                QPushButton:pressed {                    background-color: #DADADA;                    border: 1px solid #666;                }                                QPushButton:disabled {                    background-color: #F0F0F0;                    color: #A0A0A0;                    border: 1px solid #D0D0D0;                }                            )");
+            rejectButton->setStyleSheet(R"(                QPushButton {                    background-color: #F3F3F3;                    border: 1px solid #2A4E7C;                    border-radius: 2px;                    color: #2C2C2C;                    font-size: 14px;                    font-weight: 600;                    padding: 6px 14px;                   min-width: 50px;                }                                QPushButton:hover {                    background-color: #D85D5D;                }                                QPushButton:pressed {                    background-color: #DADADA;                    border: 1px solid #666;                }                                QPushButton:disabled {                    background-color: #F0F0F0;                    color: #A0A0A0;                    border: 1px solid #D0D0D0;                }                            )");
 
             connect(approveButton, &QPushButton::clicked, this, [=, this]() {
                 handleStatusChangeApproval(r.requestId, true, row);
             });
+
             connect(rejectButton, &QPushButton::clicked, this, [=, this]() {
-                QString reason = QInputDialog::getText(this, "Rejection Note", "Please enter a reason (optional):");
-                handleStatusChangeApproval(r.requestId, false, row, reason);
+                bool ok = false;
+                QString reason = QInputDialog::getText(this, "Rejection Note", "Please enter a reason (optional):", QLineEdit::Normal, QString(), &ok);
+
+                if (ok) {
+                    handleStatusChangeApproval(r.requestId, false, row, reason);
+                }
             });
 
             layout->addWidget(approveButton);
