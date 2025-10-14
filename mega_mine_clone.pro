@@ -27,6 +27,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     managegold.cpp \
+    managegoldreturn.cpp \
     orderlist.cpp \
     ordermenu.cpp \
     pch.cpp \
@@ -50,6 +51,7 @@ HEADERS += \
     loginwindow.h \
     mainwindow.h \
     managegold.h \
+    managegoldreturn.h \
     orderlist.h \
     ordermenu.h \
     pch.h \
@@ -68,16 +70,20 @@ FORMS += \
     loginwindow.ui \
     mainwindow.ui \
     managegold.ui \
+    managegoldreturn.ui \
     orderlist.ui \
     ordermenu.ui \
     pdflistdialog.ui \
     user.ui
 
 
-# QXLSX_PARENTPATH=./         # current QXlsx path is . (. means curret directory)
-# QXLSX_HEADERPATH=./header/  # current QXlsx header path is ./header/
-# QXLSX_SOURCEPATH=./source/  # current QXlsx source path is ./source/
-# include(./QXlsx.pri)
+QXLSX_PARENTPATH=./         # current QXlsx path is . (. means curret directory)
+QXLSX_HEADERPATH=./header/  # current QXlsx header path is ./header/
+QXLSX_SOURCEPATH=./source/  # current QXlsx source path is ./source/
+include(./QXlsx.pri)
+# INCLUDEPATH = ./include
+# include(./qtcsv.pri)
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -88,3 +94,6 @@ RESOURCES += \
     Resource.qrc
 
 DISTFILES +=
+
+SUBDIRS += \
+    qtcsv.pro
