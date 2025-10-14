@@ -9,6 +9,9 @@
 #include <QStringList>
 #include <QTableWidget>
 
+#include <xlsxdocument.h>
+#include <xlsxworksheet.h>
+
 #include "commontypes.h"
 
 class DatabaseUtils
@@ -84,9 +87,14 @@ public:
         static QStringList fetchShapes(const QString &tableType);
         static QStringList fetchSizes(const QString &tableType, const QString &shape);
         static QString saveImage(const QString &imagePath);
-        static bool insertCatalogData(const QString &imagePath, const QString &imageType, const QString &designNo,
+        static QString insertCatalogData(const QString &imagePath, const QString &imageType, const QString &designNo,
                                       const QString &companyName, const QJsonArray &goldArray, const QJsonArray &diamondArray,
                                       const QJsonArray &stoneArray, const QString &note);
+        static QJsonArray generateGoldWeights(int inputKarat, double inputWeight) ;
+        static QJsonArray buildDiamondArray(const QList<QVariantMap> &diamondRows, const QString &designNo) ;
+
+        static QJsonArray buildStoneArray(const QList<QVariantMap> &stoneRows, const QString &designNo);
+        static bool excelBulkInsertCatalog(const QString &filePath);
 
 
     // Login Window
@@ -128,7 +136,6 @@ public:
 
         // Order List
         static QList<QVariantList> fetchOrderListDetails();
-
 
     // JobSheet Connections
         // Image / Design

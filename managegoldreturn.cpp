@@ -36,7 +36,7 @@ void ManageGoldReturn::hideEvent(QHideEvent *event)
 {
     ui->stackedWidget->setCurrentIndex(0);
 
-    // ✅ Reuse the same function
+    // Reuse the same function
     loadFillingIssueHistory();
 
     emit menuHidden();
