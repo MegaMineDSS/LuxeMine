@@ -2821,12 +2821,11 @@ std::optional<JobSheetData> DatabaseUtils::fetchJobSheetData(const QString &jobN
 
 QPair<QString, QString> DatabaseUtils::fetchDiamondAndStoneJson(const QString &designNo)
 {
-    const QString connName = QStringLiteral("fetch_diamond_stone_conn_%1").arg(QUuid::createUuid().toString(QUuid::WithoutBraces));
+    const QString connName = "fetch_diamond_stone_conn";
     QString diamondJson, stoneJson;
 
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
-        // db.setDatabaseName("database/mega_mine_image.db");
         QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_image.db");
         db.setDatabaseName(dbPath);
 
@@ -2836,20 +2835,72 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondAndStoneJson(const QString &d
             return {};
         }
 
+        // 🔹 Fetch diamond + stone JSON from image_data
         QSqlQuery query(db);
         query.prepare("SELECT diamond, stone FROM image_data WHERE design_no = :designNo");
         query.bindValue(":designNo", designNo);
 
-        if (!query.exec()) {
-            qWarning() << "[ERROR] Query exec failed in fetchDiamondAndStoneJson:" << query.lastError().text();
-        } else if (!query.next()) {
+        if (query.exec() && query.next()) {
+            diamondJson = query.value(0).toString();
+            stoneJson   = query.value(1).toString();
+        } else {
             qWarning() << "[WARNING] No diamond/stone JSON found for designNo:" << designNo;
-                } else {
-            int colDiamond = query.record().indexOf("diamond");
-            int colStone   = query.record().indexOf("stone");
+        }
 
-            diamondJson = query.value(colDiamond).toString();
-            stoneJson   = query.value(colStone).toString();
+        // 🔹 Helper lambda to find single piece weight
+        auto getWeight = [&](const QString &type, const QString &sizeMM, bool isDiamond) -> double {
+            QSqlQuery q(db);
+            if (isDiamond) {
+                if (type.compare("Round", Qt::CaseInsensitive) == 0) {
+                    q.prepare("SELECT weight FROM Round_diamond WHERE sizeMM = ?");
+                    q.addBindValue(sizeMM.toDouble());
+                } else {
+                    q.prepare("SELECT weight FROM Fancy_diamond WHERE shape = ? AND sizeMM = ?");
+                    q.addBindValue(type);
+                    q.addBindValue(sizeMM);
+                }
+            } else {
+                q.prepare("SELECT weight FROM Stones WHERE shape = ? AND sizeMM = ?");
+                q.addBindValue(type);
+                q.addBindValue(sizeMM);
+            }
+            if (q.exec() && q.next())
+                return q.value(0).toDouble();
+            return 0.0;
+        };
+
+        // 🔹 Add weight info into diamond JSON
+        if (!diamondJson.isEmpty()) {
+            QJsonParseError err;
+            QJsonDocument doc = QJsonDocument::fromJson(diamondJson.toUtf8(), &err);
+            if (err.error == QJsonParseError::NoError && doc.isArray()) {
+                QJsonArray updated;
+                for (auto v : doc.array()) {
+                    if (!v.isObject()) continue;
+                    QJsonObject o = v.toObject();
+                    double wt = getWeight(o["type"].toString(), o["sizeMM"].toString(), true);
+                    o["weight"] = wt;
+                    updated.append(o);
+                }
+                diamondJson = QString::fromUtf8(QJsonDocument(updated).toJson(QJsonDocument::Compact));
+            }
+        }
+
+        // 🔹 Add weight info into stone JSON
+        if (!stoneJson.isEmpty()) {
+            QJsonParseError err;
+            QJsonDocument doc = QJsonDocument::fromJson(stoneJson.toUtf8(), &err);
+            if (err.error == QJsonParseError::NoError && doc.isArray()) {
+                QJsonArray updated;
+                for (auto v : doc.array()) {
+                    if (!v.isObject()) continue;
+                    QJsonObject o = v.toObject();
+                    double wt = getWeight(o["type"].toString(), o["sizeMM"].toString(), false);
+                    o["weight"] = wt;
+                    updated.append(o);
+                }
+                stoneJson = QString::fromUtf8(QJsonDocument(updated).toJson(QJsonDocument::Compact));
+            }
         }
 
         db.close();
