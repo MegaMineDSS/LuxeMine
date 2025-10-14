@@ -4,6 +4,8 @@
 #include <QRandomGenerator>
 #include <QScopedPointer>
 #include <QMessageBox>
+#include <QMdiSubWindow>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

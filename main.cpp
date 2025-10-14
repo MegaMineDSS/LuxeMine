@@ -7,6 +7,10 @@
 
 int main(int argc, char *argv[])
 {
+    // ⚡ Add this BEFORE QApplication
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
     QApplication a(argc, argv);
 
     // Set Fusion style for consistent light mode

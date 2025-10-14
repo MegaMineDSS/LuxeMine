@@ -5,7 +5,7 @@
 #include <QKeyEvent>
 
 #include "managegold.h"
-#include "managegoldreturn.h"
+#include "diamonissueretbro.h"
 
 namespace Ui {
 class JobSheet;
@@ -37,6 +37,9 @@ private:
     void updateGoldTotalWeight();
     void handleCellSave(int row, int col);
 
+    void updateDiamondTotals();
+    void setupDiamondIssueClicks();
+
 private slots:
         void onGoldDetailCellClicked(QTableWidgetItem *item); // New slot for cell click
 
@@ -46,6 +49,7 @@ private:
     QString userRole;
     int finalWidth = 0;
     int finalHeight = 0;
+    double scaleFactor = 1.0;   // 🔹 scaling factor based on resolution
 
 
     QPixmap originalPixmap;
@@ -54,8 +58,8 @@ private:
     ManageGold *newManageGold = nullptr;
     bool manageGold = false;
 
-    ManageGoldReturn *newManageGoldReturn = nullptr;
-    bool manageGoldReturn = false;
+    DiamonIssueRetBro *newDiamonIssueRetBro = nullptr;
+    bool diamondMenuVisible = false;
 
 
 

@@ -2532,7 +2532,7 @@ QPair<QString, QString> DatabaseUtils::fetchDiamondAndStoneJson(const QString &d
             qWarning() << "[ERROR] Query exec failed in fetchDiamondAndStoneJson:" << query.lastError().text();
         } else if (!query.next()) {
             qWarning() << "[WARNING] No diamond/stone JSON found for designNo:" << designNo;
-        } else {
+                } else {
             int colDiamond = query.record().indexOf("diamond");
             int colStone   = query.record().indexOf("stone");
 

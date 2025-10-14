@@ -18,21 +18,41 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
-    <number>4</number>
+    <number>9</number>
    </property>
    <property name="topMargin">
-    <number>4</number>
+    <number>9</number>
    </property>
    <property name="rightMargin">
-    <number>4</number>
+    <number>9</number>
    </property>
    <property name="bottomMargin">
-    <number>4</number>
+    <number>9</number>
    </property>
    <property name="spacing">
     <number>2</number>
    </property>
-   <item row="21" column="2">
+   <item row="4" column="5">
+    <widget class="QLineEdit" name="lengthLineEdit"/>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLabel" name="purityLabel">
+     <property name="text">
+      <string>PUTIRY</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="3" colspan="3">
+    <widget class="QLabel" name="noteLabel">
+     <property name="text">
+      <string>NOTE</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="7">
+    <widget class="QLineEdit" name="orderNoLineEdit"/>
+   </item>
+   <item row="24" column="2">
     <widget class="QLabel" name="jobNoLabel_49">
      <property name="maximumSize">
       <size>
@@ -45,11 +65,25 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1" colspan="5">
-    <widget class="QLineEdit" name="jobIssuLineEdit"/>
+   <item row="4" column="3">
+    <widget class="QLineEdit" name="sizeNoLineEdit"/>
    </item>
-   <item row="21" column="11">
-    <widget class="QLabel" name="jobNoLabel_58">
+   <item row="20" column="2">
+    <widget class="QLabel" name="stoneWtLabel">
+     <property name="text">
+      <string>STONE Wt.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="5">
+    <widget class="QLabel" name="INCLabel">
+     <property name="text">
+      <string>LENGTH</string>
+     </property>
+    </widget>
+   </item>
+   <item row="24" column="0">
+    <widget class="QLabel" name="jobNoLabel_47">
      <property name="maximumSize">
       <size>
        <width>16777215</width>
@@ -61,7 +95,48 @@
      </property>
     </widget>
    </item>
-   <item row="21" column="7">
+   <item row="3" column="6">
+    <widget class="QLabel" name="jobNoLabel_6">
+     <property name="text">
+      <string>WIDTH</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="6">
+    <widget class="QLabel" name="otherTotalLabel">
+     <property name="text">
+      <string>OTHER</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="6">
+    <widget class="QLabel" name="jobNoLabel_9">
+     <property name="text">
+      <string>Gross Wt.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="21" column="4">
+    <widget class="QLabel" name="jobNoLabel_4">
+     <property name="text">
+      <string>Net Wt.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="24" column="6">
+    <widget class="QLabel" name="jobNoLabel_53">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>FINAL POLICHING</string>
+     </property>
+    </widget>
+   </item>
+   <item row="24" column="7">
     <widget class="QLabel" name="jobNoLabel_54">
      <property name="maximumSize">
       <size>
@@ -74,18 +149,6 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="7">
-    <widget class="QLineEdit" name="orderNoLineEdit"/>
-   </item>
-   <item row="9" column="7">
-    <widget class="QLineEdit" name="otherTotalLineEdit"/>
-   </item>
-   <item row="4" column="5">
-    <widget class="QLineEdit" name="lengthLineEdit"/>
-   </item>
-   <item row="2" column="5">
-    <widget class="QLineEdit" name="desigNoLineEdit"/>
-   </item>
    <item row="0" column="6">
     <widget class="QLabel" name="dateOrderLabel">
      <property name="text">
@@ -93,93 +156,117 @@
      </property>
     </widget>
    </item>
-   <item row="16" column="6" colspan="2">
-    <widget class="QLabel" name="jobNoLabel_40">
+   <item row="19" column="0" colspan="2">
+    <widget class="QLabel" name="jobNoLabel_34">
      <property name="font">
       <font>
-       <pointsize>7</pointsize>
+       <pointsize>8</pointsize>
       </font>
      </property>
      <property name="text">
-      <string>Received the above goods as per 
-conditions overleaf.</string>
+      <string>For.Shree Laxminarayan Export</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
      </property>
     </widget>
    </item>
-   <item row="0" column="7">
-    <widget class="QDateEdit" name="dateOrderDateEdit"/>
-   </item>
-   <item row="18" column="3">
-    <widget class="QLineEdit" name="otherWtLineEdit"/>
-   </item>
-   <item row="4" column="2">
-    <widget class="QLineEdit" name="metColLineEdit"/>
-   </item>
-   <item row="16" column="4" colspan="2">
-    <widget class="QLabel" name="finalProductWtLabel">
+   <item row="24" column="1">
+    <widget class="QLabel" name="jobNoLabel_48">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="text">
-      <string>FINAL PRODUCT Wt.</string>
+      <string>FINAL POLICHING</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="6">
-    <widget class="QLabel" name="orderNoLabel">
-     <property name="text">
-      <string>ORDER NO</string>
-     </property>
-    </widget>
+   <item row="1" column="8" rowspan="21" colspan="4">
+    <widget class="QTableWidget" name="diaAndStoneForDesignTableWidget"/>
    </item>
-   <item row="5" column="3" colspan="3">
-    <widget class="QLabel" name="noteLabel">
+   <item row="8" column="6">
+    <widget class="QLabel" name="diamondTotalLabel">
      <property name="text">
-      <string>NOTE</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="3">
-    <widget class="QLabel" name="sizeNoLabel">
-     <property name="text">
-      <string>SIZE NO</string>
-     </property>
-    </widget>
-   </item>
-   <item row="18" column="4">
-    <widget class="QLabel" name="jobNoLabel_4">
-     <property name="text">
-      <string>Net Wt.</string>
+      <string>DIAMOND</string>
      </property>
     </widget>
    </item>
    <item row="13" column="7">
-    <widget class="QDateEdit" name="dateDateEdit"/>
+    <spacer name="verticalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
-   <item row="3" column="1">
-    <widget class="QLabel" name="purityLabel">
+   <item row="24" column="11">
+    <widget class="QLabel" name="jobNoLabel_58">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="text">
-      <string>PUTIRY</string>
+      <string>FINAL POLICHING</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="6">
-    <widget class="QLabel" name="clientIdLabel">
+   <item row="19" column="2">
+    <widget class="QLabel" name="diaEtLabel">
      <property name="text">
-      <string>CLIENT ID</string>
+      <string>DIA. Wt.</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="7">
-    <widget class="QLineEdit" name="heightLineEdit"/>
+   <item row="4" column="1">
+    <widget class="QLineEdit" name="purityLineEdit"/>
    </item>
-   <item row="17" column="3">
-    <widget class="QLineEdit" name="stoneWtLineEdit"/>
+   <item row="2" column="1" colspan="3">
+    <widget class="QLineEdit" name="itemDesignLineEdit"/>
    </item>
-   <item row="4" column="0">
-    <widget class="QDateEdit" name="deliDateDateEdit"/>
+   <item row="24" column="4">
+    <widget class="QLabel" name="jobNoLabel_51">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>FINAL POLICHING</string>
+     </property>
+    </widget>
    </item>
-   <item row="11" column="0" rowspan="2" colspan="8">
+   <item row="20" column="4">
+    <widget class="QLabel" name="jobNoLabel_3">
+     <property name="text">
+      <string>Gross Wt.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="7">
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="14" column="0" rowspan="2" colspan="8">
     <widget class="QTableWidget" name="goldDetailTableWidget">
      <property name="autoScroll">
       <bool>true</bool>
@@ -271,7 +358,7 @@ conditions overleaf.</string>
      </column>
      <column>
       <property name="text">
-       <string>RETURN %</string>
+       <string>LOSS %</string>
       </property>
      </column>
      <item row="0" column="0">
@@ -346,112 +433,19 @@ conditions overleaf.</string>
      </item>
     </widget>
    </item>
-   <item row="18" column="0" colspan="2">
-    <widget class="QLabel" name="jobNoLabel_35">
-     <property name="text">
-      <string>Proprietor/Authorised Signature</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignHCenter</set>
-     </property>
-    </widget>
+   <item row="0" column="1" colspan="3">
+    <widget class="QLineEdit" name="jobIssuLineEdit"/>
    </item>
-   <item row="1" column="7">
-    <widget class="QLineEdit" name="clientIdLineEdit"/>
+   <item row="4" column="6">
+    <widget class="QLineEdit" name="widthLineEdit"/>
    </item>
-   <item row="3" column="4">
-    <widget class="QLabel" name="MMLabel">
-     <property name="text">
-      <string>MM</string>
-     </property>
-    </widget>
+   <item row="20" column="5">
+    <widget class="QLineEdit" name="grossWeightLineEdit"/>
    </item>
-   <item row="3" column="6">
-    <widget class="QLabel" name="jobNoLabel">
-     <property name="text">
-      <string>JOB NO.</string>
-     </property>
-    </widget>
+   <item row="4" column="0">
+    <widget class="QLineEdit" name="jobNoLineEdit_3"/>
    </item>
-   <item row="3" column="7">
-    <widget class="QLineEdit" name="jobNoLineEdit"/>
-   </item>
-   <item row="16" column="0" colspan="2">
-    <widget class="QLabel" name="jobNoLabel_34">
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>For.Shree Laxminarayan Export</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="8" rowspan="18" colspan="4">
-    <widget class="QTableWidget" name="diaAndStoneForDesignTableWidget"/>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="orderPartyLabel">
-     <property name="text">
-      <string>ORDER PARTY</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="QLineEdit" name="purityLineEdit"/>
-   </item>
-   <item row="2" column="1" colspan="3">
-    <widget class="QLineEdit" name="itemDesignLineEdit"/>
-   </item>
-   <item row="21" column="9">
-    <widget class="QLabel" name="jobNoLabel_56">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>FINAL POLICHING</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="jobIssuLabel">
-     <property name="text">
-      <string>JOB ISSU</string>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="1">
-    <widget class="QLineEdit" name="diaLineEdit"/>
-   </item>
-   <item row="5" column="0" rowspan="6" colspan="3">
-    <widget class="QLabel" name="productImageLabel">
-     <property name="text">
-      <string>PRODUCT IMAGE</string>
-     </property>
-    </widget>
-   </item>
-   <item row="16" column="2">
-    <widget class="QLabel" name="diaEtLabel">
-     <property name="text">
-      <string>DIA. Wt.</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="deliDateLabel">
-     <property name="text">
-      <string>DELI-DATE</string>
-     </property>
-    </widget>
-   </item>
-   <item row="21" column="8">
+   <item row="24" column="8">
     <widget class="QLabel" name="jobNoLabel_55">
      <property name="maximumSize">
       <size>
@@ -464,8 +458,11 @@ conditions overleaf.</string>
      </property>
     </widget>
    </item>
-   <item row="21" column="1">
-    <widget class="QLabel" name="jobNoLabel_48">
+   <item row="0" column="7">
+    <widget class="QDateEdit" name="dateOrderDateEdit"/>
+   </item>
+   <item row="24" column="10">
+    <widget class="QLabel" name="jobNoLabel_57">
      <property name="maximumSize">
       <size>
        <width>16777215</width>
@@ -477,43 +474,7 @@ conditions overleaf.</string>
      </property>
     </widget>
    </item>
-   <item row="18" column="5">
-    <widget class="QLineEdit" name="finalProductWtLineEdit"/>
-   </item>
-   <item row="3" column="2">
-    <widget class="QLabel" name="metColLabel">
-     <property name="text">
-      <string>MET COL</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="8" colspan="4">
-    <widget class="QLabel" name="productDetailsImageLabel">
-     <property name="text">
-      <string>PRODUCT DETAILS IMAGE</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="6">
-    <widget class="QLineEdit" name="widthLineEdit"/>
-   </item>
-   <item row="4" column="3">
-    <widget class="QLineEdit" name="sizeNoLineEdit"/>
-   </item>
-   <item row="21" column="0">
-    <widget class="QLabel" name="jobNoLabel_47">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>FINAL POLICHING</string>
-     </property>
-    </widget>
-   </item>
-   <item row="14" column="0" rowspan="2" colspan="8">
+   <item row="17" column="0" rowspan="2" colspan="8">
     <widget class="QTableWidget" name="diamondAndStoneDetailTableWidget">
      <attribute name="horizontalHeaderDefaultSectionSize">
       <number>112</number>
@@ -594,164 +555,14 @@ conditions overleaf.</string>
      </item>
     </widget>
    </item>
-   <item row="6" column="3" rowspan="5" colspan="3">
-    <widget class="QTextEdit" name="noteTextEdit"/>
-   </item>
-   <item row="13" column="0">
-    <widget class="QLabel" name="diaLabel">
+   <item row="1" column="6">
+    <widget class="QLabel" name="orderNoLabel">
      <property name="text">
-      <string>DIA</string>
+      <string>ORDER NO</string>
      </property>
     </widget>
    </item>
-   <item row="17" column="2">
-    <widget class="QLabel" name="stoneWtLabel">
-     <property name="text">
-      <string>STONE Wt.</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="itemDesignLabel">
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>ITEM DESIGN</string>
-     </property>
-    </widget>
-   </item>
-   <item row="21" column="6">
-    <widget class="QLabel" name="jobNoLabel_53">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>FINAL POLICHING</string>
-     </property>
-    </widget>
-   </item>
-   <item row="21" column="10">
-    <widget class="QLabel" name="jobNoLabel_57">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>FINAL POLICHING</string>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="6">
-    <widget class="QLabel" name="dateLabel">
-     <property name="text">
-      <string>DATE</string>
-     </property>
-    </widget>
-   </item>
-   <item row="17" column="0" colspan="2">
-    <widget class="QLabel" name="jobNoLabel_2">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="21" column="4">
-    <widget class="QLabel" name="jobNoLabel_51">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>FINAL POLICHING</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="6">
-    <widget class="QLabel" name="stoneTotalLabel">
-     <property name="text">
-      <string>STONE</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="4">
-    <widget class="QLineEdit" name="MMLineEdit"/>
-   </item>
-   <item row="18" column="6" colspan="2">
-    <widget class="QLabel" name="jobNoLabel_41">
-     <property name="text">
-      <string>Receiver's Signature</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignHCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="5">
-    <widget class="QLabel" name="INCLabel">
-     <property name="text">
-      <string>INC</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="4">
-    <widget class="QLabel" name="designNoLabel">
-     <property name="text">
-      <string>DESIGN NO.</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="7">
-    <widget class="QLineEdit" name="diamondTotalLineEdit"/>
-   </item>
-   <item row="17" column="4">
-    <widget class="QLabel" name="jobNoLabel_3">
-     <property name="text">
-      <string>Gross Wt.</string>
-     </property>
-    </widget>
-   </item>
-   <item row="21" column="5">
-    <widget class="QLabel" name="jobNoLabel_52">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>FINAL POLICHING</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="6">
-    <widget class="QLabel" name="diamondTotalLabel">
-     <property name="text">
-      <string>DIAMOND</string>
-     </property>
-    </widget>
-   </item>
-   <item row="18" column="2">
-    <widget class="QLabel" name="otherWtLabel">
-     <property name="text">
-      <string>OTHER Wt.</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="5">
-    <widget class="QLineEdit" name="orderPartyLineEdit"/>
-   </item>
-   <item row="17" column="6" colspan="2">
+   <item row="20" column="6" colspan="2">
     <widget class="QLabel" name="reciverSignLabel">
      <property name="text">
       <string/>
@@ -761,21 +572,18 @@ conditions overleaf.</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="6">
-    <widget class="QLabel" name="otherTotalLabel">
+   <item row="7" column="6" colspan="2">
+    <widget class="QLabel" name="jobNoLabel_8">
      <property name="text">
-      <string>OTHER</string>
+      <string>Approximated Wt.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
    </item>
-   <item row="16" column="3">
-    <widget class="QLineEdit" name="diaWtLineEdit"/>
-   </item>
-   <item row="17" column="5">
-    <widget class="QLineEdit" name="jobNoLineEdit_2"/>
-   </item>
-   <item row="21" column="3">
-    <widget class="QLabel" name="jobNoLabel_50">
+   <item row="24" column="9">
+    <widget class="QLabel" name="jobNoLabel_56">
      <property name="maximumSize">
       <size>
        <width>16777215</width>
@@ -787,10 +595,30 @@ conditions overleaf.</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="7">
-    <widget class="QLineEdit" name="stoneTotalLineEdit"/>
+   <item row="4" column="2">
+    <widget class="QLineEdit" name="metColLineEdit"/>
    </item>
-   <item row="13" column="2" colspan="4">
+   <item row="21" column="3">
+    <widget class="QLineEdit" name="otherWtLineEdit"/>
+   </item>
+   <item row="10" column="7">
+    <widget class="QLineEdit" name="otherTotalLineEdit"/>
+   </item>
+   <item row="3" column="7">
+    <widget class="QLabel" name="jobNoLabel_7">
+     <property name="text">
+      <string>HEIGHT</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QLabel" name="metColLabel">
+     <property name="text">
+      <string>MET COL</string>
+     </property>
+    </widget>
+   </item>
+   <item row="16" column="0" colspan="8">
     <widget class="QLabel" name="issuDiamonAndStoneLabel">
      <property name="font">
       <font>
@@ -805,6 +633,241 @@ conditions overleaf.</string>
       <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="itemDesignLabel">
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>ITEM DESIGN</string>
+     </property>
+    </widget>
+   </item>
+   <item row="24" column="5">
+    <widget class="QLabel" name="jobNoLabel_52">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>FINAL POLICHING</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="4">
+    <widget class="QLabel" name="designNoLabel">
+     <property name="text">
+      <string>DESIGN NO.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="21" column="2">
+    <widget class="QLabel" name="otherWtLabel">
+     <property name="text">
+      <string>OTHER Wt.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="21" column="6" colspan="2">
+    <widget class="QLabel" name="jobNoLabel_41">
+     <property name="text">
+      <string>Receiver's Signature</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignHCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="6">
+    <widget class="QLabel" name="jobNoLabel">
+     <property name="text">
+      <string>JOB NO.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="8" colspan="4">
+    <widget class="QLabel" name="productDetailsImageLabel">
+     <property name="text">
+      <string>PRODUCT DETAILS IMAGE</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="5">
+    <widget class="QDateEdit" name="deliDateDateEdit"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="orderPartyLabel">
+     <property name="text">
+      <string>ORDER PARTY</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="4">
+    <widget class="QLabel" name="deliDateLabel">
+     <property name="text">
+      <string>DELI-DATE</string>
+     </property>
+    </widget>
+   </item>
+   <item row="19" column="4" colspan="2">
+    <widget class="QLabel" name="finalProductWtLabel">
+     <property name="text">
+      <string>FINAL PRODUCT Wt.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="4">
+    <widget class="QLineEdit" name="MMLineEdit"/>
+   </item>
+   <item row="9" column="6">
+    <widget class="QLabel" name="stoneTotalLabel">
+     <property name="text">
+      <string>STONE</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="7">
+    <widget class="QLineEdit" name="diamondTotalLineEdit"/>
+   </item>
+   <item row="6" column="3" rowspan="8" colspan="3">
+    <widget class="QTextEdit" name="noteTextEdit"/>
+   </item>
+   <item row="5" column="0" rowspan="9" colspan="3">
+    <widget class="QLabel" name="productImageLabel">
+     <property name="text">
+      <string>PRODUCT IMAGE</string>
+     </property>
+    </widget>
+   </item>
+   <item row="21" column="0" colspan="2">
+    <widget class="QLabel" name="jobNoLabel_35">
+     <property name="text">
+      <string>Proprietor/Authorised Signature</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignHCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="7">
+    <widget class="QLineEdit" name="stoneTotalLineEdit"/>
+   </item>
+   <item row="4" column="7">
+    <widget class="QLineEdit" name="heightLineEdit"/>
+   </item>
+   <item row="2" column="7">
+    <widget class="QLineEdit" name="jobNoLineEdit"/>
+   </item>
+   <item row="20" column="3">
+    <widget class="QLineEdit" name="stoneWtLineEdit"/>
+   </item>
+   <item row="1" column="4">
+    <widget class="QLabel" name="clientIdLabel">
+     <property name="text">
+      <string>CLIENT ID</string>
+     </property>
+    </widget>
+   </item>
+   <item row="20" column="0" colspan="2">
+    <widget class="QLabel" name="jobNoLabel_2">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="5">
+    <widget class="QLineEdit" name="desigNoLineEdit"/>
+   </item>
+   <item row="19" column="6" colspan="2">
+    <widget class="QLabel" name="jobNoLabel_40">
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Received the above goods as per 
+conditions overleaf.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
+     </property>
+    </widget>
+   </item>
+   <item row="21" column="5">
+    <widget class="QLineEdit" name="finalProductWtLineEdit"/>
+   </item>
+   <item row="3" column="3">
+    <widget class="QLabel" name="sizeNoLabel">
+     <property name="text">
+      <string>SIZE NO</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="4">
+    <widget class="QLabel" name="MMLabel">
+     <property name="text">
+      <string>MM</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="3">
+    <widget class="QLineEdit" name="orderPartyLineEdit"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="jobNoLabel_5">
+     <property name="text">
+      <string>MET. NAME</string>
+     </property>
+    </widget>
+   </item>
+   <item row="24" column="3">
+    <widget class="QLabel" name="jobNoLabel_50">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>FINAL POLICHING</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="5">
+    <widget class="QLineEdit" name="clientIdLineEdit"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="jobIssuLabel">
+     <property name="text">
+      <string>JOB ISSU</string>
+     </property>
+    </widget>
+   </item>
+   <item row="19" column="3">
+    <widget class="QLineEdit" name="diaWtLineEdit"/>
+   </item>
+   <item row="12" column="6">
+    <widget class="QLabel" name="jobNoLabel_10">
+     <property name="text">
+      <string>Net Wt.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="7">
+    <widget class="QLineEdit" name="grossWtLineEdit"/>
+   </item>
+   <item row="12" column="7">
+    <widget class="QLineEdit" name="netWtLineEdit"/>
    </item>
   </layout>
  </widget>

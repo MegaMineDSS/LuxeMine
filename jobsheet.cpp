@@ -22,20 +22,42 @@ JobSheet::JobSheet(QWidget *parent, const QString &jobNo, const QString &role)
     setMinimumSize(100, 100);
     setWindowFlags(Qt::Window | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
-    ui->gridLayout->setContentsMargins(4,4,4,4);
+    ui->gridLayout->setContentsMargins(10,10,10,10);
 
-    int maxWidth = 1410;
-    int maxHeight = 910;
+    // Your base design resolution
+    // --- Scaling setup ---
+    // Base resolution you designed on
+    const double baseW = 1920.0;
+    const double baseH = 1080.0;
 
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->availableGeometry();
 
-    int screenWidth = screenGeometry.width() * 0.8;
-    int screenHeight = screenGeometry.height() * 0.8;
+    // Compute scale factor relative to base resolution
+    double scaleX = screenGeometry.width() / baseW;
+    double scaleY = screenGeometry.height() / baseH;
+    scaleFactor = qMin(scaleX, scaleY);
 
-    // Choose the smaller between 80% of 1410×910 vs 80% of screen
-    finalWidth = qMin(maxWidth, screenWidth);
-    finalHeight = qMin(maxHeight, screenHeight);
+    // Scale main window size
+    finalWidth  = static_cast<int>(1410 * scaleFactor);
+    finalHeight = static_cast<int>(910  * scaleFactor);
+
+    resize(finalWidth, finalHeight);
+    move(screenGeometry.center() - rect().center());
+
+    // Apply global font scaling
+    QFont f = font();
+    f.setPointSizeF(f.pointSizeF() * scaleFactor);
+    setFont(f);
+
+    // Apply scaled margins
+    ui->gridLayout->setContentsMargins(
+        static_cast<int>(4 * scaleFactor),
+        static_cast<int>(4 * scaleFactor),
+        static_cast<int>(4 * scaleFactor),
+        static_cast<int>(4 * scaleFactor));
+
+
 
     resize(finalWidth, finalHeight);
     move(screenGeometry.center() - rect().center());
@@ -45,20 +67,17 @@ JobSheet::JobSheet(QWidget *parent, const QString &jobNo, const QString &role)
     ui->goldDetailTableWidget->resizeRowsToContents();
 
     // Function to adjust table height based on rows
-    auto adjustTableHeight = [](QTableWidget* table){
-        int totalHeight = table->horizontalHeader()->height();
-        qDebug() << table->rowCount();
-        for (int row = 0; row < table->rowCount(); ++row) {
-            totalHeight += table->rowHeight(row);
-        }
-        totalHeight += 2 * table->frameWidth();
-        table->setMinimumHeight(totalHeight);
-        table->setMaximumHeight(totalHeight);
+    // Scale table row heights and headers
+    auto scaleTable = [this](QTableWidget* table) {
+        table->horizontalHeader()->setDefaultSectionSize(
+            static_cast<int>(table->horizontalHeader()->defaultSectionSize() * scaleFactor));
+        table->verticalHeader()->setDefaultSectionSize(
+            static_cast<int>(table->verticalHeader()->defaultSectionSize() * scaleFactor));
+        table->resizeRowsToContents();
     };
 
-    // Apply to both tables
-    adjustTableHeight(ui->diamondAndStoneDetailTableWidget);
-    adjustTableHeight(ui->goldDetailTableWidget);
+    scaleTable(ui->diamondAndStoneDetailTableWidget);
+    scaleTable(ui->goldDetailTableWidget);
 
 
     set_value(jobNo);
@@ -91,35 +110,30 @@ JobSheet::~JobSheet()
 
 void JobSheet::resizeEvent(QResizeEvent *event)
 {
-    QDialog::resizeEvent(event);  // Call base class
+    QDialog::resizeEvent(event);
 
     if (!originalPixmap.isNull()) {
         ui->productImageLabel->setPixmap(
-            originalPixmap.scaled(ui->productImageLabel->size(),
-                                  Qt::KeepAspectRatio,
-                                  Qt::SmoothTransformation)
-            );
+            originalPixmap.scaled(
+                ui->productImageLabel->size() * scaleFactor,
+                Qt::KeepAspectRatio,
+                Qt::SmoothTransformation));
     }
+
+    int marginLeftRight = static_cast<int>(4 * scaleFactor);
+    int marginTopBottom = static_cast<int>(4 * scaleFactor);
 
     int windowW = width();
     int windowH = height();
 
-    int baseW = finalWidth;   // Store 1410 * 0.8 or whatever you use
-    int baseH = finalHeight;
+    if (windowW > finalWidth)
+        marginLeftRight = (windowW - finalWidth) / 2;
+    if (windowH > finalHeight)
+        marginTopBottom = (windowH - finalHeight) / 2;
 
-    int marginLeftRight = 4;
-    int marginTopBottom = 4;
-
-    // If window is larger than base, add extra margin to center content
-    if (windowW > baseW)
-        marginLeftRight = (windowW - baseW) / 2;
-
-    if (windowH > baseH)
-        marginTopBottom = (windowH - baseH) / 2;
-
-    // Apply new margins
-    ui->gridLayout->setContentsMargins(marginLeftRight, marginTopBottom,
-                                       marginLeftRight, marginTopBottom);
+    ui->gridLayout->setContentsMargins(
+        marginLeftRight, marginTopBottom,
+        marginLeftRight, marginTopBottom);
 }
 
 void JobSheet::keyPressEvent(QKeyEvent *event)
@@ -192,29 +206,53 @@ void JobSheet::set_value(const QString &jobNo)
 
     QTableWidget *table = ui->diaAndStoneForDesignTableWidget;
     table->setRowCount(0);
-    table->setColumnCount(4);
-    table->setHorizontalHeaderLabels({"Type", "Name", "Quantity", "Size (MM)"});
+    table->setColumnCount(6);
+    table->setHorizontalHeaderLabels({"Type", "Name", "Quantity", "Size (MM)", "1 Pc Wt", "Total Wt"});
+
+    double diamondTotalWt = 0.0;
+    double stoneTotalWt   = 0.0;
 
     auto parseAndAddRows = [&](const QString &jsonStr, const QString &typeLabel) {
         QJsonParseError parseError;
         QJsonDocument doc = QJsonDocument::fromJson(jsonStr.toUtf8(), &parseError);
         if (parseError.error != QJsonParseError::NoError || !doc.isArray())
             return;
+
         for (auto value : doc.array()) {
             if (!value.isObject()) continue;
             QJsonObject obj = value.toObject();
+
+            QString name  = obj["type"].toString();
+            QString size  = obj["sizeMM"].toString();
+            int qty       = obj["quantity"].toString().toInt();
+            double wtEach = obj["weight"].toDouble();
+            double wtTotal = wtEach * qty;
+
             int row = table->rowCount();
             table->insertRow(row);
             table->setItem(row, 0, new QTableWidgetItem(typeLabel));
-            table->setItem(row, 1, new QTableWidgetItem(obj["type"].toString()));
-            table->setItem(row, 2, new QTableWidgetItem(obj["quantity"].toString()));
-            table->setItem(row, 3, new QTableWidgetItem(obj["sizeMM"].toString()));
+            table->setItem(row, 1, new QTableWidgetItem(name));
+            table->setItem(row, 2, new QTableWidgetItem(QString::number(qty)));
+            table->setItem(row, 3, new QTableWidgetItem(size));
+            table->setItem(row, 4, new QTableWidgetItem(QString::number(wtEach, 'f', 3)));
+            table->setItem(row, 5, new QTableWidgetItem(QString::number(wtTotal, 'f', 3)));
+
+            // ✅ Accumulate totals
+            if (typeLabel == "Diamond")
+                diamondTotalWt += wtTotal;
+            else if (typeLabel == "Stone")
+                stoneTotalWt += wtTotal;
         }
     };
 
     parseAndAddRows(diamondJson, "Diamond");
     parseAndAddRows(stoneJson, "Stone");
+
     table->resizeColumnsToContents();
+
+    // ✅ Update total line edits
+    ui->diamondTotalLineEdit->setText(QString::number(diamondTotalWt, 'f', 3));
+    ui->stoneTotalLineEdit->setText(QString::number(stoneTotalWt, 'f', 3));
 }
 
 void JobSheet::loadImageForDesignNo()
@@ -290,8 +328,15 @@ void JobSheet::set_value_designer(){
 
     QList<QTableWidget*> tableWidgets = findChildren<QTableWidget*>();
     for (QTableWidget* table : tableWidgets) {
+        // Disable editing
         table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        table->setEnabled(false);
+
+        // Optional: disable selection if you don't want the user to highlight cells
+        // table->setSelectionMode(QAbstractItemView::NoSelection);
+
+        // Make it read-only but still scrollable and interactive
+        table->setFocusPolicy(Qt::NoFocus);
+        table->setStyleSheet("QTableWidget { background-color: #f0f0f0; }"); // optional visual cue
     }
 
     QList<QLabel*> labels = findChildren<QLabel*>();
@@ -303,20 +348,23 @@ void JobSheet::set_value_designer(){
         }
     }
 
+    updateDiamondTotals();
+    updateGoldTotalWeight();
 }
 
 void JobSheet::set_value_manuf()
 {
-    // Selection behavior
+    //
+    // ---------------------- GOLD TABLE ----------------------
+    //
     ui->goldDetailTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->goldDetailTableWidget->setSelectionBehavior(QAbstractItemView::SelectItems);
 
-    // ✅ Fill totals when opening JobSheet
     updateGoldTotalWeight();
 
-    // ✅ Open ManageGold (col 1) or manageGoldReturn (col 4) on click
+    // ✅ Open ManageGold for col 1 (Filling), col 2 (Dust), col 4 (Return)
     connect(ui->goldDetailTableWidget, &QTableWidget::cellClicked, this, [this](int row, int col) {
-        if (row == 0 && (col == 1 || col == 4)) {
+        if (row == 0 && (col == 1 || col == 2 || col == 4)) {
             QTableWidgetItem *item = ui->goldDetailTableWidget->item(row, col);
             if (!item) {
                 item = new QTableWidgetItem();
@@ -324,24 +372,19 @@ void JobSheet::set_value_manuf()
             }
             onGoldDetailCellClicked(item);
         }
-        // ✅ Special case: Dust cell (0,2) → open QInputDialog
-        else if (row == 0 && col == 2) {
-            handleCellSave(row, col); // this will trigger the QInputDialog version
-        }
     });
 
-    // ✅ Allow manual editing ONLY for returns (col 4, row 1–4)
     ui->goldDetailTableWidget->setEditTriggers(
         QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed
         );
 
     connect(ui->goldDetailTableWidget, &QTableWidget::cellChanged, this, [this](int row, int col) {
-        if (col == 4 && row >= 1 && row <= 4) { // returns
+        if (col == 4 && row >= 1 && row <= 4) {
             handleCellSave(row, col);
         }
     });
 
-    // ✅ Lock col 1, col 2 (dust is read-only in table), col 3, and col 5
+    // ✅ Lock all except return (col 4 rows 1–4)
     for (int r = 0; r < ui->goldDetailTableWidget->rowCount(); ++r) {
         for (int c : {1, 2, 3, 5}) {
             QTableWidgetItem *item = ui->goldDetailTableWidget->item(r, c);
@@ -349,9 +392,34 @@ void JobSheet::set_value_manuf()
                 item = new QTableWidgetItem();
                 ui->goldDetailTableWidget->setItem(r, c, item);
             }
-            item->setFlags(item->flags() & ~Qt::ItemIsEditable); // make read-only
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
         }
     }
+
+    //
+    // ---------------------- DIAMOND & STONE TABLE ----------------------
+    //
+    ui->diamondAndStoneDetailTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->diamondAndStoneDetailTableWidget->setSelectionBehavior(QAbstractItemView::SelectItems);
+
+    // ✅ Make every cell non-editable
+    for (int r = 0; r < ui->diamondAndStoneDetailTableWidget->rowCount(); ++r) {
+        for (int c = 0; c < ui->diamondAndStoneDetailTableWidget->columnCount(); ++c) {
+            QTableWidgetItem *item = ui->diamondAndStoneDetailTableWidget->item(r, c);
+            if (!item) {
+                item = new QTableWidgetItem();
+                ui->diamondAndStoneDetailTableWidget->setItem(r, c, item);
+            }
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        }
+    }
+
+    setupDiamondIssueClicks();
+    updateDiamondTotals();
+    updateGoldTotalWeight();
+    // ✅ Handle clicks to open DiamonIssueRetBro window
+
+
 }
 
 void JobSheet::onGoldDetailCellClicked(QTableWidgetItem *item)
@@ -362,92 +430,53 @@ void JobSheet::onGoldDetailCellClicked(QTableWidgetItem *item)
     // =========================
     // Filling Gold (col = 1)
     // =========================
-    if (row == 0 && col == 1) {
+    if (row == 0 && (col == 1 || col == 2 || col == 4)) {
         if (!newManageGold) {
             newManageGold = new ManageGold(this);
-            newManageGold->setWindowFlags(Qt::FramelessWindowHint);
+            newManageGold->setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
             newManageGold->setAttribute(Qt::WA_DeleteOnClose, false);
 
-            // Position under the cell
-            QRect cellRect = ui->goldDetailTableWidget->visualItemRect(item);
-            QPoint localPos = ui->goldDetailTableWidget->mapTo(this, cellRect.bottomLeft());
-            newManageGold->move(localPos);
-
-            connect(newManageGold, &ManageGold::menuHidden, this, [=, this]() {
-                manageGold = false;
+            connect(newManageGold, &ManageGold::menuHidden, this, [this]() {
                 qApp->removeEventFilter(this);
+                manageGold = false;
             });
 
-            connect(newManageGold, &ManageGold::totalWeightCalculated, this, [=](double weight) {
-                int r = 0, c = 1;
+            connect(newManageGold, &ManageGold::totalWeightCalculated, this, [this](double weight) {
+                int r = 0;
+                int c = (newManageGold->currentMode == ManageGold::Filling) ? 1 : 4;
                 QTableWidgetItem *cell = ui->goldDetailTableWidget->item(r, c);
-                if (!cell) {
+                if (!cell)
                     cell = new QTableWidgetItem();
-                    ui->goldDetailTableWidget->setItem(r, c, cell);
-                }
                 cell->setText(QString::number(weight, 'f', 3));
+                ui->goldDetailTableWidget->setItem(r, c, cell);
             });
         }
 
-        if (!manageGold) {
-            QRect cellRect = ui->goldDetailTableWidget->visualItemRect(item);
-            QPoint localPos = ui->goldDetailTableWidget->mapTo(this, cellRect.bottomLeft());
-            newManageGold->move(localPos);
+        // ✅ Set mode dynamically
+        newManageGold->setMode(
+            col == 1 ? ManageGold::Filling :
+                col == 4 ? ManageGold::Returning :
+                ManageGold::Dust        // ✅ new mode for dust
+            );
+
+
+        QRect cellRect = ui->goldDetailTableWidget->visualItemRect(item);
+        QPoint globalPos = ui->goldDetailTableWidget->viewport()->mapToGlobal(cellRect.bottomLeft());
+
+        // ✅ Toggle behavior — hide if already visible
+        if (newManageGold->isVisible()) {
+            newManageGold->hide();
+            manageGold = false;
+            qApp->removeEventFilter(this);
+        } else {
+            newManageGold->move(globalPos);
             newManageGold->show();
             newManageGold->raise();
             qApp->installEventFilter(this);
             manageGold = true;
-        } else {
-            newManageGold->hide();
-            qApp->removeEventFilter(this);
-            manageGold = false;
         }
     }
 
-    // =========================
-    // Returning Gold (col = 4)
-    // =========================
-    if (row == 0 && col == 4) {
-        if (!newManageGoldReturn) {
-            newManageGoldReturn = new ManageGoldReturn(this);  // ⚡ reuse ManageGold or make manageGoldReturn class
-            newManageGoldReturn->setWindowFlags(Qt::FramelessWindowHint);
-            newManageGoldReturn->setAttribute(Qt::WA_DeleteOnClose, false);
-
-            // Position under the cell
-            QRect cellRect = ui->goldDetailTableWidget->visualItemRect(item);
-            QPoint localPos = ui->goldDetailTableWidget->mapTo(this, cellRect.bottomLeft());
-            newManageGoldReturn->move(localPos);
-
-            connect(newManageGoldReturn, &ManageGoldReturn::menuHidden, this, [=, this]() {
-                manageGoldReturn = false;
-                qApp->removeEventFilter(this);
-            });
-
-            connect(newManageGoldReturn, &ManageGoldReturn::totalWeightCalculated, this, [=](double weight) {
-                int r = 0, c = 4;
-                QTableWidgetItem *cell = ui->goldDetailTableWidget->item(r, c);
-                if (!cell) {
-                    cell = new QTableWidgetItem();
-                    ui->goldDetailTableWidget->setItem(r, c, cell);
-                }
-                cell->setText(QString::number(weight, 'f', 3));
-            });
-        }
-
-        if (!manageGoldReturn) {
-            QRect cellRect = ui->goldDetailTableWidget->visualItemRect(item);
-            QPoint localPos = ui->goldDetailTableWidget->mapTo(this, cellRect.bottomLeft());
-            newManageGoldReturn->move(localPos);
-            newManageGoldReturn->show();
-            newManageGoldReturn->raise();
-            qApp->installEventFilter(this);
-            manageGoldReturn = true;
-        } else {
-            newManageGoldReturn->hide();
-            qApp->removeEventFilter(this);
-            manageGoldReturn = false;
-        }
-    }
     updateGoldTotalWeight();
 }
 
@@ -466,12 +495,12 @@ void JobSheet::updateGoldTotalWeight()
     double settingReturn = 0.0;
     double finalPolishReturn = 0.0;
 
-    // Open DB
+    // --- Open DB ---
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "weight_fetch_conn");
     QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
     db.setDatabaseName(dbPath);
 
-    QString returnJson; // save return JSON for product weight
+    QString returnJson;
 
     if (db.open()) {
         QSqlQuery query(db);
@@ -483,58 +512,58 @@ void JobSheet::updateGoldTotalWeight()
         query.addBindValue(jobNo);
 
         if (query.exec() && query.next()) {
-            // ---------------- Issue JSON ----------------
+            // --- Issue JSON ---
             QString issueJson = query.value(0).toString();
             if (!issueJson.isEmpty()) {
                 QJsonParseError parseError;
                 QJsonDocument doc = QJsonDocument::fromJson(issueJson.toUtf8(), &parseError);
                 if (parseError.error == QJsonParseError::NoError && doc.isArray()) {
-                    QJsonArray arr = doc.array();
-                    for (const QJsonValue &val : arr) {
-                        if (val.isObject()) {
-                            QJsonObject obj = val.toObject();
-                            totalIssueWeight += obj["weight"].toString().toDouble();
-                        }
-                    }
+                    for (const QJsonValue &val : doc.array())
+                        if (val.isObject())
+                            totalIssueWeight += val.toObject()["weight"].toString().toDouble();
                 }
             }
 
-            // ---------------- Dust (plain value) ----------------
-            QString dustVal = query.value(1).toString();
-            if (!dustVal.isEmpty()) {
-                dustWeight = dustVal.toDouble();
+            // --- Dust JSON ---
+            QString dustJson = query.value(1).toString();
+            if (!dustJson.isEmpty()) {
+                QJsonParseError parseError;
+                QJsonDocument doc = QJsonDocument::fromJson(dustJson.toUtf8(), &parseError);
+                if (parseError.error == QJsonParseError::NoError && doc.isArray()) {
+                    for (const QJsonValue &val : doc.array())
+                        if (val.isObject())
+                            dustWeight += val.toObject()["weight"].toString().toDouble();
+                } else {
+                    bool ok = false;
+                    double plainDust = dustJson.toDouble(&ok);
+                    if (ok) dustWeight = plainDust;
+                }
+
                 int row = 0, col = 2;
                 QTableWidgetItem *dustItem = ui->goldDetailTableWidget->item(row, col);
-                if (!dustItem) {
-                    dustItem = new QTableWidgetItem();
-                    ui->goldDetailTableWidget->setItem(row, col, dustItem);
-                }
+                if (!dustItem) dustItem = new QTableWidgetItem();
+                ui->goldDetailTableWidget->setItem(row, col, dustItem);
                 dustItem->setText(QString::number(dustWeight, 'f', 3));
             }
 
-            // ---------------- Return JSON ----------------
+            // --- Return JSON ---
             returnJson = query.value(2).toString();
             if (!returnJson.isEmpty()) {
                 QJsonParseError parseError;
                 QJsonDocument doc = QJsonDocument::fromJson(returnJson.toUtf8(), &parseError);
                 if (parseError.error == QJsonParseError::NoError && doc.isArray()) {
-                    QJsonArray arr = doc.array();
-                    for (const QJsonValue &val : arr) {
-                        if (val.isObject()) {
-                            QJsonObject obj = val.toObject();
-                            totalReturnWeight += obj["weight"].toString().toDouble();
-                        }
-                    }
+                    for (const QJsonValue &val : doc.array())
+                        if (val.isObject())
+                            totalReturnWeight += val.toObject()["weight"].toString().toDouble();
                 }
             }
 
-            // ---------------- Stage Returns ----------------
+            // --- Stage returns ---
             buffingReturn     = query.value(3).toDouble();
             freePolishReturn  = query.value(4).toDouble();
             settingReturn     = query.value(5).toDouble();
             finalPolishReturn = query.value(6).toDouble();
 
-            // Show in col=4
             auto setCell = [this](int row, int col, double val) {
                 QTableWidgetItem *it = ui->goldDetailTableWidget->item(row, col);
                 if (!it) {
@@ -553,169 +582,369 @@ void JobSheet::updateGoldTotalWeight()
     }
     QSqlDatabase::removeDatabase("weight_fetch_conn");
 
-    // ---------------- Helper for product weight ----------------
+    // --- Helper: product weight ---
     auto getProductWeight = [](const QString &returnJson) -> double {
         if (returnJson.isEmpty()) return 0.0;
-
         QJsonParseError parseError;
         QJsonDocument doc = QJsonDocument::fromJson(returnJson.toUtf8(), &parseError);
         if (parseError.error != QJsonParseError::NoError || !doc.isArray()) return 0.0;
-
         double productWeight = 0.0;
-        QJsonArray arr = doc.array();
-        for (const QJsonValue &val : arr) {
-            if (val.isObject()) {
-                QJsonObject obj = val.toObject();
-                if (obj.contains("type") && obj["type"].toString() == "Product") {
-                    productWeight += obj["weight"].toString().toDouble();
-                }
-            }
-        }
+        for (const QJsonValue &val : doc.array())
+            if (val.isObject() && val.toObject()["type"].toString() == "Product")
+                productWeight += val.toObject()["weight"].toString().toDouble();
         return productWeight;
     };
 
-    // ✅ Issue total → col 1 (row 0)
-    {
-        int row = 0, col = 1;
-        QTableWidgetItem *item = ui->goldDetailTableWidget->item(row, col);
-        if (!item) {
-            item = new QTableWidgetItem();
-            ui->goldDetailTableWidget->setItem(row, col, item);
-        }
-        item->setText(QString::number(totalIssueWeight, 'f', 3));
-    }
+    // --- Fill base table values ---
+    auto setItemVal = [this](int row, int col, double val) {
+        QTableWidgetItem *it = ui->goldDetailTableWidget->item(row, col);
+        if (!it) it = new QTableWidgetItem();
+        ui->goldDetailTableWidget->setItem(row, col, it);
+        it->setText(QString::number(val, 'f', 3));
+    };
+    setItemVal(0, 1, totalIssueWeight);
+    setItemVal(0, 4, totalReturnWeight);
 
-    // ✅ Return total (all returns combined) → col 4 (row 0)
-    {
-        double grandReturn = totalReturnWeight;
-        int row = 0, col = 4;
-        QTableWidgetItem *item = ui->goldDetailTableWidget->item(row, col);
-        if (!item) {
-            item = new QTableWidgetItem();
-            ui->goldDetailTableWidget->setItem(row, col, item);
-        }
-        item->setText(QString::number(grandReturn, 'f', 3));
-    }
+    double productWeight = getProductWeight(returnJson);
+    setItemVal(1, 1, productWeight);
 
-    // ✅ Stage col 1
-    // (1,1) → product weight only
-    {
-        double productWeight = getProductWeight(returnJson);
-        QTableWidgetItem *item11 = ui->goldDetailTableWidget->item(1, 1);
-        if (!item11) {
-            item11 = new QTableWidgetItem();
-            ui->goldDetailTableWidget->setItem(1, 1, item11);
-        }
-        if (productWeight != 0.0)
-            item11->setText(QString::number(productWeight, 'f', 3));
-    }
-
-    // Copy returns into stage col 1
     auto copyCell = [this](int fromRow, int fromCol, int toRow, int toCol) {
         QTableWidgetItem *src = ui->goldDetailTableWidget->item(fromRow, fromCol);
         if (!src || src->text().isEmpty()) return;
         QTableWidgetItem *dst = ui->goldDetailTableWidget->item(toRow, toCol);
-        if (!dst) {
-            dst = new QTableWidgetItem();
-            ui->goldDetailTableWidget->setItem(toRow, toCol, dst);
-        }
+        if (!dst) dst = new QTableWidgetItem();
+        ui->goldDetailTableWidget->setItem(toRow, toCol, dst);
         dst->setText(src->text());
     };
     copyCell(1, 4, 2, 1);
     copyCell(2, 4, 3, 1);
     copyCell(3, 4, 4, 1);
 
-    // ---------------- Loss & Return% for stage rows ----------------
-    auto calcLossReturn = [this](int row) {
-        QTableWidgetItem *inputItem = ui->goldDetailTableWidget->item(row, 1);
+    // --- Calculate diamond/stone/other used weights ---
+    auto getUsedWeight = [this](int row) -> double {
+        QTableWidget *tbl = ui->diamondAndStoneDetailTableWidget;
+        auto val = [&](int c) -> double {
+            QTableWidgetItem *it = tbl->item(row, c);
+
+
+            return (it && !it->text().isEmpty()) ? it->text().toDouble() : 0.0;
+        };
+        // qDebug() << "Row:" << row << "Cols:" << val(2) << val(4) << val(6);
+        return val(2) - val(4) - val(6);
+    };
+    double diamondUsed = getUsedWeight(0);
+    double stoneUsed   = getUsedWeight(1);
+    double otherUsed   = getUsedWeight(2);
+    double totalUsedDSO = diamondUsed + stoneUsed + otherUsed;
+    qDebug() << totalUsedDSO;
+
+    // --- Loss & Loss% calculations ---
+    auto calcLossPercent = [this](int row, double adjustExtra = 0.0) {
+        QTableWidgetItem *inputItem  = ui->goldDetailTableWidget->item(row, 1);
         QTableWidgetItem *returnItem = ui->goldDetailTableWidget->item(row, 4);
         if (!inputItem || !returnItem) return;
 
         double input = inputItem->text().toDouble();
-        double ret = returnItem->text().toDouble();
-
+        double ret   = returnItem->text().toDouble() - adjustExtra; // subtract extra weights
         double loss = input - ret;
-        double retPercent = (input > 0.0) ? (ret / input) * 100.0 : 0.0;
+        double lossPercent = (input > 0.0) ? (loss / input) * 100.0 : 0.0;
 
-        QTableWidgetItem *lossItem = ui->goldDetailTableWidget->item(row, 3);
-        if (!lossItem) {
-            lossItem = new QTableWidgetItem();
-            ui->goldDetailTableWidget->setItem(row, 3, lossItem);
-        }
-        lossItem->setText(QString::number(loss, 'f', 3));
-
-        QTableWidgetItem *percentItem = ui->goldDetailTableWidget->item(row, 5);
-        if (!percentItem) {
-            percentItem = new QTableWidgetItem();
-            ui->goldDetailTableWidget->setItem(row, 5, percentItem);
-        }
-        percentItem->setText(QString::number(retPercent, 'f', 2) + "%");
+        auto setCellVal = [this](int row, int col, const QString &text) {
+            QTableWidgetItem *it = ui->goldDetailTableWidget->item(row, col);
+            if (!it) it = new QTableWidgetItem();
+            ui->goldDetailTableWidget->setItem(row, col, it);
+            it->setText(text);
+        };
+        setCellVal(row, 3, QString::number(loss, 'f', 3));
+        setCellVal(row, 5, QString::number(lossPercent, 'f', 2) + "%");
     };
 
-    calcLossReturn(1);
-    calcLossReturn(2);
-    calcLossReturn(3);
-    calcLossReturn(4);
+    calcLossPercent(1);
+    calcLossPercent(2);
+    calcLossPercent(3, totalUsedDSO); // subtract diamond + stone + other
+    calcLossPercent(4);
 
-    // ✅ Loss & Return% for row 0 (with dust)
+    // --- Overall loss (row 0, including dust) ---
     {
         double grandReturn = totalReturnWeight;
         double loss = totalIssueWeight - (grandReturn + dustWeight);
-        int row = 0, col = 3;
-        QTableWidgetItem *item = ui->goldDetailTableWidget->item(row, col);
-        if (!item) {
-            item = new QTableWidgetItem();
-            ui->goldDetailTableWidget->setItem(row, col, item);
-        }
-        item->setText(QString::number(loss, 'f', 3));
+        setItemVal(0, 3, loss);
 
-        double returnPercent = (totalIssueWeight > 0.0) ? ((grandReturn + dustWeight) / totalIssueWeight) * 100.0 : 0.0;
-        row = 0; col = 5;
-        item = ui->goldDetailTableWidget->item(row, col);
-        if (!item) {
-            item = new QTableWidgetItem();
-            ui->goldDetailTableWidget->setItem(row, col, item);
-        }
-        item->setText(QString::number(returnPercent, 'f', 2) + "%");
+        double lossPercent = (totalIssueWeight > 0.0)
+                                 ? (loss / totalIssueWeight) * 100.0
+                                 : 0.0;
+        QTableWidgetItem *percentItem = ui->goldDetailTableWidget->item(0, 5);
+        if (!percentItem) percentItem = new QTableWidgetItem();
+        ui->goldDetailTableWidget->setItem(0, 5, percentItem);
+        percentItem->setText(QString::number(lossPercent, 'f', 2) + "%");
     }
 
-    // ---------------- Total row (row 5) ----------------
-    // ---------------- Total row (row 5) ----------------
+    // --- Total row (row 5) ---
     {
         double lossSum = 0.0;
-
         for (int row = 0; row <= 4; ++row) {
-            // Sum of Loss (col 3)
             QTableWidgetItem *lossItem = ui->goldDetailTableWidget->item(row, 3);
             if (lossItem && !lossItem->text().isEmpty())
                 lossSum += lossItem->text().toDouble();
         }
 
-        // Set total Loss in (5,3)
-        QTableWidgetItem *totalLossItem = ui->goldDetailTableWidget->item(5, 3);
-        if (!totalLossItem) {
-            totalLossItem = new QTableWidgetItem();
-            ui->goldDetailTableWidget->setItem(5, 3, totalLossItem);
-        }
-        totalLossItem->setText(QString::number(lossSum, 'f', 3));
+        setItemVal(5, 3, lossSum);
 
-        // Calculate total return%: (0,1 - 5,3) / 0,1 * 100
         QTableWidgetItem *issueItem = ui->goldDetailTableWidget->item(0, 1);
         double totalIssue = issueItem ? issueItem->text().toDouble() : 0.0;
-        double totalReturnPercent = 0.0;
-        if (totalIssue > 0.0) {
-            totalReturnPercent = ((totalIssue - lossSum) / totalIssue) * 100.0;
-        }
+        double totalLossPercent = (totalIssue > 0.0)
+                                      ? (lossSum / totalIssue) * 100.0
+                                      : 0.0;
 
-        // Set total return% in (5,5)
-        QTableWidgetItem *totalReturnItem = ui->goldDetailTableWidget->item(5, 5);
-        if (!totalReturnItem) {
-            totalReturnItem = new QTableWidgetItem();
-            ui->goldDetailTableWidget->setItem(5, 5, totalReturnItem);
-        }
-        totalReturnItem->setText(QString::number(totalReturnPercent, 'f', 2) + "%");
+        QTableWidgetItem *totalLossItem = ui->goldDetailTableWidget->item(5, 5);
+        if (!totalLossItem) totalLossItem = new QTableWidgetItem();
+        ui->goldDetailTableWidget->setItem(5, 5, totalLossItem);
+        totalLossItem->setText(QString::number(totalLossPercent, 'f', 2) + "%");
     }
 
+    // ✅ Optional: rename header to "Loss %"
+    ui->goldDetailTableWidget->setHorizontalHeaderItem(5, new QTableWidgetItem("Loss %"));
+
+    // --- Gross & Net Weight display ---
+    {
+        // Cell (4,4) = final polish return (gross weight)
+        QTableWidgetItem *grossItem = ui->goldDetailTableWidget->item(4, 4);
+        double grossWt = (grossItem && !grossItem->text().isEmpty())
+                             ? grossItem->text().toDouble()
+                             : 0.0;
+
+        // Total used diamond + stone + other weight (already calculated above)
+        double totalUsedDSO = 0.0;
+        {
+            auto getUsedWeight = [this](int row) -> double {
+                QTableWidget *tbl = ui->diamondAndStoneDetailTableWidget;
+                auto val = [&](int c) -> double {
+                    QTableWidgetItem *it = tbl->item(row, c);
+                    return (it && !it->text().isEmpty()) ? it->text().toDouble() : 0.0;
+                };
+                return val(2) - val(4) - val(6);
+            };
+            totalUsedDSO = getUsedWeight(0) + getUsedWeight(1) + getUsedWeight(2);
+        }
+
+        // Net weight = gross - (diamond + stone + other)
+        double netWt = grossWt - totalUsedDSO;
+        if (netWt < 0.0)
+            netWt = 0.0; // safety clamp
+
+        // --- Update LineEdits ---
+        ui->grossWtLineEdit->setText(QString::number(grossWt, 'f', 3));
+        ui->netWtLineEdit->setText(QString::number(netWt, 'f', 3));
+
+        qDebug() << "Gross Wt:" << grossWt
+                 << " | Used DSO:" << totalUsedDSO
+                 << " | Net Wt:" << netWt;
+    }
+
+}
+
+void JobSheet::updateDiamondTotals()
+{
+    QString jobNo = ui->jobNoLineEdit->text().trimmed();
+    if (jobNo.isEmpty())
+        return;
+
+    // ✅ Open DB
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "diamond_total_conn");
+    QString dbPath = QDir(QCoreApplication::applicationDirPath())
+                         .filePath("database/mega_mine_orderbook.db");
+    db.setDatabaseName(dbPath);
+
+    if (!db.open()) {
+        QMessageBox::warning(this, "DB Error", db.lastError().text());
+        return;
+    }
+
+    // ✅ Helper lambda: read total pcs & wt from a given column name
+    auto getTotals = [&](const QString &column) -> QPair<int, double> {
+        int totalPcs = 0;
+        double totalWt = 0.0;
+
+        QSqlQuery q(db);
+        q.prepare(QString("SELECT \"%1\" FROM jobsheet_detail WHERE job_no = ?").arg(column));
+        q.addBindValue(jobNo);
+
+        if (q.exec() && q.next()) {
+            QString json = q.value(0).toString();
+            if (!json.isEmpty()) {
+                QJsonParseError err;
+                QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &err);
+                if (err.error == QJsonParseError::NoError && doc.isArray()) {
+                    QJsonArray arr = doc.array();
+                    for (const QJsonValue &v : arr) {
+                        if (!v.isObject()) continue;
+                        QJsonObject obj = v.toObject();
+                        totalPcs += obj["pcs"].toInt();
+                        totalWt += obj["wt"].toString().toDouble();
+                    }
+                }
+            }
+        }
+
+        return { totalPcs, totalWt };
+    };
+
+    // ✅ List of all columns with mapping to row & col
+    struct Entry { QString col; int row; int pcsCol; int wtCol; };
+    QList<Entry> entries = {
+                            // Diamond
+                            { "diamond_issue",  0, 1, 2 },
+                            { "diamond_return", 0, 3, 4 },
+                            { "diamond_broken", 0, 5, 6 },
+
+                            // Stone
+                            { "stone_issue",  1, 1, 2 },
+                            { "stone_return", 1, 3, 4 },
+                            { "stone_broken", 1, 5, 6 },
+
+                            // Other
+                            { "other_issue",  2, 1, 2 },
+                            { "other_return", 2, 3, 4 },
+                            { "other_broken", 2, 5, 6 },
+                            };
+
+    // ✅ Loop and fill
+    for (const auto &e : entries) {
+        auto [pcs, wt] = getTotals(e.col);
+
+        QTableWidgetItem *pcsItem = ui->diamondAndStoneDetailTableWidget->item(e.row, e.pcsCol);
+        if (!pcsItem) {
+            pcsItem = new QTableWidgetItem();
+            ui->diamondAndStoneDetailTableWidget->setItem(e.row, e.pcsCol, pcsItem);
+        }
+        pcsItem->setText(QString::number(pcs));
+
+        QTableWidgetItem *wtItem = ui->diamondAndStoneDetailTableWidget->item(e.row, e.wtCol);
+        if (!wtItem) {
+            wtItem = new QTableWidgetItem();
+            ui->diamondAndStoneDetailTableWidget->setItem(e.row, e.wtCol, wtItem);
+        }
+        wtItem->setText(QString::number(wt, 'f', 3));
+    }
+
+    db.close();
+    QSqlDatabase::removeDatabase("diamond_total_conn");
+
+
+    // ✅ --- Calculate net weights (col2 - col4 - col6) ---
+    auto getNetWeight = [this](int row) -> double {
+        QTableWidget *tbl = ui->diamondAndStoneDetailTableWidget;
+
+        auto getVal = [&](int col) -> double {
+            QTableWidgetItem *item = tbl->item(row, col);
+            return (item && !item->text().isEmpty()) ? item->text().toDouble() : 0.0;
+        };
+
+        double issue  = getVal(2);
+        double ret    = getVal(4);
+        double broken = getVal(6);
+
+        return issue - ret - broken;
+    };
+
+    // ✅ Compute for each category
+    double diamondNet = getNetWeight(0);
+    double stoneNet   = getNetWeight(1);
+    double otherNet   = getNetWeight(2);
+
+    // ✅ Update UI line edits
+    ui->diaWtLineEdit->setText(QString::number(diamondNet, 'f', 3));
+    ui->stoneWtLineEdit->setText(QString::number(stoneNet, 'f', 3));
+    ui->otherWtLineEdit->setText(QString::number(otherNet, 'f', 3));
+
+
+}
+
+
+// call this from set_value_manuf() to enable only diamond-issue cells (0,1) and (0,2)
+void JobSheet::setupDiamondIssueClicks()
+{
+    // Use UniqueConnection to avoid multiple identical connects if set_value_manuf() runs again
+    connect(ui->diamondAndStoneDetailTableWidget, &QTableWidget::cellClicked, this,
+            [this](int row, int col) {
+                // Only allow diamond issue cells for step 1
+                if (col == 0)
+                    return;
+
+                QTableWidgetItem *item = ui->diamondAndStoneDetailTableWidget->item(row, col);
+                if (!item) {
+                    item = new QTableWidgetItem();
+                    ui->diamondAndStoneDetailTableWidget->setItem(row, col, item);
+                }
+
+                // get job no
+                QString jobNo = ui->jobNoLineEdit->text().trimmed();
+                if (jobNo.isEmpty()) {
+                    QMessageBox::warning(this, "Missing Job No",
+                                         "Please enter or select a valid Job Number before adding diamond data.");
+                    return;
+                }
+
+                // lazy init popup
+                if (!newDiamonIssueRetBro) {
+                    newDiamonIssueRetBro = new DiamonIssueRetBro(this);
+                    newDiamonIssueRetBro->setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
+                    newDiamonIssueRetBro->setAttribute(Qt::WA_DeleteOnClose, false);
+
+                    // hide handling
+                    connect(newDiamonIssueRetBro, &DiamonIssueRetBro::menuHidden, this, [this]() {
+                        qApp->removeEventFilter(this);
+                        diamondMenuVisible = false;
+                    });
+
+                    // when popup saves, update cells & totals
+                    // ✅ When popup saves data, update that row & refresh totals
+                    connect(newDiamonIssueRetBro, &DiamonIssueRetBro::valuesUpdated, this,
+                            [this](int r, const QVariantMap &vals) {
+                                auto setVal = [this](int rr, int cc, const QString &val) {
+                                    QTableWidgetItem *cell = ui->diamondAndStoneDetailTableWidget->item(rr, cc);
+                                    if (!cell) {
+                                        cell = new QTableWidgetItem();
+                                        ui->diamondAndStoneDetailTableWidget->setItem(rr, cc, cell);
+                                    }
+                                    cell->setText(val);
+                                };
+
+                                // 🧩 Dynamically handle all column types
+                                if (vals.contains("issue_pcs"))  setVal(r, 1, vals["issue_pcs"].toString());
+                                if (vals.contains("issue_wt"))   setVal(r, 2, vals["issue_wt"].toString());
+                                if (vals.contains("return_pcs")) setVal(r, 3, vals["return_pcs"].toString());
+                                if (vals.contains("return_wt"))  setVal(r, 4, vals["return_wt"].toString());
+                                if (vals.contains("broken_pcs")) setVal(r, 5, vals["broken_pcs"].toString());
+                                if (vals.contains("broken_wt"))  setVal(r, 6, vals["broken_wt"].toString());
+
+                                // ✅ Always refresh all totals after DB update
+                                updateDiamondTotals();
+                            });
+
+                }
+
+                // pass context so popup can save to DB correctly
+                newDiamonIssueRetBro->setContext(row, col, jobNo);
+
+                // position popup next to cell
+                QRect cellRect = ui->diamondAndStoneDetailTableWidget->visualItemRect(item);
+                QPoint globalPos = ui->diamondAndStoneDetailTableWidget->viewport()->mapToGlobal(cellRect.bottomLeft());
+
+                // toggle show/hide
+                if (newDiamonIssueRetBro->isVisible()) {
+                    newDiamonIssueRetBro->hide();
+                    diamondMenuVisible = false;
+                    qApp->removeEventFilter(this);
+                } else {
+                    newDiamonIssueRetBro->move(globalPos);
+                    newDiamonIssueRetBro->show();
+                    newDiamonIssueRetBro->raise();
+                    diamondMenuVisible = true;
+                    qApp->installEventFilter(this);
+                }
+            // }, Qt::UniqueConnection);
+    });
 }
 
 void JobSheet::handleCellSave(int row, int col)
@@ -726,74 +955,25 @@ void JobSheet::handleCellSave(int row, int col)
     QString jobNo = ui->jobNoLineEdit->text().trimmed();
     if (jobNo.isEmpty()) return;
 
-    // Map row/col to database column name
+    // ✅ Map valid stage return columns
     QString dbColumn;
-    if (row == 0 && col == 2) dbColumn = "filling_dust";       // Dust (special case)
-    else if (row == 1 && col == 4) dbColumn = "buffing_return";
+    if (row == 1 && col == 4) dbColumn = "buffing_return";
     else if (row == 2 && col == 4) dbColumn = "free_polish_return";
     else if (row == 3 && col == 4) dbColumn = "setting_return";
     else if (row == 4 && col == 4) dbColumn = "final_polish_return";
-    else return; // not a handled cell
+    else
+        return; // no DB action for other cells (dust handled by ManageGold)
 
-    // Open DB
+    // ✅ Open SQLite connection
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "cell_save_conn");
     QString dbPath = QDir(QCoreApplication::applicationDirPath()).filePath("database/mega_mine_orderbook.db");
     db.setDatabaseName(dbPath);
 
-    double existingValue = 0.0;
-    if (db.open()) {
-        QSqlQuery q(db);
-        q.prepare("SELECT " + dbColumn + " FROM jobsheet_detail WHERE job_no = ?");
-        q.addBindValue(jobNo);
-        if (q.exec() && q.next()) {
-            existingValue = q.value(0).toDouble();
-        }
-    }
-
-    // ✅ Special case: Dust (row 0, col 2) → always editable, ADD instead of overwrite
-    if (row == 0 && col == 2) {
-        bool okInput = false;
-        double addValue = QInputDialog::getDouble(
-            this,
-            "Add Dust Weight",
-            "Enter additional dust weight:",
-            0.0,        // default
-            0.0,        // min
-            100000.0,   // max
-            3,          // decimals
-            &okInput
-            );
-
-        if (!okInput) {
-            // user cancelled → restore old value
-            item->setText(QString::number(existingValue, 'f', 3));
-            db.close();
-            QSqlDatabase::removeDatabase("cell_save_conn");
-            return;
-        }
-
-        double newTotal = existingValue + addValue;
-        QString newFormatted = QString::number(newTotal, 'f', 3);
-
-        QSqlQuery q(db);
-        q.prepare("UPDATE jobsheet_detail SET " + dbColumn + " = ? WHERE job_no = ?");
-        q.addBindValue(newFormatted);
-        q.addBindValue(jobNo);
-        if (!q.exec() || q.numRowsAffected() == 0) {
-            q.prepare("INSERT INTO jobsheet_detail (job_no, " + dbColumn + ") VALUES (?, ?)");
-            q.addBindValue(jobNo);
-            q.addBindValue(newFormatted);
-            q.exec();
-        }
-
-        item->setText(newFormatted); // show updated total
-        db.close();
-        QSqlDatabase::removeDatabase("cell_save_conn");
-        updateGoldTotalWeight();
+    if (!db.open()) {
+        QMessageBox::critical(this, "DB Error", db.lastError().text());
         return;
     }
 
-    // ✅ For other cells (one-time save)
     QString text = item->text().trimmed();
     if (text.isEmpty()) return;
 
@@ -801,12 +981,15 @@ void JobSheet::handleCellSave(int row, int col)
     double value = text.toDouble(&ok);
     if (!ok) {
         QMessageBox::warning(this, "Invalid", "Please enter a valid number.");
-        item->setText(""); // reset
+        item->setText("");
+        db.close();
+        QSqlDatabase::removeDatabase("cell_save_conn");
         return;
     }
 
     QString formatted = QString::number(value, 'f', 3);
 
+    // ✅ Check if already exists
     bool alreadyExists = false;
     QString existingText;
     {
@@ -827,6 +1010,7 @@ void JobSheet::handleCellSave(int row, int col)
         return;
     }
 
+    // ✅ Confirm save
     auto reply = QMessageBox::question(this, "Confirm", "Save value " + formatted + " ?");
     if (reply == QMessageBox::Yes) {
         QSqlQuery q(db);
@@ -846,5 +1030,6 @@ void JobSheet::handleCellSave(int row, int col)
 
     db.close();
     QSqlDatabase::removeDatabase("cell_save_conn");
+
     updateGoldTotalWeight();
 }
